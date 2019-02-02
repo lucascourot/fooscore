@@ -1,6 +1,6 @@
 <?php
 
-use App\Kernel;
+use Fooscore\Kernel;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 

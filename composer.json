@@ -10,10 +10,10 @@
         }
     ],
     "autoload": {
-        "psr-4": { "App\\": "src/" }
+        "psr-4": { "Fooscore\\": "src/" }
     },
     "autoload-dev": {
-        "psr-4": { "App\\Tests\\": "tests/" }
+        "psr-4": { "Fooscore\\Tests\\": "tests/" }
     },
     "require": {
         "php": "^7.2",
@@ -38,7 +38,8 @@
         "preferred-install": {
             "*": "dist"
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "bin-dir": "bin"
     },
     "replace": {
         "paragonie/random_compat": "2.*",

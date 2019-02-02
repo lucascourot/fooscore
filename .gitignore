@@ -1,4 +1,6 @@
 /vendor/
+/bin/*
+!/bin/console
 
 ###> phpunit/phpunit ###
 /phpunit.xml
