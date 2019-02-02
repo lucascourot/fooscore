@@ -7,26 +7,56 @@
         .foosball {
             text-align: center;
         }
+        .team-blue {
+            fill: #007fff;
+        }
+        .team-red {
+            fill: #bf0000;
+        }
+        .team {
+            stroke: #000;
+        }
+        .team ellipse {
+            stroke-width: 2;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 <div class="foosball">
     <svg width="560" height="600" xmlns="http://www.w3.org/2000/svg">
-        <g>
-            <ellipse ry="40" rx="40" cy="80" cx="50" stroke-width="2" stroke="#000" fill="#007fff"></ellipse>
-            <ellipse ry="40" rx="40" cy="400" cx="50" stroke-width="2" stroke="#000" fill="#007fff"></ellipse>
-            <ellipse ry="40" rx="40" cy="200" cx="510" stroke-width="2" stroke="#000" fill="#bf0000"></ellipse>
-            <ellipse ry="40" rx="40" cy="520" cx="510" stroke-width="2" stroke="#000" fill="#bf0000"></ellipse>
+        <rect height="598" width="360" y="1" x="100" stroke-width="2" stroke="#000" fill="#ffffff"></rect>
+        <ellipse stroke="#000" ry="50" rx="50" cy="300" cx="280" stroke-width="2" fill="none"></ellipse>
+        <line stroke="#000" y2="300" x2="460" y1="300" x1="100" stroke-width="2"></line>
+
+        <g class="team-blue team">
+            <ellipse id="player-blue-back" ry="40" rx="40" cy="80" cx="50" stroke-width="2"></ellipse>
+            <ellipse id="player-blue-front" ry="40" rx="40" cy="400" cx="50" stroke-width="2"></ellipse>
+            <rect height="80" width="160" y="2" x="200" stroke-width="0"></rect>
         </g>
 
-        <g>
-            <rect height="598" width="360" y="1" x="100" stroke-width="2" stroke="#000" fill="#ffffff"></rect>
-            <rect height="80" width="160" y="2" x="200" stroke-width="0" stroke="#000" fill="#007fff"></rect>
-            <rect height="80" width="160" y="518" x="200" stroke-width="0" stroke="#000" fill="#bf0000"></rect>
-            <ellipse stroke="#000" ry="50" rx="50" cy="300" cx="280" stroke-width="2" fill="none"></ellipse>
-            <line stroke="#000" y2="300" x2="460" y1="300" x1="100" stroke-width="2"></line>
+        <g class="team-red team">
+            <ellipse id="player-red-back" ry="40" rx="40" cy="520" cx="510" stroke-width="2"></ellipse>
+            <ellipse id="player-red-front" ry="40" rx="40" cy="200" cx="510" stroke-width="2"></ellipse>
+            <rect height="80" width="160" y="518" x="200" stroke-width="0"></rect>
         </g>
     </svg>
 </div>
+<script>
+    (() => {
+        document.getElementById('player-blue-back').addEventListener('click', () => {
+            alert('player-blue-back');
+        });
+        document.getElementById('player-blue-front').addEventListener('click', () => {
+            alert('player-blue-front');
+        });
+        document.getElementById('player-red-back').addEventListener('click', () => {
+            alert('player-red-back');
+        });
+        document.getElementById('player-red-front').addEventListener('click', () => {
+            alert('player-red-front');
+        });
+    })();
+</script>
 </body>
 </html>
