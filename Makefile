@@ -38,4 +38,4 @@ cs-ci: ## Run Continuous Integration code style check
 
 .PHONY: start
 start: ## Starts the server
-	php -S 127.0.0.1:8080 public/index.html
+	php -S 127.0.0.1:8080 public/index.php
