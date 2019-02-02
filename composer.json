@@ -1,0 +1,26 @@
+{
+    "name": "lucascourot/fooscore",
+    "description": "Foosball app for your team",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lucas Courot",
+            "email": "lucas@courot.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "FooScore\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "FooScore\\Tests\\": "tests/" }
+    },
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^8.0",
+        "infection/infection": "^0.12.0",
+        "phpstan/phpstan": "^0.11.1",
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "m6web/php-cs-fixer-config": "^1.1"
+    }
+}
