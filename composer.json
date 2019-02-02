@@ -15,7 +15,9 @@
     "autoload-dev": {
         "psr-4": { "FooScore\\Tests\\": "tests/" }
     },
-    "require": {},
+    "require": {
+        "symfony/flex": "^1.1"
+    },
     "require-dev": {
         "phpunit/phpunit": "^8.0",
         "infection/infection": "^0.12.0",
