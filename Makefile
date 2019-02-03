@@ -8,11 +8,19 @@ help: ## This help
 # Tests
 
 .PHONY: test unit-test mutation_test
-test: unit-test mutation_test
+test: ui-test integration-test unit-test mutation_test
+
+ui-test: ## Run unit tests
+	@test -f bin/phpunit || echo "cannot run unit tests (needs phpunit/phpunit)"
+	php bin/phpunit --group=ui
+
+integration-test: ## Run unit tests
+	@test -f bin/phpunit || echo "cannot run unit tests (needs phpunit/phpunit)"
+	php bin/phpunit --group=integration
 
 unit-test: ## Run unit tests
 	@test -f bin/phpunit || echo "cannot run unit tests (needs phpunit/phpunit)"
-	php bin/phpunit --testdox --coverage-text --coverage-clover ./build/logs/clover.xml --whitelist=src/Domain --coverage-xml=build/coverage/coverage-xml --log-junit=build/coverage/phpunit.junit.xml
+	php bin/phpunit --testdox --group=unit --coverage-text --coverage-clover ./build/logs/clover.xml --coverage-xml=build/coverage/coverage-xml --log-junit=build/coverage/phpunit.junit.xml
 
 mutation_test: ## Run mutation tests
 	@test -f bin/infection || echo "cannot run unit tests (needs infection/infection)"
