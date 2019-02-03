@@ -20,7 +20,7 @@ Players can see the ELO chart to compare to others.
 ## Start the server
     make start
 
-## Launch test
+## Launch tests
     make test
 
 ### Credits

@@ -2,6 +2,7 @@
 /bin/*
 !/bin/console
 /build
+/.phpunit.result.cache
 
 ###> phpunit/phpunit ###
 /phpunit.xml
