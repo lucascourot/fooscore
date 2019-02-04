@@ -4,25 +4,61 @@
     <meta charset="utf-8">
     <title>FooScore</title>
     <style>
+        body {
+            background-color: #F0F0F0;
+        }
+
         .foosball {
             text-align: center;
         }
+
         .team-blue {
             fill: #007fff;
         }
+
         .team-red {
             fill: #bf0000;
         }
+
         .team {
             stroke: #000;
         }
+
         .team ellipse {
             stroke-width: 2;
             cursor: pointer;
         }
+
+        #players-container select {
+            position: absolute;
+            top: 150px;
+            width: 100px;
+            left: 50%;
+            margin-left: -50px;
+        }
+
+        #start-container button {
+            position: absolute;
+            top: 450px;
+            width: 100px;
+            left: 50%;
+            margin-left: -50px;
+        }
     </style>
 </head>
 <body>
+<div id="players-container">
+    <select name="players" id="players" title="Select player">
+        <option selected disabled>Select player</option>
+        <option value="lucas">Lucas</option>
+        <option value="john">John</option>
+    </select>
+</div>
+
+<div id="start-container">
+    <button id="start">Start match</button>
+</div>
+
 <div class="foosball">
     <svg width="560" height="600" xmlns="http://www.w3.org/2000/svg">
         <rect height="598" width="360" y="1" x="100" stroke-width="2" stroke="#000" fill="#ffffff"></rect>
