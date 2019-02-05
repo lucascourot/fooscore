@@ -16,4 +16,37 @@ class ApiController extends AbstractController
             'token' => 'abc',
         ]);
     }
+
+    /**
+     * @Route("/api/players", name="api_players")
+     */
+    public function players()
+    {
+        $players = [
+            [
+                'id' => '1',
+                'name' => 'Lucas Courot',
+                'displayName' => 'Lucas C.',
+            ],
+            [
+                'id' => '2',
+                'name' => 'John Doe',
+                'displayName' => 'John D.',
+            ],
+            [
+                'id' => '3',
+                'name' => 'Alice',
+                'displayName' => 'Alice',
+            ],
+            [
+                'id' => '4',
+                'name' => 'Bob',
+                'displayName' => 'Bob',
+            ],
+        ];
+
+        return $this->json([
+            'players' => $players,
+        ]);
+    }
 }

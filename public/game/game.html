@@ -3,21 +3,34 @@
 <head>
     <meta charset="utf-8">
     <title>FooScore</title>
+    <meta name="viewport" content="width=560">
     <style>
         body {
             background-color: #F0F0F0;
+            width: 560px;
+            position: relative;
+            margin: auto;
+            margin-top: 30px;
         }
 
         .foosball {
             text-align: center;
         }
 
-        .team-blue {
+        svg .team-blue {
             fill: #007fff;
         }
 
-        .team-red {
+        svg .team-red {
             fill: #bf0000;
+        }
+
+        #players-container .team-blue {
+            background-color: #007fff;
+        }
+
+        #players-container .team-red {
+            background-color: #bf0000;
         }
 
         .team {
@@ -31,66 +44,197 @@
 
         #players-container select {
             position: absolute;
-            top: 150px;
             width: 100px;
+            height: 100px;
             left: 50%;
-            margin-left: -50px;
+            cursor: pointer;
+            opacity: 0;
+        }
+
+        #player-blue-back {
+            top: 30px;
+            margin-left: -280px;
+        }
+
+        #player-blue-front {
+            top: 350px;
+            margin-left: -280px;
+        }
+
+        #player-red-front {
+            top: 150px;
+            margin-left: 180px;
+        }
+
+        #player-red-back {
+            top: 470px;
+            margin-left: 180px;
         }
 
         #start-container button {
             position: absolute;
-            top: 450px;
-            width: 100px;
+            top: 225px;
+            width: 260px;
             left: 50%;
-            margin-left: -50px;
+            margin-left: -130px;
+            height: 150px;
+            color: white;
+            font-size: 50px;
+            background-color: #53b074;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0px 0px 10px 1px #97b79a;
         }
     </style>
 </head>
 <body>
-<div id="players-container">
-    <select name="players" id="players" title="Select player">
-        <option selected disabled>Select player</option>
-        <option value="lucas">Lucas</option>
-        <option value="john">John</option>
-    </select>
-</div>
+<form action="." method="post" id="game-form">
+    <div id="players-container">
+        <select name="player-blue-back" id="player-blue-back" class="team-blue" title="Blue team" required></select>
+        <select name="player-blue-back" id="player-blue-front" class="team-blue" title="Blue team" required></select>
+        <select name="player-red-back" id="player-red-back" class="team-red" title="Red team" required></select>
+        <select name="player-red-back" id="player-red-front" class="team-red" title="Red team" required></select>
+    </div>
 
-<div id="start-container">
-    <button id="start">Start match</button>
-</div>
+    <div id="start-container">
+        <button id="start" type="submit">GO! <span style="text-shadow: 5px 5px 5px #65806f;">⚽</span></button>
+    </div>
+</form>
 
 <div class="foosball">
     <svg width="560" height="600" xmlns="http://www.w3.org/2000/svg">
-        <rect height="598" width="360" y="1" x="100" stroke-width="2" stroke="#000" fill="#ffffff"></rect>
+        <rect height="598" width="360" y="1" x="100" stroke-width="2" stroke="#000" fill="#ffffff" rx="15"
+              ry="15"></rect>
         <ellipse stroke="#000" ry="50" rx="50" cy="300" cx="280" stroke-width="2" fill="none"></ellipse>
         <line stroke="#000" y2="300" x2="460" y1="300" x1="100" stroke-width="2"></line>
 
         <g class="team-blue team">
-            <ellipse id="player-blue-back" ry="40" rx="40" cy="80" cx="50" stroke-width="2"></ellipse>
-            <ellipse id="player-blue-front" ry="40" rx="40" cy="400" cx="50" stroke-width="2"></ellipse>
+            <ellipse id="blue-back" ry="40" rx="40" cy="80" cx="50" stroke-width="2"></ellipse>
+            <ellipse id="blue-front" ry="40" rx="40" cy="400" cx="50" stroke-width="2"></ellipse>
             <rect height="80" width="160" y="2" x="200" stroke-width="0"></rect>
         </g>
 
         <g class="team-red team">
-            <ellipse id="player-red-back" ry="40" rx="40" cy="520" cx="510" stroke-width="2"></ellipse>
-            <ellipse id="player-red-front" ry="40" rx="40" cy="200" cx="510" stroke-width="2"></ellipse>
+            <ellipse id="red-back" ry="40" rx="40" cy="520" cx="510" stroke-width="2"></ellipse>
+            <ellipse id="red-front" ry="40" rx="40" cy="200" cx="510" stroke-width="2"></ellipse>
             <rect height="80" width="160" y="518" x="200" stroke-width="0"></rect>
         </g>
     </svg>
 </div>
 <script>
-    (() => {
-        document.getElementById('player-blue-back').addEventListener('click', () => {
-            alert('player-blue-back');
-        });
-        document.getElementById('player-blue-front').addEventListener('click', () => {
-            alert('player-blue-front');
-        });
-        document.getElementById('player-red-back').addEventListener('click', () => {
-            alert('player-red-back');
-        });
-        document.getElementById('player-red-front').addEventListener('click', () => {
-            alert('player-red-front');
+    (async () => {
+        // ===== Functions
+        const getSelectedValueForId = (id) => {
+            const player = document.getElementById(id);
+            return player.options[player.selectedIndex];
+        };
+
+        const fetchPlayerList = async () => {
+            const rawResponse = await fetch('/api/players', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (rawResponse.status !== 200) {
+                alert('Server error: Cannot fetch the player list :(.');
+                return [];
+            }
+            const response = await rawResponse.json();
+
+            if (!response.players) {
+                alert('Server Error: cannot fetch players.');
+            }
+
+            return response.players;
+        };
+
+        const populatePlayerDropdown = (id, playerList) => {
+            let dropdown = document.getElementById(id);
+
+            let defaultOption = document.createElement('option');
+            defaultOption.text = 'Select player';
+            defaultOption.value = '';
+            defaultOption.disabled = true;
+            // defaultOption.selected = true;
+
+            dropdown.add(defaultOption);
+
+            playerList.forEach((player) => {
+                let option = document.createElement('option');
+                option.text = player.name;
+                option.value = player.id;
+                option.setAttribute('display-name', player.displayName)
+                dropdown.add(option);
+            });
+        };
+
+        const renderPlayers = () => {
+            document.getElementById('blue-back').addEventListener('click', () => {
+                alert('player-blue-back');
+            });
+            document.getElementById('blue-front').addEventListener('click', () => {
+                alert('player-blue-front');
+            });
+            document.getElementById('red-back').addEventListener('click', () => {
+                alert('player-red-back');
+            });
+            document.getElementById('red-front').addEventListener('click', () => {
+                alert('player-red-front');
+            });
+        };
+
+        const startGame = async (players) => {
+            const rawResponse = await fetch('/api/game', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('token')
+                },
+                body: JSON.stringify({players})
+            });
+            if (rawResponse.status !== 200) {
+                return null;
+            }
+            const response = await rawResponse.json();
+
+            return response.gameId;
+        };
+
+        // ===== Main
+        const playerList = await fetchPlayerList();
+
+        populatePlayerDropdown('player-blue-back', playerList);
+        populatePlayerDropdown('player-blue-front', playerList);
+        populatePlayerDropdown('player-red-back', playerList);
+        populatePlayerDropdown('player-red-front', playerList);
+
+        document.getElementById('game-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const players = {
+                blueBack: getSelectedValueForId('player-blue-back').value,
+                blueFront: getSelectedValueForId('player-blue-front').value,
+                redBack: getSelectedValueForId('player-red-back').value,
+                redFront: getSelectedValueForId('player-red-front').value,
+            };
+            console.log(players);
+
+            const gameId = await startGame(players);
+            console.log(gameId);
+
+            if (!gameId) {
+                alert('Server error: Cannot start a new match :(.');
+                return;
+            }
+
+            localStorage.setItem('gameId', gameId);
+
+            renderPlayers();
+
+            document.getElementById('game-form').style.display = 'none';
         });
     })();
 </script>

@@ -44,7 +44,7 @@
 
             if (response.token) {
                 localStorage.setItem('token', response.token);
-                window.location.replace('./game.html');
+                window.location.replace('/game/game.html');
             } else {
                 alert('Wrong credentials.');
             }
