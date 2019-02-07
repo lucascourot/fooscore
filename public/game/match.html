@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>FooScore</title>
+    <meta name="viewport" content="width=560">
+    <style>
+        body {
+            background-color: #F0F0F0;
+            width: 560px;
+            position: relative;
+            margin: auto;
+            margin-top: 30px;
+        }
+
+        .foosball {
+            text-align: center;
+        }
+
+        svg .team-blue {
+            fill: #007fff;
+        }
+
+        svg .team-red {
+            fill: #bf0000;
+        }
+
+        #players-container .team-blue {
+            background-color: #007fff;
+        }
+
+        #players-container .team-red {
+            background-color: #bf0000;
+        }
+
+        .team {
+            stroke: #000;
+        }
+
+        .team ellipse {
+            stroke-width: 2;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="foosball">
+    <svg width="560" height="600" xmlns="http://www.w3.org/2000/svg">
+        <rect height="598" width="360" y="1" x="100" stroke-width="2" stroke="#000" fill="#ffffff" rx="15"
+              ry="15"></rect>
+        <ellipse stroke="#000" ry="50" rx="50" cy="300" cx="280" stroke-width="2" fill="none"></ellipse>
+        <line stroke="#000" y2="300" x2="460" y1="300" x1="100" stroke-width="2"></line>
+
+        <g class="team-blue team">
+            <ellipse id="blue-back" ry="40" rx="40" cy="80" cx="50" stroke-width="2"></ellipse>
+            <ellipse id="blue-front" ry="40" rx="40" cy="400" cx="50" stroke-width="2"></ellipse>
+            <rect height="80" width="160" y="2" x="200" stroke-width="0"></rect>
+        </g>
+
+        <g class="team-red team">
+            <ellipse id="red-back" ry="40" rx="40" cy="520" cx="510" stroke-width="2"></ellipse>
+            <ellipse id="red-front" ry="40" rx="40" cy="200" cx="510" stroke-width="2"></ellipse>
+            <rect height="80" width="160" y="518" x="200" stroke-width="0"></rect>
+        </g>
+    </svg>
+</div>
+<script>
+    (async () => {
+        // ===== Functions
+        const scoreGoal = async (matchId, playerId) => {
+            const rawResponse = await fetch('/api/match/'+matchId+'/players/'+playerId+'/goals', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('token')
+                }
+            });
+            if (rawResponse.status !== 201) {
+                return null;
+            }
+            const response = await rawResponse.json();
+
+            return response.id;
+        };
+
+        const fetchMatchPlayers = async (matchId) => {
+            const rawResponse = await fetch('/api/matches/'+matchId+'/players', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('token')
+                }
+            });
+            if (rawResponse.status !== 200) {
+                alert('Cannot fetch players for this match.');
+            }
+            const response = await rawResponse.json();
+
+            return response.players;
+        };
+
+        const renderPlayers = (matchId, matchPlayers) => {
+            document.getElementById('blue-back').addEventListener('click', () => {
+                alert(matchPlayers.blue.back.id);
+            });
+            document.getElementById('blue-front').addEventListener('click', () => {
+                alert(matchPlayers.blue.front.id);
+            });
+            document.getElementById('red-back').addEventListener('click', () => {
+                alert(matchPlayers.red.back.id);
+            });
+            document.getElementById('red-front').addEventListener('click', () => {
+                alert(matchPlayers.red.front.id);
+            });
+        };
+
+        // ===== Main
+        const url = new URL(window.location.href);
+        const matchId = url.searchParams.get("id");
+        console.log('Match Id: ', matchId);
+
+        if (!matchId) {
+            alert('Invalid match id.');
+            return;
+        }
+
+        const matchPlayers = await fetchMatchPlayers(matchId);
+        console.log('Match players: ', matchPlayers);
+
+        renderPlayers(matchId, matchPlayers);
+    })();
+</script>
+</body>
+</html>

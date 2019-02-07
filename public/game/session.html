@@ -88,7 +88,7 @@
     </style>
 </head>
 <body>
-<form action="." method="post" id="game-form">
+<form action="." method="post" id="match-form">
     <div id="players-container">
         <select name="player-blue-back" id="player-blue-back" class="team-blue" title="Blue team" required></select>
         <select name="player-blue-back" id="player-blue-front" class="team-blue" title="Blue team" required></select>
@@ -165,28 +165,13 @@
                 let option = document.createElement('option');
                 option.text = player.name;
                 option.value = player.id;
-                option.setAttribute('display-name', player.displayName)
+                option.setAttribute('display-name', player.displayName);
                 dropdown.add(option);
             });
         };
 
-        const renderPlayers = () => {
-            document.getElementById('blue-back').addEventListener('click', () => {
-                alert('player-blue-back');
-            });
-            document.getElementById('blue-front').addEventListener('click', () => {
-                alert('player-blue-front');
-            });
-            document.getElementById('red-back').addEventListener('click', () => {
-                alert('player-red-back');
-            });
-            document.getElementById('red-front').addEventListener('click', () => {
-                alert('player-red-front');
-            });
-        };
-
-        const startGame = async (players) => {
-            const rawResponse = await fetch('/api/game', {
+        const startMatch = async (players) => {
+            const rawResponse = await fetch('/api/matches', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -200,7 +185,7 @@
             }
             const response = await rawResponse.json();
 
-            return response.gameId;
+            return response.id;
         };
 
         // ===== Main
@@ -211,7 +196,7 @@
         populatePlayerDropdown('player-red-back', playerList);
         populatePlayerDropdown('player-red-front', playerList);
 
-        document.getElementById('game-form').addEventListener('submit', async (e) => {
+        document.getElementById('match-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const players = {
@@ -220,21 +205,17 @@
                 redBack: getSelectedValueForId('player-red-back').value,
                 redFront: getSelectedValueForId('player-red-front').value,
             };
-            console.log(players);
+            console.log('Players: ', players);
 
-            const gameId = await startGame(players);
-            console.log(gameId);
+            const matchId = await startMatch(players);
+            console.log('matchId: ', matchId);
 
-            if (!gameId) {
+            if (!matchId) {
                 alert('Server error: Cannot start a new match :(.');
                 return;
             }
 
-            localStorage.setItem('gameId', gameId);
-
-            renderPlayers();
-
-            document.getElementById('game-form').style.display = 'none';
+            window.location = './match.html?id=' + matchId;
         });
     })();
 </script>

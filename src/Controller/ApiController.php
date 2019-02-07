@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ApiController extends AbstractController
 {
     /**
-     * @Route("/api/login", name="api_login")
+     * @Route("/api/login", name="api_login", methods={"POST"})
      */
     public function index()
     {
@@ -18,7 +18,7 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api/players", name="api_players")
+     * @Route("/api/players", name="api_players", methods={"GET"})
      */
     public function players()
     {
@@ -42,6 +42,49 @@ class ApiController extends AbstractController
                 'id' => '4',
                 'name' => 'Bob',
                 'displayName' => 'Bob',
+            ],
+        ];
+
+        return $this->json([
+            'players' => $players,
+        ]);
+    }
+
+    /**
+     * @Route("/api/matches", name="api_start_match", methods={"POST"})
+     */
+    public function startMatch()
+    {
+        return $this->json([
+            'id' => '123',
+        ]);
+    }
+
+    /**
+     * @Route("/api/matches/{matchId}/players", name="api_match_players", methods={"GET"})
+     */
+    public function matchPlayers()
+    {
+        $players = [
+            'blue' => [
+                'back' => [
+                    'id' => '1',
+                    'displayName' => 'Lucas C.',
+                ],
+                'front' => [
+                    'id' => '2',
+                    'displayName' => 'John D.',
+                ],
+            ],
+            'red' => [
+                'back' => [
+                    'id' => '3',
+                    'displayName' => 'Alice',
+                ],
+                'front' => [
+                    'id' => '4',
+                    'displayName' => 'Bob',
+                ],
             ],
         ];
 
