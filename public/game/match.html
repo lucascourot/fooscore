@@ -152,6 +152,16 @@
             return response.players;
         };
 
+        const fetchGoals = async (matchId) => {
+            const rawResponse = await fetch('/api/matches/' + matchId, {method: 'GET', headers});
+            if (rawResponse.status !== 200) {
+                throw Error('Server error.');
+            }
+            const response = await rawResponse.json();
+
+            return response.goals;
+        };
+
         const appendGoalToList = (goal) => {
             let goalRecord = document.createElement('li');
             goalRecord.appendChild(
@@ -190,6 +200,10 @@
 
         const matchPlayers = await fetchMatchPlayers(matchId);
         console.log('Match players: ', matchPlayers);
+
+        const goals = await fetchGoals(matchId);
+        console.log('Match goal: ', goals);
+        goals.forEach(appendGoalToList);
 
         renderPlayers(matchId, matchPlayers);
     })();

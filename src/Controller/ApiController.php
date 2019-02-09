@@ -64,6 +64,32 @@ class ApiController extends AbstractController
     {
         return $this->json([
             'id' => $matchId,
+            'goals' => [
+                [
+                    'id' => 1,
+                    'scoredAt' => [
+                        'min' => 1,
+                        'sec' => 40,
+                    ],
+                    'author' => [
+                        'name' => 'Lucas Courot',
+                        'team' => 'blue',
+                        'position' => 'back',
+                    ]
+                ],
+                [
+                    'id' => 2,
+                    'scoredAt' => [
+                        'min' => 10,
+                        'sec' => 05,
+                    ],
+                    'author' => [
+                        'name' => 'Alice',
+                        'team' => 'red',
+                        'position' => 'back',
+                    ]
+                ],
+            ]
         ]);
     }
 
