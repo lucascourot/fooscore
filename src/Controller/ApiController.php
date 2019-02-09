@@ -89,40 +89,29 @@ class ApiController extends AbstractController
                         'position' => 'back',
                     ]
                 ],
-            ]
-        ]);
-    }
-
-    /**
-     * @Route("/api/matches/{matchId}/players", name="api_match_players", methods={"GET"})
-     */
-    public function matchPlayers()
-    {
-        $players = [
-            'blue' => [
-                'back' => [
-                    'id' => '1',
-                    'name' => 'Lucas Courot',
+            ],
+            'players' => [
+                'blue' => [
+                    'back' => [
+                        'id' => '1',
+                        'name' => 'Lucas Courot',
+                    ],
+                    'front' => [
+                        'id' => '2',
+                        'name' => 'John Doe',
+                    ],
                 ],
-                'front' => [
-                    'id' => '2',
-                    'name' => 'John Doe',
+                'red' => [
+                    'back' => [
+                        'id' => '3',
+                        'name' => 'Alice',
+                    ],
+                    'front' => [
+                        'id' => '4',
+                        'name' => 'Bob',
+                    ],
                 ],
             ],
-            'red' => [
-                'back' => [
-                    'id' => '3',
-                    'name' => 'Alice',
-                ],
-                'front' => [
-                    'id' => '4',
-                    'name' => 'Bob',
-                ],
-            ],
-        ];
-
-        return $this->json([
-            'players' => $players,
         ]);
     }
 

@@ -152,14 +152,12 @@
             return response.players;
         };
 
-        const fetchGoals = async (matchId) => {
+        const fetchMatchInfo = async (matchId) => {
             const rawResponse = await fetch('/api/matches/' + matchId, {method: 'GET', headers});
             if (rawResponse.status !== 200) {
-                throw Error('Server error.');
+                throw Error('Server error: cannot find the match :(');
             }
-            const response = await rawResponse.json();
-
-            return response.goals;
+            return await rawResponse.json();
         };
 
         const appendGoalToList = (goal) => {
@@ -191,19 +189,16 @@
         // ===== Main
         const url = new URL(window.location.href);
         const matchId = url.searchParams.get("id");
-        console.log('Match Id: ', matchId);
 
         if (!matchId) {
             alert('Invalid match id.');
             return;
         }
 
-        const matchPlayers = await fetchMatchPlayers(matchId);
-        console.log('Match players: ', matchPlayers);
+        const matchInfo = await fetchMatchInfo(matchId);
+        matchInfo.goals.forEach(appendGoalToList);
 
-        const goals = await fetchGoals(matchId);
-        console.log('Match goal: ', goals);
-        goals.forEach(appendGoalToList);
+        const matchPlayers = matchInfo.players;
 
         renderPlayers(matchId, matchPlayers);
     })();
