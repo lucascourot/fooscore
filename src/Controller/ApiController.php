@@ -52,8 +52,18 @@ class ApiController extends AbstractController
      */
     public function startMatch()
     {
+        return $this->redirect($this->generateUrl('api_match', [
+            'matchId' => '123',
+        ]));
+    }
+
+    /**
+     * @Route("/api/matches/{matchId}", name="api_match", methods={"GET"})
+     */
+    public function showMatch(string $matchId)
+    {
         return $this->json([
-            'id' => '123',
+            'id' => $matchId,
         ]);
     }
 

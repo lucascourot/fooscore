@@ -45,13 +45,13 @@
         .labels {
             font-family: sans-serif;
             font-size: 14px;
-            text-align: center;
             user-select: none;
         }
 
-        .labels p {
+        .names p {
             position: absolute;
             width: 100px;
+            text-align: center;
         }
 
         #blue-back-name {
@@ -70,6 +70,23 @@
         #red-front-name {
             right: 0;
             top: 230px;
+        }
+
+        .goals ol {
+            position: absolute;
+            width: 200px;
+            left: 50%;
+            margin-left: -100px;
+            color: gray;
+            font-size: 12px;
+        }
+
+        #blue-goals {
+            top: 80px;
+        }
+
+        #red-goals {
+            top: 350px;
         }
     </style>
 </head>
@@ -95,11 +112,16 @@
     </svg>
 </div>
 
-<div class="labels">
+<div class="labels names">
     <p id="blue-back-name"></p>
     <p id="blue-front-name"></p>
     <p id="red-back-name"></p>
     <p id="red-front-name"></p>
+</div>
+
+<div class="labels goals">
+    <ol id="blue-goals"></ol>
+    <ol id="red-goals"></ol>
 </div>
 <script>
     (async () => {
@@ -115,8 +137,7 @@
                 headers
             });
             if (rawResponse.status >= 400) {
-                alert('Server error: please retry :(');
-                return;
+                throw Error('Server error: please retry :(');
             }
             return await rawResponse.json();
         };
@@ -124,11 +145,19 @@
         const fetchMatchPlayers = async (matchId) => {
             const rawResponse = await fetch('/api/matches/' + matchId + '/players', {method: 'GET', headers});
             if (rawResponse.status !== 200) {
-                alert('Cannot fetch players for this match.');
+                throw Error('Cannot fetch players for this match.');
             }
             const response = await rawResponse.json();
 
             return response.players;
+        };
+
+        const appendGoalToList = (goal) => {
+            let goalRecord = document.createElement('li');
+            goalRecord.appendChild(
+                document.createTextNode(`${goal.author.name} (${goal.scoredAt.min}"${goal.scoredAt.sec})`)
+            );
+            document.getElementById(`${goal.author.team}-goals`).appendChild(goalRecord);
         };
 
         const renderPlayers = (matchId, matchPlayers) => {
@@ -136,8 +165,14 @@
                 ['back', 'front'].forEach(position => {
                     const player = matchPlayers[team][position];
                     document.getElementById(`${team}-${position}-name`).innerText = player.name;
-                    document.getElementById(`${team}-${position}`).addEventListener('click', () => {
-                        scoreGoal(matchId, player.id);
+                    document.getElementById(`${team}-${position}`).addEventListener('click', async () => {
+                        try {
+                            const goal = await scoreGoal(matchId, player.id);
+
+                            appendGoalToList(goal);
+                        } catch (e) {
+                            alert(e.message);
+                        }
                     });
                 });
             });
