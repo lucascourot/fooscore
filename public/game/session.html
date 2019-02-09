@@ -123,7 +123,6 @@
 </div>
 <script>
     (async () => {
-        // ===== Functions
         const getSelectedValueForId = (id) => {
             const player = document.getElementById(id);
             return player.options[player.selectedIndex];
@@ -165,7 +164,7 @@
                 let option = document.createElement('option');
                 option.text = player.name;
                 option.value = player.id;
-                option.setAttribute('display-name', player.displayName);
+                option.setAttribute('display-name', player.name);
                 dropdown.add(option);
             });
         };

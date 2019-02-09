@@ -3,6 +3,7 @@
 namespace Fooscore\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ApiController extends AbstractController
@@ -26,22 +27,18 @@ class ApiController extends AbstractController
             [
                 'id' => '1',
                 'name' => 'Lucas Courot',
-                'displayName' => 'Lucas C.',
             ],
             [
                 'id' => '2',
                 'name' => 'John Doe',
-                'displayName' => 'John D.',
             ],
             [
                 'id' => '3',
                 'name' => 'Alice',
-                'displayName' => 'Alice',
             ],
             [
                 'id' => '4',
                 'name' => 'Bob',
-                'displayName' => 'Bob',
             ],
         ];
 
@@ -69,27 +66,58 @@ class ApiController extends AbstractController
             'blue' => [
                 'back' => [
                     'id' => '1',
-                    'displayName' => 'Lucas C.',
+                    'name' => 'Lucas Courot',
                 ],
                 'front' => [
                     'id' => '2',
-                    'displayName' => 'John D.',
+                    'name' => 'John Doe',
                 ],
             ],
             'red' => [
                 'back' => [
                     'id' => '3',
-                    'displayName' => 'Alice',
+                    'name' => 'Alice',
                 ],
                 'front' => [
                     'id' => '4',
-                    'displayName' => 'Bob',
+                    'name' => 'Bob',
                 ],
             ],
         ];
 
         return $this->json([
             'players' => $players,
+        ]);
+    }
+
+    /**
+     * @Route("/api/matches/{matchId}/players/{playerId}/goals", name="api_score_goal", methods={"POST"})
+     */
+    public function scoreGoal(string $matchId, string $playerId)
+    {
+        return $this->redirect($this->generateUrl('api_goal', [
+            'matchId' => $matchId,
+            'playerId' => $playerId,
+            'goalId' => 'goal123',
+        ]));
+    }
+
+    /**
+     * @Route("/api/matches/{matchId}/players/{playerId}/goals/{goalId}", name="api_goal", methods={"GET"})
+     */
+    public function showGoal(string $goalId)
+    {
+        return $this->json([
+            'id' => $goalId,
+            'scoredAt' => [
+                'min' => 1,
+                'sec' => 40,
+            ],
+            'author' => [
+                'name' => 'Lucas Courot',
+                'team' => 'blue',
+                'position' => 'back',
+            ]
         ]);
     }
 }

@@ -41,6 +41,36 @@
             stroke-width: 2;
             cursor: pointer;
         }
+
+        .labels {
+            font-family: sans-serif;
+            font-size: 14px;
+            text-align: center;
+            user-select: none;
+        }
+
+        .labels p {
+            position: absolute;
+            width: 100px;
+        }
+
+        #blue-back-name {
+            top: 110px;
+        }
+
+        #blue-front-name {
+            top: 430px;
+        }
+
+        #red-back-name {
+            right: 0;
+            top: 550px;
+        }
+
+        #red-front-name {
+            right: 0;
+            top: 230px;
+        }
     </style>
 </head>
 <body>
@@ -64,35 +94,35 @@
         </g>
     </svg>
 </div>
+
+<div class="labels">
+    <p id="blue-back-name"></p>
+    <p id="blue-front-name"></p>
+    <p id="red-back-name"></p>
+    <p id="red-front-name"></p>
+</div>
 <script>
     (async () => {
-        // ===== Functions
-        const scoreGoal = async (matchId, playerId) => {
-            const rawResponse = await fetch('/api/match/'+matchId+'/players/'+playerId+'/goals', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': localStorage.getItem('token')
-                }
-            });
-            if (rawResponse.status !== 201) {
-                return null;
-            }
-            const response = await rawResponse.json();
+        const headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('token')
+        };
 
-            return response.id;
+        const scoreGoal = async (matchId, playerId) => {
+            const rawResponse = await fetch('/api/matches/' + matchId + '/players/' + playerId + '/goals', {
+                method: 'POST',
+                headers
+            });
+            if (rawResponse.status >= 400) {
+                alert('Server error: please retry :(');
+                return;
+            }
+            return await rawResponse.json();
         };
 
         const fetchMatchPlayers = async (matchId) => {
-            const rawResponse = await fetch('/api/matches/'+matchId+'/players', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': localStorage.getItem('token')
-                }
-            });
+            const rawResponse = await fetch('/api/matches/' + matchId + '/players', {method: 'GET', headers});
             if (rawResponse.status !== 200) {
                 alert('Cannot fetch players for this match.');
             }
@@ -102,17 +132,14 @@
         };
 
         const renderPlayers = (matchId, matchPlayers) => {
-            document.getElementById('blue-back').addEventListener('click', () => {
-                alert(matchPlayers.blue.back.id);
-            });
-            document.getElementById('blue-front').addEventListener('click', () => {
-                alert(matchPlayers.blue.front.id);
-            });
-            document.getElementById('red-back').addEventListener('click', () => {
-                alert(matchPlayers.red.back.id);
-            });
-            document.getElementById('red-front').addEventListener('click', () => {
-                alert(matchPlayers.red.front.id);
+            ['blue', 'red'].forEach(team => {
+                ['back', 'front'].forEach(position => {
+                    const player = matchPlayers[team][position];
+                    document.getElementById(`${team}-${position}-name`).innerText = player.name;
+                    document.getElementById(`${team}-${position}`).addEventListener('click', () => {
+                        scoreGoal(matchId, player.id);
+                    });
+                });
             });
         };
 
