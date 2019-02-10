@@ -8,23 +8,22 @@ help: ## This help
 # Tests
 
 .PHONY: test unit-test mutation_test
-test: ui-test integration-test unit-test mutation_test cs phpstan
+test: ui-test integration-test unit-test mutation_test coverage cs phpstan
 
 ui-test: ## Run ui tests
-	@test -f bin/phpunit || echo "cannot run unit tests (needs phpunit/phpunit)"
 	php bin/phpunit --group=ui
 
 integration-test: ## Run integration tests
-	@test -f bin/phpunit || echo "cannot run unit tests (needs phpunit/phpunit)"
 	php bin/phpunit --group=integration
 
 unit-test: ## Run unit tests
-	@test -f bin/phpunit || echo "cannot run unit tests (needs phpunit/phpunit)"
-	php bin/phpunit --testdox --group=unit --coverage-text --coverage-clover ./build/logs/clover.xml --coverage-xml=build/coverage/coverage-xml --log-junit=build/coverage/phpunit.junit.xml
+	php bin/phpunit --testdox --group=unit
 
 mutation_test: ## Run mutation tests
-	@test -f bin/infection || echo "cannot run unit tests (needs infection/infection)"
 	php bin/infection
+
+coverage: ## Run test coverage
+	php bin/phpunit --exclude-group=ui --coverage-text --coverage-clover ./build/logs/clover.xml --coverage-xml=build/coverage/coverage-xml --log-junit=build/coverage/phpunit.junit.xml
 
 .PHONY: check_security
 check_security: ## Check for dependency vulnerabilities

@@ -10,6 +10,18 @@ use PHPUnit\Framework\TestCase;
  */
 class UsernameTest extends TestCase
 {
+    public function testShouldGetValidUsernameAsValue()
+    {
+        // Given
+        $email = 'john@example.com';
+
+        // When
+        $username = new Username($email);
+
+        // Then
+        $this->assertSame($email, $username->getUsername());
+    }
+
     public function testShouldBeAnEmail()
     {
         $this->expectException(\InvalidArgumentException::class);

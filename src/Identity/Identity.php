@@ -2,7 +2,7 @@
 
 namespace Fooscore\Identity;
 
-final class Identity
+final class Identity implements LogIn
 {
     /**
      * @var RegisteredUsers
