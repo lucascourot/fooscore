@@ -24,6 +24,7 @@
             <directory>src</directory>
             <exclude>
                 <file>src/Kernel.php</file>
+                <directory>src/Controller</directory>
             </exclude>
         </whitelist>
     </filter>

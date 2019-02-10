@@ -8,13 +8,13 @@ help: ## This help
 # Tests
 
 .PHONY: test unit-test mutation_test
-test: ui-test integration-test unit-test mutation_test
+test: ui-test integration-test unit-test mutation_test cs phpstan
 
-ui-test: ## Run unit tests
+ui-test: ## Run ui tests
 	@test -f bin/phpunit || echo "cannot run unit tests (needs phpunit/phpunit)"
 	php bin/phpunit --group=ui
 
-integration-test: ## Run unit tests
+integration-test: ## Run integration tests
 	@test -f bin/phpunit || echo "cannot run unit tests (needs phpunit/phpunit)"
 	php bin/phpunit --group=integration
 
@@ -41,6 +41,12 @@ cs-fix: ## Fix code style
 
 cs-ci: ## Run Continuous Integration code style check
 	./bin/php-cs-fixer fix --dry-run --using-cache=no --verbose
+
+# Static Analysis
+
+.PHONY: phpstan
+phpstan: ## Check static analysis
+	./bin/phpstan analyse src tests --level=max
 
 # Fooscore
 
