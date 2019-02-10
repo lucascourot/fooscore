@@ -4,5 +4,5 @@ namespace Fooscore\Identity;
 
 interface LogIn
 {
-    public function logIn(Username $username): ?string;
+    public function logIn(Credentials $username): ?string;
 }

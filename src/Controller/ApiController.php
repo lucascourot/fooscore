@@ -2,8 +2,8 @@
 
 namespace Fooscore\Controller;
 
+use Fooscore\Identity\Credentials;
 use Fooscore\Identity\LogIn;
-use Fooscore\Identity\Username;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,7 +16,12 @@ class ApiController extends AbstractController
     public function index(Request $request, LogIn $logIn)
     {
         $credentials = json_decode((string) $request->getContent(), true);
-        $token = $logIn->logIn(new Username($credentials['username'] ?? ''));
+        $token = $logIn->logIn(
+            new Credentials(
+                $credentials['username'] ?? '',
+                $credentials['password'] ?? ''
+            )
+        );
 
         if ($token === null) {
             return $this->json([

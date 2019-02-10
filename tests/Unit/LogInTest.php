@@ -2,9 +2,9 @@
 
 namespace Fooscore\Tests\Unit;
 
+use Fooscore\Identity\Credentials;
 use Fooscore\Identity\Identity;
 use Fooscore\Identity\RegisteredUsers;
-use Fooscore\Identity\Username;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -23,7 +23,8 @@ class LogInTest extends TestCase
         $john = [
             'username' => 'john@example.com',
             'password' => '123',
-            'token' => 'abc'
+            'name' => 'John Doe',
+            'token' => 'abc',
         ];
 
         /** @var RegisteredUsers $registeredUsers */
@@ -33,10 +34,10 @@ class LogInTest extends TestCase
 
         // When
         $identity = new Identity($registeredUsers);
-        $token = $identity->logIn(new Username('john@example.com'));
+        $token = $identity->logIn(new Credentials($john['username'], $john['password']));
 
         // Then
-        self::assertSame('abc', $token);
+        self::assertSame($john['token'], $token);
     }
 
     public function testShouldNotLogInIfNotRegistered(): void
@@ -49,7 +50,7 @@ class LogInTest extends TestCase
 
         // When
         $identity = new Identity($registeredUsers);
-        $token = $identity->logIn(new Username('john@example.com'));
+        $token = $identity->logIn(new Credentials('john@example.com', 'foo'));
 
         // Then
         self::assertSame(null, $token);

@@ -2,8 +2,8 @@
 
 namespace Fooscore\Adapters\Identity;
 
+use Fooscore\Identity\Credentials;
 use Fooscore\Identity\RegisteredUsers;
-use Fooscore\Identity\Username;
 
 final class RegisteredUsersInMemory implements RegisteredUsers
 {
@@ -31,10 +31,10 @@ final class RegisteredUsersInMemory implements RegisteredUsers
         ],
     ];
 
-    public function getUser(Username $username): ?array
+    public function getUser(Credentials $credentials): ?array
     {
         foreach ($this->users as $user) {
-            if ($user['username'] === $username->getUsername()) {
+            if ($credentials->match($user['username'], $user['password'])) {
                 return $user;
             }
         }

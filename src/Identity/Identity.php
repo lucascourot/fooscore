@@ -14,9 +14,9 @@ final class Identity implements LogIn
         $this->registeredUsers = $registeredUsers;
     }
 
-    public function logIn(Username $username): ?string
+    public function logIn(Credentials $credentials): ?string
     {
-        $user = $this->registeredUsers->getUser($username);
+        $user = $this->registeredUsers->getUser($credentials);
 
         return $user['token'] ?? null;
     }
