@@ -3,7 +3,6 @@
 namespace Fooscore\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ApiController extends AbstractController
@@ -75,7 +74,7 @@ class ApiController extends AbstractController
                         'name' => 'Lucas Courot',
                         'team' => 'blue',
                         'position' => 'back',
-                    ]
+                    ],
                 ],
                 [
                     'id' => 2,
@@ -87,7 +86,7 @@ class ApiController extends AbstractController
                         'name' => 'Alice',
                         'team' => 'red',
                         'position' => 'back',
-                    ]
+                    ],
                 ],
             ],
             'players' => [
@@ -142,7 +141,7 @@ class ApiController extends AbstractController
                 'name' => 'Lucas Courot',
                 'team' => 'blue',
                 'position' => 'back',
-            ]
+            ],
         ]);
     }
 }
