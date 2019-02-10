@@ -6,6 +6,7 @@ use Fooscore\Identity\Credentials;
 use Fooscore\Identity\Identity;
 use Fooscore\Identity\RegisteredUsers;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,6 +18,8 @@ use PHPUnit\Framework\TestCase;
  */
 class LogInTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testShouldLogInAsARegisteredUser(): void
     {
         // Given

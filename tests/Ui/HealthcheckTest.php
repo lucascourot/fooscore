@@ -3,6 +3,7 @@
 namespace Fooscore\Tests\Ui;
 
 use Fooscore\Kernel;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -11,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class HealthcheckTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testStatusRouteRespondsCorrectly(): void
     {
         // Given

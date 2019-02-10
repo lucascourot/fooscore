@@ -4,6 +4,7 @@ namespace Fooscore\Tests\Integration;
 
 use Fooscore\Adapters\Identity\RegisteredUsersInMemory;
 use Fooscore\Identity\Credentials;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,6 +12,8 @@ use PHPUnit\Framework\TestCase;
  */
 class RegisteredUsersInMemoryTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testGetsRegisteredUserByUsername(): void
     {
         // Given

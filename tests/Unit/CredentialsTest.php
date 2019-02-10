@@ -3,6 +3,7 @@
 namespace Fooscore\Tests\Unit;
 
 use Fooscore\Identity\Credentials;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -10,6 +11,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CredentialsTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testShouldMatchCredentials(): void
     {
         // Given
