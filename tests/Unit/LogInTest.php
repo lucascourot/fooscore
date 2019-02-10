@@ -38,4 +38,20 @@ class LogInTest extends TestCase
         // Then
         $this->assertSame('abc', $token);
     }
+
+    public function testShouldNotLogInIfNotRegistered()
+    {
+        // Given
+        /** @var RegisteredUsers $registeredUsers */
+        $registeredUsers = Mockery::mock(RegisteredUsers::class, [
+            'getUser' => null,
+        ]);
+
+        // When
+        $identity = new Identity($registeredUsers);
+        $token = $identity->logIn(new Username('john@example.com'));
+
+        // Then
+        $this->assertSame(null, $token);
+    }
 }

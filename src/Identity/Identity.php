@@ -14,10 +14,10 @@ final class Identity
         $this->registeredUsers = $registeredUsers;
     }
 
-    public function logIn(Username $username): string
+    public function logIn(Username $username): ?string
     {
         $user = $this->registeredUsers->getUser($username);
 
-        return $user['token'];
+        return $user['token'] ?? null;
     }
 }
