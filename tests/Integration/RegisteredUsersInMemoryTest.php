@@ -55,4 +55,30 @@ class RegisteredUsersInMemoryTest extends TestCase
         // Then
         self::assertSame(null, $user);
     }
+
+    public function testShouldCheckValidToken(): void
+    {
+        // Given
+        $token = 'johnToken';
+        $adapter = new RegisteredUsersInMemory();
+
+        // When
+        $isValid = $adapter->isTokenValid($token);
+
+        // Then
+        self::assertTrue($isValid);
+    }
+
+    public function testShouldCheckInvalidToken(): void
+    {
+        // Given
+        $token = 'not valid';
+        $adapter = new RegisteredUsersInMemory();
+
+        // When
+        $isValid = $adapter->isTokenValid($token);
+
+        // Then
+        self::assertFalse($isValid);
+    }
 }

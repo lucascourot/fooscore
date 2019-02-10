@@ -133,7 +133,8 @@
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('token')
                 }
             });
             if (rawResponse.status !== 200) {
@@ -156,7 +157,7 @@
             defaultOption.text = 'Select player';
             defaultOption.value = '';
             defaultOption.disabled = true;
-            // defaultOption.selected = true;
+            defaultOption.selected = true;
 
             dropdown.add(defaultOption);
 

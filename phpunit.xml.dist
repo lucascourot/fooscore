@@ -25,6 +25,7 @@
             <exclude>
                 <file>src/Kernel.php</file>
                 <directory>src/Controller</directory>
+                <directory>src/EventSubscriber</directory>
             </exclude>
         </whitelist>
     </filter>

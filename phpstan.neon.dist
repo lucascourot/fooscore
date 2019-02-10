@@ -5,3 +5,4 @@ parameters:
     excludes_analyse:
         - %rootDir%/../../../src/Kernel.php
         - %rootDir%/../../../src/Controller
+        - %rootDir%/../../../src/EventSubscriber

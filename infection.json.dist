@@ -5,6 +5,7 @@
             "src"
         ],
         "excludes": [
+            "EventSubscriber",
             "Controller",
             "Kernel.php"
         ]

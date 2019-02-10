@@ -2,7 +2,7 @@
 
 namespace Fooscore\Identity;
 
-final class Identity implements LogIn
+final class Identity implements LogIn, CheckToken
 {
     /**
      * @var RegisteredUsers
@@ -19,5 +19,10 @@ final class Identity implements LogIn
         $user = $this->registeredUsers->getUser($credentials);
 
         return $user['token'] ?? null;
+    }
+
+    public function isValid(string $token): bool
+    {
+        return $this->registeredUsers->isTokenValid($token);
     }
 }
