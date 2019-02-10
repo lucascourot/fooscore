@@ -1,0 +1,7 @@
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+    excludes_analyse:
+        - %rootDir%/../../../src/Kernel.php
+        - %rootDir%/../../../src/Controller

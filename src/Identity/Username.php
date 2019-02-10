@@ -11,7 +11,7 @@ final class Username
 
     public function __construct(string $username)
     {
-        if (!filter_var($username, FILTER_VALIDATE_EMAIL)) {
+        if (filter_var($username, FILTER_VALIDATE_EMAIL) === false) {
             throw new \InvalidArgumentException('Please use your email address as the username.');
         }
 

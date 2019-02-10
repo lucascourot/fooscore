@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RegisteredUsersInMemoryTest extends TestCase
 {
-    public function testGetsRegisteredUserByUsername()
+    public function testGetsRegisteredUserByUsername(): void
     {
         // Given
         $email = 'john@example.com';
@@ -21,10 +21,10 @@ class RegisteredUsersInMemoryTest extends TestCase
         $user = $adapter->getUser(new Username($email));
 
         // Then
-        $this->assertSame('John Doe', $user['name']);
+        self::assertSame('John Doe', $user['name']);
     }
 
-    public function testReturnsNullIfUserNotFound()
+    public function testReturnsNullIfUserNotFound(): void
     {
         // Given
         $email = 'notfound@example.com';
@@ -34,6 +34,6 @@ class RegisteredUsersInMemoryTest extends TestCase
         $user = $adapter->getUser(new Username($email));
 
         // Then
-        $this->assertSame(null, $user);
+        self::assertSame(null, $user);
     }
 }

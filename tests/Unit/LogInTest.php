@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class LogInTest extends TestCase
 {
-    public function testShouldLogInAsARegisteredUser()
+    public function testShouldLogInAsARegisteredUser(): void
     {
         // Given
         $john = [
@@ -36,10 +36,10 @@ class LogInTest extends TestCase
         $token = $identity->logIn(new Username('john@example.com'));
 
         // Then
-        $this->assertSame('abc', $token);
+        self::assertSame('abc', $token);
     }
 
-    public function testShouldNotLogInIfNotRegistered()
+    public function testShouldNotLogInIfNotRegistered(): void
     {
         // Given
         /** @var RegisteredUsers $registeredUsers */
@@ -52,6 +52,6 @@ class LogInTest extends TestCase
         $token = $identity->logIn(new Username('john@example.com'));
 
         // Then
-        $this->assertSame(null, $token);
+        self::assertSame(null, $token);
     }
 }

@@ -7,6 +7,9 @@ use Fooscore\Identity\Username;
 
 final class RegisteredUsersInMemory implements RegisteredUsers
 {
+    /**
+     * @var array
+     */
     private $users = [
         [
             'username' => 'john@example.com',

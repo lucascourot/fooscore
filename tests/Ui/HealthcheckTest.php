@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class HealthcheckTest extends TestCase
 {
-    public function testStatusRouteRespondsCorrectly()
+    public function testStatusRouteRespondsCorrectly(): void
     {
         // Given
         $kernel = new Kernel('test', false);
@@ -20,7 +20,7 @@ class HealthcheckTest extends TestCase
         $response = $kernel->handle(Request::create('/status'));
 
         // Then
-        $this->assertJson($response->getContent());
-        $this->assertSame(['status' => 'ok'], json_decode($response->getContent(), true));
+        self::assertJson($response->getContent());
+        self::assertSame(['status' => 'ok'], json_decode($response->getContent(), true));
     }
 }
