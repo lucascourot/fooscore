@@ -52,7 +52,7 @@ final class RegisteredUsersInMemory implements RegisteredUsers
         return null;
     }
 
-    public function isTokenValid(string $token): bool
+    public function tokenExists(string $token): bool
     {
         foreach ($this->users as $user) {
             if ($user['token'] === $token) {

@@ -23,7 +23,7 @@ final class Identity implements LogIn, CheckToken, GetUsers
 
     public function isValid(string $token): bool
     {
-        return $this->registeredUsers->isTokenValid($token);
+        return $this->registeredUsers->tokenExists($token);
     }
 
     public function getUsers(): array

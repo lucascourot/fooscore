@@ -63,7 +63,7 @@ class RegisteredUsersInMemoryTest extends TestCase
         $adapter = new RegisteredUsersInMemory();
 
         // When
-        $isValid = $adapter->isTokenValid($token);
+        $isValid = $adapter->tokenExists($token);
 
         // Then
         self::assertTrue($isValid);
@@ -76,7 +76,7 @@ class RegisteredUsersInMemoryTest extends TestCase
         $adapter = new RegisteredUsersInMemory();
 
         // When
-        $isValid = $adapter->isTokenValid($token);
+        $isValid = $adapter->tokenExists($token);
 
         // Then
         self::assertFalse($isValid);
