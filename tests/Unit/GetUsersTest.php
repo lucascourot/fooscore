@@ -64,23 +64,6 @@ class GetUsersTest extends TestCase
     public function testNoUserExists(): void
     {
         // Given
-        $users = [
-            [
-                'id' => 1,
-                'username' => 'alice@example.com',
-                'password' => 'alice123',
-                'name' => 'Alice',
-                'token' => 'johnToken',
-            ],
-            [
-                'id' => 2,
-                'username' => 'bob@example.com',
-                'password' => 'bob123',
-                'name' => 'Bob',
-                'token' => 'johnToken',
-            ],
-        ];
-
         /** @var RegisteredUsers $registeredUsers */
         $registeredUsers = Mockery::mock(RegisteredUsers::class, [
             'getAllUsers' => [],
