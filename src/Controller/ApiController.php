@@ -3,6 +3,7 @@
 namespace Fooscore\Controller;
 
 use Fooscore\Identity\Credentials;
+use Fooscore\Identity\GetUsers;
 use Fooscore\Identity\LogIn;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,29 +38,10 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/players", name="api_players", methods={"GET"})
      */
-    public function players()
+    public function players(GetUsers $getUsers)
     {
-        $players = [
-            [
-                'id' => '1',
-                'name' => 'Lucas Courot',
-            ],
-            [
-                'id' => '2',
-                'name' => 'John Doe',
-            ],
-            [
-                'id' => '3',
-                'name' => 'Alice',
-            ],
-            [
-                'id' => '4',
-                'name' => 'Bob',
-            ],
-        ];
-
         return $this->json([
-            'players' => $players,
+            'players' => $getUsers->getUsers(),
         ]);
     }
 

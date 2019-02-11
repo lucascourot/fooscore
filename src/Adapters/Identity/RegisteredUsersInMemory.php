@@ -12,18 +12,28 @@ final class RegisteredUsersInMemory implements RegisteredUsers
      */
     private $users = [
         [
+            'id' => 1,
             'username' => 'john@example.com',
             'password' => 'john123',
             'name' => 'John Doe',
             'token' => 'johnToken',
         ],
         [
+            'id' => 2,
+            'username' => 'alex@example.com',
+            'password' => 'alex123',
+            'name' => 'Alex',
+            'token' => 'alexToken',
+        ],
+        [
+            'id' => 3,
             'username' => 'alice@example.com',
             'password' => 'alice123',
             'name' => 'Alice',
             'token' => 'johnToken',
         ],
         [
+            'id' => 4,
             'username' => 'bob@example.com',
             'password' => 'bob123',
             'name' => 'Bob',
@@ -51,5 +61,10 @@ final class RegisteredUsersInMemory implements RegisteredUsers
         }
 
         return false;
+    }
+
+    public function getAllUsers(): array
+    {
+        return $this->users;
     }
 }

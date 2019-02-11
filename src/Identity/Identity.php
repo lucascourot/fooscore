@@ -2,7 +2,7 @@
 
 namespace Fooscore\Identity;
 
-final class Identity implements LogIn, CheckToken
+final class Identity implements LogIn, CheckToken, GetUsers
 {
     /**
      * @var RegisteredUsers
@@ -24,5 +24,15 @@ final class Identity implements LogIn, CheckToken
     public function isValid(string $token): bool
     {
         return $this->registeredUsers->isTokenValid($token);
+    }
+
+    public function getUsers(): array
+    {
+        return array_map(function (array $user): array {
+            return [
+                'id' => $user['id'],
+                'name' => $user['name'],
+            ];
+        }, $this->registeredUsers->getAllUsers());
     }
 }
