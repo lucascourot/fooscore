@@ -13,20 +13,7 @@ class CredentialsTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testShouldMatchCredentials(): void
-    {
-        // Given
-        $email = 'john@example.com';
-        $password = 'john123';
-
-        // When
-        $credentials = new Credentials($email, $password);
-
-        // Then
-        self::assertTrue($credentials->match($email, $password));
-    }
-
-    public function testShouldBeAnEmail(): void
+    public function testUsernameShouldBeAnEmail(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
