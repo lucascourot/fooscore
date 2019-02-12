@@ -1,6 +1,6 @@
 <?php
 
-namespace Fooscore\Tests\Integration;
+namespace Fooscore\Tests\Integration\Identity;
 
 use Fooscore\Adapters\Identity\RegisteredUsersInMemory;
 use Fooscore\Identity\Credentials;

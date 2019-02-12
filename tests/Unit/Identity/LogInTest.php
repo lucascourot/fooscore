@@ -1,6 +1,6 @@
 <?php
 
-namespace Fooscore\Tests\Unit;
+namespace Fooscore\Tests\Unit\Identity;
 
 use Fooscore\Identity\Credentials;
 use Fooscore\Identity\Identity;
