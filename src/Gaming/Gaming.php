@@ -4,10 +4,20 @@ namespace Fooscore\Gaming;
 
 final class Gaming implements StartMatch
 {
-    public function startMatch(TeamBlue $teamBlue, TeamRed $teamRed): ?int
-    {
-        $match = Match::start($teamBlue, $teamRed);
+    /**
+     * @var MatchIdGenerator
+     */
+    private $matchIdGenerator;
 
-        return 1;
+    public function __construct(MatchIdGenerator $matchIdGenerator)
+    {
+        $this->matchIdGenerator = $matchIdGenerator;
+    }
+
+    public function startMatch(TeamBlue $teamBlue, TeamRed $teamRed): MatchId
+    {
+        $match = Match::start($this->matchIdGenerator->generate(), $teamBlue, $teamRed);
+
+        return $match->id();
     }
 }
