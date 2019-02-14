@@ -39,7 +39,6 @@ class GetUsersTest extends TestCase
             ],
         ];
 
-        /** @var RegisteredUsers $registeredUsers */
         $registeredUsers = Mockery::mock(RegisteredUsers::class, [
             'getAllUsers' => $users,
         ]);
@@ -64,7 +63,6 @@ class GetUsersTest extends TestCase
     public function testNoUserExists(): void
     {
         // Given
-        /** @var RegisteredUsers $registeredUsers */
         $registeredUsers = Mockery::mock(RegisteredUsers::class, [
             'getAllUsers' => [],
         ]);

@@ -30,7 +30,6 @@ class LogInTest extends TestCase
             'token' => 'abc',
         ];
 
-        /** @var RegisteredUsers $registeredUsers */
         $registeredUsers = Mockery::mock(RegisteredUsers::class, [
             'getUser' => $john,
         ]);
@@ -46,7 +45,6 @@ class LogInTest extends TestCase
     public function testShouldNotLogInIfNotRegistered(): void
     {
         // Given
-        /** @var RegisteredUsers $registeredUsers */
         $registeredUsers = Mockery::mock(RegisteredUsers::class, [
             'getUser' => null,
         ]);

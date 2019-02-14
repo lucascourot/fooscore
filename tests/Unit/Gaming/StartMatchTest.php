@@ -5,8 +5,10 @@ namespace Fooscore\Tests\Unit\Gaming;
 use Fooscore\Gaming\Gaming;
 use Fooscore\Gaming\MatchId;
 use Fooscore\Gaming\MatchIdGenerator;
+use Fooscore\Gaming\MatchRepository;
 use Fooscore\Gaming\TeamBlue;
 use Fooscore\Gaming\TeamRed;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
@@ -26,18 +28,22 @@ class StartMatchTest extends TestCase
     {
         // Given
         $teamBlue = new TeamBlue('a', 'b');
-        $teamRed = new TeamRed('a', 'b');
+        $teamRed = new TeamRed('c', 'd');
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
-        /** @var MatchIdGenerator $matchIdGenerator */
-        $matchIdGenerator = \Mockery::mock(MatchIdGenerator::class, [
+        $matchIdGenerator = Mockery::mock(MatchIdGenerator::class, [
             'generate' => $matchId,
         ]);
+        $matchRepository = Mockery::spy(MatchRepository::class);
 
         // When
-        $gaming = new Gaming($matchIdGenerator);
+        $gaming = new Gaming($matchIdGenerator, $matchRepository);
         $id = $gaming->startMatch($teamBlue, $teamRed);
 
         // Then
         self::assertTrue($id->sameValueAs($matchId));
+        $matchRepository
+            ->shouldHaveReceived()
+            ->save(Mockery::any())
+            ->once();
     }
 }

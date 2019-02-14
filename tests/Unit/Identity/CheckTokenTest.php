@@ -24,7 +24,6 @@ class CheckTokenTest extends TestCase
         // Given
         $token = 'johnToken';
 
-        /** @var RegisteredUsers $registeredUsers */
         $registeredUsers = Mockery::mock(RegisteredUsers::class, [
             'tokenExists' => true,
         ]);
