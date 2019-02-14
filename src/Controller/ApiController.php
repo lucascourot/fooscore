@@ -2,6 +2,9 @@
 
 namespace Fooscore\Controller;
 
+use Fooscore\Gaming\StartMatch;
+use Fooscore\Gaming\TeamBlue;
+use Fooscore\Gaming\TeamRed;
 use Fooscore\Identity\Credentials;
 use Fooscore\Identity\GetUsers;
 use Fooscore\Identity\LogIn;
@@ -48,10 +51,17 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/matches", name="api_start_match", methods={"POST"})
      */
-    public function startMatch()
+    public function startMatch(Request $request, StartMatch $startMatch)
     {
+        $players = json_decode((string) $request->getContent(), true)['players'];
+
+        $matchId = $startMatch->startMatch(
+            new TeamBlue($players['blueBack'], $players['blueFront']),
+            new TeamRed($players['redBack'], $players['redFront'])
+        );
+
         return $this->redirect($this->generateUrl('api_match', [
-            'matchId' => '123',
+            'matchId' => $matchId->value()->toString(),
         ]));
     }
 
