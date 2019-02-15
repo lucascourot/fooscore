@@ -8,7 +8,7 @@ help: ## This help
 # Tests
 
 .PHONY: test unit-test mutation_test
-test: ui-test integration-test unit-test mutation_test coverage cs phpstan
+test: cs phpstan ui-test coverage mutation_test
 
 ui-test: ## Run ui tests
 	php bin/phpunit --group=ui
@@ -20,7 +20,7 @@ unit-test: ## Run unit tests
 	php bin/phpunit --testdox --group=unit
 
 mutation_test: ## Run mutation tests
-	php bin/infection
+	php bin/infection --threads=4
 
 coverage: ## Run test coverage
 	php bin/phpunit --exclude-group=ui --coverage-text --coverage-clover ./build/logs/clover.xml --coverage-xml=build/coverage/coverage-xml --log-junit=build/coverage/phpunit.junit.xml
