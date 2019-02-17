@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Scorer;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fooscore\Tests\Integration\Gaming;
 
 use Fooscore\Adapters\Gaming\MatchRepositoryPg;

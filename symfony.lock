@@ -47,9 +47,6 @@
     "justinrainbow/json-schema": {
         "version": "5.2.8"
     },
-    "m6web/php-cs-fixer-config": {
-        "version": "v1.1.0"
-    },
     "mockery/mockery": {
         "version": "1.2.1"
     },

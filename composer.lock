@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2de3e670aa7d9015767533b1ad4420de",
+    "content-hash": "9b6f0b05b14a0308c8774a7eac9bace3",
     "packages": [
         {
             "name": "psr/cache",
@@ -2224,47 +2224,6 @@
                 "schema"
             ],
             "time": "2019-01-14T23:55:14+00:00"
-        },
-        {
-            "name": "m6web/php-cs-fixer-config",
-            "version": "v1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/M6Web/php-cs-fixer-config.git",
-                "reference": "fc6bd97e19b00cfcaf0d3f0cfea9a7f82fac5775"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/M6Web/php-cs-fixer-config/zipball/fc6bd97e19b00cfcaf0d3f0cfea9a7f82fac5775",
-                "reference": "fc6bd97e19b00cfcaf0d3f0cfea9a7f82fac5775",
-                "shasum": ""
-            },
-            "require": {
-                "friendsofphp/php-cs-fixer": "^2.14"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "M6Web\\CS\\Config\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "M6Web",
-                    "email": "opensource@m6web.fr",
-                    "homepage": "http://tech.m6web.fr/"
-                }
-            ],
-            "description": "PHP CS Fixer config for M6Web components",
-            "keywords": [
-                "CodingStyle",
-                "cs"
-            ],
-            "time": "2019-01-25T09:36:30+00:00"
         },
         {
             "name": "mockery/mockery",
