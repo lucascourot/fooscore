@@ -2,12 +2,16 @@
 
 namespace Fooscore\Controller;
 
+use Fooscore\Gaming\MatchId;
+use Fooscore\Gaming\ScoreGoal;
+use Fooscore\Gaming\Scorer;
 use Fooscore\Gaming\StartMatch;
 use Fooscore\Gaming\TeamBlue;
 use Fooscore\Gaming\TeamRed;
 use Fooscore\Identity\Credentials;
 use Fooscore\Identity\GetUsers;
 use Fooscore\Identity\LogIn;
+use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -55,13 +59,13 @@ class ApiController extends AbstractController
     {
         $players = json_decode((string) $request->getContent(), true)['players'];
 
-        $matchId = $startMatch->startMatch(
+        $match = $startMatch->startMatch(
             new TeamBlue($players['blueBack'], $players['blueFront']),
             new TeamRed($players['redBack'], $players['redFront'])
         );
 
         return $this->redirect($this->generateUrl('api_match', [
-            'matchId' => $matchId->value()->toString(),
+            'matchId' => $match->id()->value()->toString(),
         ]));
     }
 
@@ -124,19 +128,28 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api/matches/{matchId}/players/{playerId}/goals", name="api_score_goal", methods={"POST"})
+     * @Route("/api/matches/{matchId}/goals", name="api_score_goal", methods={"POST"})
      */
-    public function scoreGoal(string $matchId, string $playerId)
+    public function scoreGoal(Request $request, string $matchId, ScoreGoal $scoreGoal)
     {
+        $content = json_decode((string) $request->getContent(), true);
+        $type = $content['type'];
+        $team = $content['team'];
+        $position = $content['position'];
+
+        $scoreGoal->scoreGoal(
+            new MatchId(Uuid::fromString($matchId)),
+            Scorer::fromTeamAndPosition($team, $position)
+        );
+
         return $this->redirect($this->generateUrl('api_goal', [
             'matchId' => $matchId,
-            'playerId' => $playerId,
             'goalId' => 'goal123',
         ]));
     }
 
     /**
-     * @Route("/api/matches/{matchId}/players/{playerId}/goals/{goalId}", name="api_goal", methods={"GET"})
+     * @Route("/api/matches/{matchId}/goals/{goalId}", name="api_goal", methods={"GET"})
      */
     public function showGoal(string $goalId)
     {

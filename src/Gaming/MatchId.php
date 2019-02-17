@@ -20,9 +20,4 @@ final class MatchId
     {
         return $this->uuid;
     }
-
-    public function sameValueAs(MatchId $other): bool
-    {
-        return $this->uuid->equals($other->uuid);
-    }
 }

@@ -3,10 +3,13 @@
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Gaming;
+use Fooscore\Gaming\GoalWasScored;
+use Fooscore\Gaming\Match;
 use Fooscore\Gaming\MatchId;
 use Fooscore\Gaming\MatchIdGenerator;
 use Fooscore\Gaming\MatchRepository;
 use Fooscore\Gaming\MatchWasStarted;
+use Fooscore\Gaming\Scorer;
 use Fooscore\Gaming\TeamBlue;
 use Fooscore\Gaming\TeamRed;
 use Mockery;
@@ -17,32 +20,35 @@ use Ramsey\Uuid\Uuid;
 /**
  * @group unit
  *
- * In order to score goals
+ * In order to see who won the match
  * As a referee
- * I want to start a match
+ * I want to score goals
  */
-class StartMatchTest extends TestCase
+class ScoreGoalTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testShouldStartMatch(): void
+    public function testShouldScoreRegularGoal(): void
     {
         // Given
-        $teamBlue = new TeamBlue('a', 'b');
-        $teamRed = new TeamRed('c', 'd');
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
         $matchIdGenerator = Mockery::mock(MatchIdGenerator::class, [
             'generate' => $matchId,
         ]);
         $matchRepository = Mockery::spy(MatchRepository::class);
+        $matchRepository->allows('get')->with($matchId)->andReturns(
+            Match::reconstituteFromHistory([
+                new MatchWasStarted($matchId, new TeamBlue('a', 'b'), new TeamRed('c', 'd')),
+            ])
+        );
 
         // When
         $gaming = new Gaming($matchIdGenerator, $matchRepository);
-        $match = $gaming->startMatch($teamBlue, $teamRed);
+        $scorer = Scorer::fromTeamAndPosition('blue', 'back');
+        $match = $gaming->scoreGoal($matchId, $scorer);
 
         // Then
-        self::assertEquals([new MatchWasStarted($matchId, $teamBlue, $teamRed)], $match->getRecordedEvents());
-        self::assertSame($matchId->value()->toString(), $match->id()->value()->toString());
+        self::assertEquals([new GoalWasScored($scorer)], $match->getRecordedEvents());
         $matchRepository->shouldHaveReceived()->save($match)->once();
     }
 }

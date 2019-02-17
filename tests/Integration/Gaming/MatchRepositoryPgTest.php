@@ -18,7 +18,7 @@ class MatchRepositoryPgTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testShouldWriteToPgsql(): void
+    public function testShouldReadFromPgsql(): void
     {
         // Given
         $adapter = new MatchRepositoryPg();
@@ -28,11 +28,12 @@ class MatchRepositoryPgTest extends TestCase
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
 
         $match = Match::start($matchId, $teamBlue, $teamRed);
-
-        // When
         $adapter->save($match);
 
+        // When
+        $savedMatch = $adapter->get($matchId);
+
         // Then
-        self::assertSame(true, true);
+        self::assertEquals($match, $savedMatch);
     }
 }

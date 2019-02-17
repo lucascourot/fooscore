@@ -187,11 +187,11 @@
             return await rawResponse.json();
         };
 
-        const sendGoalToServer = async (playerId, type) => {
-            const rawResponse = await fetch('/api/matches/' + matchId + '/players/' + playerId + '/goals', {
+        const sendGoalToServer = async (team, position, type) => {
+            const rawResponse = await fetch('/api/matches/' + matchId + '/goals', {
                 method: 'POST',
                 headers,
-                body: JSON.stringify({type})
+                body: JSON.stringify({team, position, type})
             });
             if (rawResponse.status >= 400) {
                 throw Error('Server error: please retry :(');
@@ -200,10 +200,11 @@
         };
 
         const scoreGoal = async (type) => {
-            const playerId = document.getElementById('goal-types').getAttribute('player');
+            const team = document.getElementById('goal-types').getAttribute('team');
+            const position = document.getElementById('goal-types').getAttribute('position');
             document.getElementById('goal-types').style.display = 'none';
             try {
-                const goal = await sendGoalToServer(playerId, type);
+                const goal = await sendGoalToServer(team, position, type);
 
                 appendGoalToList(goal);
             } catch (e) {
@@ -223,8 +224,9 @@
             document.getElementById('player-name-of-action').innerText = player.name;
             document.getElementById('goal-types').className = '';
             document.getElementById('goal-types').classList.add(`team-${player.team}`);
+            document.getElementById('goal-types').setAttribute('team', player.team);
             document.getElementById('goal-types').classList.add(`position-${player.position}`);
-            document.getElementById('goal-types').setAttribute('player', player.id);
+            document.getElementById('goal-types').setAttribute('position', player.position);
             document.getElementById('goal-types').style.display = 'block';
         };
 

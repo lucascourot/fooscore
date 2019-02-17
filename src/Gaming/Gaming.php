@@ -2,7 +2,7 @@
 
 namespace Fooscore\Gaming;
 
-final class Gaming implements StartMatch
+final class Gaming implements StartMatch, ScoreGoal
 {
     /**
      * @var MatchIdGenerator
@@ -20,12 +20,23 @@ final class Gaming implements StartMatch
         $this->matchRepository = $matchRepository;
     }
 
-    public function startMatch(TeamBlue $teamBlue, TeamRed $teamRed): MatchId
+    public function startMatch(TeamBlue $teamBlue, TeamRed $teamRed): Match
     {
         $match = Match::start($this->matchIdGenerator->generate(), $teamBlue, $teamRed);
 
         $this->matchRepository->save($match);
 
-        return $match->id();
+        return $match;
+    }
+
+    public function scoreGoal(MatchId $matchId, Scorer $scorer): Match
+    {
+        $match = $this->matchRepository->get($matchId);
+
+        $match->scoreGoal($scorer);
+
+        $this->matchRepository->save($match);
+
+        return $match;
     }
 }
