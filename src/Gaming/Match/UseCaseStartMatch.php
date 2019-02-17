@@ -6,7 +6,7 @@ namespace Fooscore\Gaming\Match;
 
 use Fooscore\Gaming\StartMatch as StartMatchInputPort;
 
-final class StartMatch implements StartMatchInputPort
+final class UseCaseStartMatch implements StartMatchInputPort
 {
     /**
      * @var MatchIdGenerator

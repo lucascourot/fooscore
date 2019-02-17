@@ -6,7 +6,7 @@ namespace Fooscore\Gaming\Match;
 
 use Fooscore\Gaming\ScoreGoal as ScoreGoalInputPort;
 
-final class ScoreGoal implements ScoreGoalInputPort
+final class UseCaseScoreGoal implements ScoreGoalInputPort
 {
     /**
      * @var MatchRepository
