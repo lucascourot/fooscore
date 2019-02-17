@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Fooscore\Adapters\Gaming;
 
-use Fooscore\Gaming\MatchId;
-use Fooscore\Gaming\MatchIdGenerator;
+use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Match\MatchIdGenerator;
 use Ramsey\Uuid\Uuid;
 
 final class MatchIdGeneratorUuidv4 implements MatchIdGenerator

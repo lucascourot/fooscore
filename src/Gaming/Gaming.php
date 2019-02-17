@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming;
 
+use Fooscore\Gaming\Match\Match;
+use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Match\MatchIdGenerator;
+use Fooscore\Gaming\Match\MatchRepository;
+use Fooscore\Gaming\Match\Scorer;
+use Fooscore\Gaming\Match\TeamBlue;
+use Fooscore\Gaming\Match\TeamRed;
+
 final class Gaming implements StartMatch, ScoreGoal
 {
     /**

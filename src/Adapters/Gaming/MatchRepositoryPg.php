@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Fooscore\Adapters\Gaming;
 
-use Fooscore\Gaming\Match;
-use Fooscore\Gaming\MatchId;
-use Fooscore\Gaming\MatchRepository;
-use Fooscore\Gaming\TeamBlue;
-use Fooscore\Gaming\TeamRed;
+use Fooscore\Gaming\Match\Match;
+use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Match\MatchRepository;
+use Fooscore\Gaming\Match\TeamBlue;
+use Fooscore\Gaming\Match\TeamRed;
 use Ramsey\Uuid\Uuid;
 
 final class MatchRepositoryPg implements MatchRepository

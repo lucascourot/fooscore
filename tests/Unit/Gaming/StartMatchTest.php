@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Gaming;
-use Fooscore\Gaming\MatchId;
-use Fooscore\Gaming\MatchIdGenerator;
-use Fooscore\Gaming\MatchRepository;
-use Fooscore\Gaming\MatchWasStarted;
-use Fooscore\Gaming\TeamBlue;
-use Fooscore\Gaming\TeamRed;
+use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Match\MatchIdGenerator;
+use Fooscore\Gaming\Match\MatchRepository;
+use Fooscore\Gaming\Match\MatchWasStarted;
+use Fooscore\Gaming\Match\TeamBlue;
+use Fooscore\Gaming\Match\TeamRed;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;

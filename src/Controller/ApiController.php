@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Fooscore\Controller;
 
-use Fooscore\Gaming\MatchId;
+use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Match\Scorer;
+use Fooscore\Gaming\Match\TeamBlue;
+use Fooscore\Gaming\Match\TeamRed;
 use Fooscore\Gaming\ScoreGoal;
-use Fooscore\Gaming\Scorer;
 use Fooscore\Gaming\StartMatch;
-use Fooscore\Gaming\TeamBlue;
-use Fooscore\Gaming\TeamRed;
 use Fooscore\Identity\Credentials;
 use Fooscore\Identity\GetUsers;
 use Fooscore\Identity\LogIn;

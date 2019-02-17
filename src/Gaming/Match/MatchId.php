@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fooscore\Gaming;
+namespace Fooscore\Gaming\Match;
 
 use Ramsey\Uuid\UuidInterface;
 
