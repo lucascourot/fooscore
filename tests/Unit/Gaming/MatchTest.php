@@ -4,14 +4,9 @@ declare(strict_types=1);
 
 namespace Fooscore\Tests\Unit\Gaming;
 
-use Fooscore\Gaming\Match\DomainEvent;
-use Fooscore\Gaming\Match\GoalWasScored;
-use Fooscore\Gaming\Match\Match;
-use Fooscore\Gaming\Match\MatchId;
-use Fooscore\Gaming\Match\MatchWasStarted;
-use Fooscore\Gaming\Match\Scorer;
-use Fooscore\Gaming\Match\TeamBlue;
-use Fooscore\Gaming\Match\TeamRed;
+use Fooscore\Gaming\Match\{
+    DomainEvent, GoalWasScored, Match, MatchId, MatchWasStarted, Scorer, TeamBlue, TeamRed
+};
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;

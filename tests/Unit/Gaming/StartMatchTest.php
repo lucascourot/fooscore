@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace Fooscore\Tests\Unit\Gaming;
 
-use Fooscore\Gaming\Gaming;
-use Fooscore\Gaming\Match\MatchId;
-use Fooscore\Gaming\Match\MatchIdGenerator;
-use Fooscore\Gaming\Match\MatchRepository;
-use Fooscore\Gaming\Match\MatchWasStarted;
-use Fooscore\Gaming\Match\TeamBlue;
-use Fooscore\Gaming\Match\TeamRed;
+use Fooscore\Gaming\Match\{
+    MatchId, MatchIdGenerator, MatchRepository, MatchWasStarted, StartMatch, TeamBlue, TeamRed
+};
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
@@ -39,8 +35,8 @@ class StartMatchTest extends TestCase
         $matchRepository = Mockery::spy(MatchRepository::class);
 
         // When
-        $gaming = new Gaming($matchIdGenerator, $matchRepository);
-        $match = $gaming->startMatch($teamBlue, $teamRed);
+        $startMatchUseCase = new StartMatch($matchIdGenerator, $matchRepository);
+        $match = $startMatchUseCase->startMatch($teamBlue, $teamRed);
 
         // Then
         self::assertEquals([new MatchWasStarted($matchId, $teamBlue, $teamRed)], $match->getRecordedEvents());

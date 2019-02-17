@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Integration\Gaming;
 
 use Fooscore\Adapters\Gaming\MatchRepositoryPg;
-use Fooscore\Gaming\Match\Match;
-use Fooscore\Gaming\Match\MatchId;
-use Fooscore\Gaming\Match\TeamBlue;
-use Fooscore\Gaming\Match\TeamRed;
+use Fooscore\Gaming\Match\{
+    Match, MatchId, TeamBlue, TeamRed
+};
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;

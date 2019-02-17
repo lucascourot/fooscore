@@ -27,6 +27,7 @@ final class FooscoreCsConfig extends \PhpCsFixer\Config
             'ordered_imports' => ['sort_algorithm' => 'alpha'],
             'declare_strict_types' => true,
             'date_time_immutable' => true,
+            'single_import_per_statement' => false,
         ];
 
         return $rules;

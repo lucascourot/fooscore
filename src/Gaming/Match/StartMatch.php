@@ -2,17 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Fooscore\Gaming;
+namespace Fooscore\Gaming\Match;
 
-use Fooscore\Gaming\Match\Match;
-use Fooscore\Gaming\Match\MatchId;
-use Fooscore\Gaming\Match\MatchIdGenerator;
-use Fooscore\Gaming\Match\MatchRepository;
-use Fooscore\Gaming\Match\Scorer;
-use Fooscore\Gaming\Match\TeamBlue;
-use Fooscore\Gaming\Match\TeamRed;
+use Fooscore\Gaming\StartMatch as StartMatchInputPort;
 
-final class Gaming implements StartMatch, ScoreGoal
+final class StartMatch implements StartMatchInputPort
 {
     /**
      * @var MatchIdGenerator
@@ -33,17 +27,6 @@ final class Gaming implements StartMatch, ScoreGoal
     public function startMatch(TeamBlue $teamBlue, TeamRed $teamRed): Match
     {
         $match = Match::start($this->matchIdGenerator->generate(), $teamBlue, $teamRed);
-
-        $this->matchRepository->save($match);
-
-        return $match;
-    }
-
-    public function scoreGoal(MatchId $matchId, Scorer $scorer): Match
-    {
-        $match = $this->matchRepository->get($matchId);
-
-        $match->scoreGoal($scorer);
 
         $this->matchRepository->save($match);
 
