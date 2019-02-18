@@ -86,8 +86,7 @@ class ApiController extends AbstractController
                         'min' => 1,
                         'sec' => 40,
                     ],
-                    'author' => [
-                        'name' => 'Lucas Courot',
+                    'scorer' => [
                         'team' => 'blue',
                         'position' => 'back',
                     ],
@@ -98,8 +97,7 @@ class ApiController extends AbstractController
                         'min' => 10,
                         'sec' => 05,
                     ],
-                    'author' => [
-                        'name' => 'Alice',
+                    'scorer' => [
                         'team' => 'red',
                         'position' => 'back',
                     ],
@@ -164,8 +162,7 @@ class ApiController extends AbstractController
                 'min' => 1,
                 'sec' => 40,
             ],
-            'author' => [
-                'name' => 'Lucas Courot',
+            'scorer' => [
                 'team' => 'blue',
                 'position' => 'back',
             ],
