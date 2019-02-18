@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\{
-    DomainEvent, GoalWasScored, Match, MatchId, MatchWasStarted, Scorer, TeamBlue, TeamRed
+    DomainEvent, Goal, GoalWasScored, Match, MatchId, MatchWasStarted, Scorer, TeamBlue, TeamRed
 };
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +28,9 @@ class MatchTest extends TestCase
 
         $match = Match::reconstituteFromHistory([
             new MatchWasStarted($matchId, $teamBlue, $teamRed),
-            new GoalWasScored(Scorer::fromTeamAndPosition('blue', 'back')),
+            new GoalWasScored(
+                new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'))
+            ),
         ]);
 
         self::assertCount(0, $match->getRecordedEvents());

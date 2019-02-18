@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fooscore\Controller;
 
+use Fooscore\Gaming\Match\Goal;
 use Fooscore\Gaming\Match\MatchId;
 use Fooscore\Gaming\Match\Scorer;
 use Fooscore\Gaming\Match\TeamBlue;
@@ -139,14 +140,16 @@ class ApiController extends AbstractController
         $team = $content['team'];
         $position = $content['position'];
 
-        $scoreGoal->scoreGoal(
+        $match = $scoreGoal->scoreGoal(
             new MatchId(Uuid::fromString($matchId)),
             Scorer::fromTeamAndPosition($team, $position)
         );
+        /** @var Goal $lastScoreGoal */
+        $lastScoreGoal = array_values(array_slice($match->scoredGoals(), -1))[0];
 
         return $this->redirect($this->generateUrl('api_goal', [
             'matchId' => $matchId,
-            'goalId' => 'goal123',
+            'goalId' => $lastScoreGoal->number(),
         ]));
     }
 

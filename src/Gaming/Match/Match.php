@@ -10,7 +10,7 @@ namespace Fooscore\Gaming\Match;
 final class Match
 {
     /**
-     * @var array
+     * @var DomainEvent[]
      */
     private $recordedEvents = [];
 
@@ -20,9 +20,9 @@ final class Match
     private $id;
 
     /**
-     * @var array
+     * @var Goal[]
      */
-    private $goals = [];
+    private $scoredGoals = [];
 
     public static function start(MatchId $matchId, TeamBlue $teamBlue, TeamRed $teamRed): self
     {
@@ -39,7 +39,7 @@ final class Match
 
     public function scoreGoal(Scorer $scorer): self
     {
-        $this->recordThat(new GoalWasScored($scorer));
+        $this->recordThat(new GoalWasScored(new Goal(1, $scorer)));
 
         return $this;
     }
@@ -58,7 +58,7 @@ final class Match
     private function apply(DomainEvent $event): void
     {
         if ($event instanceof GoalWasScored) {
-            $this->goals[] = $event->getScorer();
+            $this->scoredGoals[] = $event->goal();
 
             return;
         }
@@ -86,5 +86,13 @@ final class Match
         }
 
         return $self;
+    }
+
+    /**
+     * @return Goal[]
+     */
+    public function scoredGoals(): array
+    {
+        return $this->scoredGoals;
     }
 }

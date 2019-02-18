@@ -7,17 +7,17 @@ namespace Fooscore\Gaming\Match;
 final class GoalWasScored implements DomainEvent
 {
     /**
-     * @var Scorer
+     * @var Goal
      */
-    private $scorer;
+    private $goal;
 
-    public function __construct(Scorer $scorer)
+    public function __construct(Goal $goal)
     {
-        $this->scorer = $scorer;
+        $this->goal = $goal;
     }
 
-    public function getScorer(): Scorer
+    public function goal(): Goal
     {
-        return $this->scorer;
+        return $this->goal;
     }
 }
