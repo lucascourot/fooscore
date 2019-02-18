@@ -17,6 +17,39 @@
             "ref": "cb4152ebcadbe620ea2261da1a1c5a9b8cea7672"
         }
     },
+    "doctrine/cache": {
+        "version": "v1.8.0"
+    },
+    "doctrine/collections": {
+        "version": "v1.5.0"
+    },
+    "doctrine/dbal": {
+        "version": "v2.9.2"
+    },
+    "doctrine/doctrine-bundle": {
+        "version": "1.6",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.6",
+            "ref": "453e89b78ded666f351617baca5ae40d20622351"
+        }
+    },
+    "doctrine/doctrine-cache-bundle": {
+        "version": "1.3.5"
+    },
+    "doctrine/doctrine-migrations-bundle": {
+        "version": "1.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.2",
+            "ref": "c1431086fec31f17fbcfe6d6d7e92059458facc1"
+        }
+    },
+    "doctrine/event-manager": {
+        "version": "v1.0.0"
+    },
     "doctrine/inflector": {
         "version": "v1.3.0"
     },
@@ -25,6 +58,15 @@
     },
     "doctrine/lexer": {
         "version": "v1.0.1"
+    },
+    "doctrine/migrations": {
+        "version": "v2.0.0"
+    },
+    "doctrine/persistence": {
+        "version": "v1.1.0"
+    },
+    "doctrine/reflection": {
+        "version": "v1.0.0"
     },
     "friendsofphp/php-cs-fixer": {
         "version": "2.2",
@@ -40,6 +82,9 @@
     },
     "infection/infection": {
         "version": "0.12.0"
+    },
+    "jdorn/sql-formatter": {
+        "version": "v1.2.17"
     },
     "jean85/pretty-package-versions": {
         "version": "1.2"
@@ -79,6 +124,9 @@
     },
     "ocramius/package-versions": {
         "version": "1.3.0"
+    },
+    "ocramius/proxy-manager": {
+        "version": "2.2.2"
     },
     "padraic/humbug_get_contents": {
         "version": "1.1.2"
@@ -218,6 +266,9 @@
     "symfony/dependency-injection": {
         "version": "v4.2.2"
     },
+    "symfony/doctrine-bridge": {
+        "version": "v4.2.3"
+    },
     "symfony/dotenv": {
         "version": "v4.2.2"
     },
@@ -307,5 +358,11 @@
     },
     "webmozart/assert": {
         "version": "1.4.0"
+    },
+    "zendframework/zend-code": {
+        "version": "3.3.1"
+    },
+    "zendframework/zend-eventmanager": {
+        "version": "3.2.1"
     }
 }
