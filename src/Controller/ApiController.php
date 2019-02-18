@@ -142,12 +142,18 @@ class ApiController extends AbstractController
             new MatchId(Uuid::fromString($matchId)),
             Scorer::fromTeamAndPosition($team, $position)
         );
-        /** @var Goal $lastScoreGoal */
-        $lastScoreGoal = array_values(array_slice($match->scoredGoals(), -1))[0];
+        /** @var Goal $lastScoredGoal */
+        $lastScoredGoal = array_values(array_slice($match->scoredGoals(), -1))[0] ?? null;
+
+        if ($lastScoredGoal === null) {
+            return $this->json([
+                'error' => 'Cannot get the scored goal.',
+            ], 400);
+        }
 
         return $this->redirect($this->generateUrl('api_goal', [
             'matchId' => $matchId,
-            'goalId' => $lastScoreGoal->number(),
+            'goalId' => $lastScoredGoal->number(),
         ]));
     }
 
