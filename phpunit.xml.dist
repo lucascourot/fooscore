@@ -26,6 +26,7 @@
                 <file>src/Kernel.php</file>
                 <directory>src/Controller</directory>
                 <directory>src/EventSubscriber</directory>
+                <directory>src/Migrations</directory>
             </exclude>
         </whitelist>
     </filter>

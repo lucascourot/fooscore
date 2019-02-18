@@ -7,3 +7,4 @@ parameters:
         - %rootDir%/../../../src/Kernel.php
         - %rootDir%/../../../src/Controller
         - %rootDir%/../../../src/EventSubscriber
+        - %rootDir%/../../../src/Migrations
