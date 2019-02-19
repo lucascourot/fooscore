@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\{
-    DomainEvent, Goal, GoalWasScored, Match, MatchId, MatchWasStarted, Scorer, TeamBlue, TeamRed
+    DomainEvent, Goal, GoalWasScored, Match, MatchId, MatchWasStarted, Scorer, TeamBlue, TeamRed, VersionedEvent
 };
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
@@ -27,9 +27,10 @@ class MatchTest extends TestCase
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
 
         $match = Match::reconstituteFromHistory([
-            new MatchWasStarted($matchId, $teamBlue, $teamRed),
-            new GoalWasScored(
-                new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'))
+            new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed)),
+            new VersionedEvent(2, new GoalWasScored(
+                    new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'))
+                )
             ),
         ]);
 
@@ -41,22 +42,25 @@ class MatchTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         Match::reconstituteFromHistory([
-            new class() implements DomainEvent {
-                public static function eventName(): string
-                {
-                    return 'error';
-                }
+            new VersionedEvent(
+                1,
+                new class() implements DomainEvent {
+                    public static function eventName(): string
+                    {
+                        return 'error';
+                    }
 
-                public static function fromEventDataArray(array $eventData): DomainEvent
-                {
-                    return new self();
-                }
+                    public static function fromEventDataArray(array $eventData): DomainEvent
+                    {
+                        return new self();
+                    }
 
-                public function eventDataAsArray(): array
-                {
-                    return [];
+                    public function eventDataAsArray(): array
+                    {
+                        return [];
+                    }
                 }
-            },
+            ),
         ]);
     }
 }

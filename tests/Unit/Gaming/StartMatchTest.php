@@ -5,13 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\{
-    MatchId,
-    MatchIdGenerator,
-    MatchRepository,
-    MatchWasStarted,
-    TeamBlue,
-    TeamRed,
-    UseCaseStartMatch
+    MatchId, MatchIdGenerator, MatchRepository, MatchWasStarted, TeamBlue, TeamRed, UseCaseStartMatch, VersionedEvent
 };
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -45,7 +39,9 @@ class StartMatchTest extends TestCase
         $match = $startMatchUseCase->startMatch($teamBlue, $teamRed);
 
         // Then
-        self::assertEquals([new MatchWasStarted($matchId, $teamBlue, $teamRed)], $match->recordedEvents());
+        self::assertEquals([
+            new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed)),
+        ], $match->recordedEvents());
         self::assertSame($matchId->value()->toString(), $match->id()->value()->toString());
         $matchRepository->shouldHaveReceived()->save($match)->once();
     }

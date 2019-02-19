@@ -6,7 +6,7 @@ namespace Fooscore\Adapters\Gaming;
 
 use Doctrine\DBAL\Connection;
 use Fooscore\Gaming\Match\{
-    DomainEvent, GoalWasScored, Match, MatchId, MatchRepository, MatchWasStarted
+    DomainEvent, GoalWasScored, Match, MatchId, MatchRepository, MatchWasStarted, VersionedEvent
 };
 use Ramsey\Uuid\Uuid;
 
@@ -33,10 +33,10 @@ final class MatchRepositoryPg implements MatchRepository
 
     public function save(Match $match): void
     {
-        $domainEvents = $match->recordedEvents();
+        $versionedEvents = $match->recordedEvents();
 
-        $aggregateVersion = 1;
-        foreach ($domainEvents as $domainEvent) {
+        foreach ($versionedEvents as $versionedEvent) {
+            $domainEvent = $versionedEvent->domainEvent();
 //            try {
             $statement = $this->connection->prepare(<<<SQL
                 INSERT INTO event_store
@@ -50,7 +50,7 @@ SQL
                     'event_data' => json_encode($domainEvent->eventDataAsArray()),
                     'aggregate_id' => $match->id()->value()->toString(),
                     'aggregate_type' => 'match',
-                    'aggregate_version' => $aggregateVersion++,
+                    'aggregate_version' => $versionedEvent->aggregateVersion(),
                 ]);
 //                $this->eventDispatcher->dispatch($domainEvent);
 //            } catch (\Throwable $exception) {
@@ -62,14 +62,14 @@ SQL
     public function get(MatchId $matchId): Match
     {
         $statement = $this->connection->prepare(<<<SQL
-                SELECT
-                    *
-                FROM
-                    event_store
-                WHERE
-                    aggregate_id = :aggregate_id
-                    AND aggregate_type = :aggregate_type
-                ORDER BY event_store.event_id;
+            SELECT
+                *
+            FROM
+                event_store
+            WHERE
+                aggregate_id = :aggregate_id
+                AND aggregate_type = :aggregate_type
+            ORDER BY event_store.event_id;
 SQL
         );
         $statement->execute([
@@ -79,13 +79,15 @@ SQL
 
         $domainEventsArray = $statement->fetchAll(\PDO::FETCH_ASSOC);
 
-        $domainEvents = array_map(function (array $domainEventArray): DomainEvent {
+        $versionedEvents = array_map(function (array $domainEventArray): VersionedEvent {
             foreach ($this->knownDomainEvents as $knownDomainEventName => $knownDomainEventClass) {
                 if ($domainEventArray['event_name'] === $knownDomainEventName) {
                     /* @var DomainEvent $knownDomainEventClass */
-                    return $knownDomainEventClass::fromEventDataArray(
+                    $domainEvent = $knownDomainEventClass::fromEventDataArray(
                         json_decode($domainEventArray['event_data'], true)
                     );
+
+                    return new VersionedEvent($domainEventArray['aggregate_version'], $domainEvent);
                 }
             }
 
@@ -94,6 +96,6 @@ SQL
             );
         }, $domainEventsArray);
 
-        return Match::reconstituteFromHistory($domainEvents);
+        return Match::reconstituteFromHistory($versionedEvents);
     }
 }

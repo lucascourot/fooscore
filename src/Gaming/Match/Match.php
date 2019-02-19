@@ -12,11 +12,6 @@ final class Match
     use DisableConstruct;
 
     /**
-     * @var DomainEvent[]
-     */
-    private $recordedEvents = [];
-
-    /**
      * @var MatchId
      */
     private $id;
@@ -26,17 +21,22 @@ final class Match
      */
     private $scoredGoals = [];
 
+    /**
+     * @var VersionedEvent[]
+     */
+    private $recordedEvents = [];
+
+    /**
+     * @var int
+     */
+    private $aggregateVersion = 0;
+
     public static function start(MatchId $matchId, TeamBlue $teamBlue, TeamRed $teamRed): self
     {
         $self = new self();
         $self->recordThat(new MatchWasStarted($matchId, $teamBlue, $teamRed));
 
         return $self;
-    }
-
-    public function id(): MatchId
-    {
-        return $this->id;
     }
 
     public function scoreGoal(Scorer $scorer): self
@@ -46,8 +46,21 @@ final class Match
         return $this;
     }
 
+    public function id(): MatchId
+    {
+        return $this->id;
+    }
+
     /**
-     * @return DomainEvent[]
+     * @return Goal[]
+     */
+    public function scoredGoals(): array
+    {
+        return $this->scoredGoals;
+    }
+
+    /**
+     * @return VersionedEvent[]
      */
     public function recordedEvents(): array
     {
@@ -56,7 +69,8 @@ final class Match
 
     private function recordThat(DomainEvent $event): void
     {
-        $this->recordedEvents[] = $event;
+        $this->aggregateVersion++;
+        $this->recordedEvents[] = new VersionedEvent($this->aggregateVersion, $event);
         $this->apply($event);
     }
 
@@ -80,24 +94,17 @@ final class Match
     }
 
     /**
-     * @param DomainEvent[] $domainEvents
+     * @param VersionedEvent[] $versionedEvents
      */
-    public static function reconstituteFromHistory(array $domainEvents): self
+    public static function reconstituteFromHistory(array $versionedEvents): self
     {
         $self = new self();
 
-        foreach ($domainEvents as $domainEvent) {
-            $self->apply($domainEvent);
+        foreach ($versionedEvents as $versionedEvent) {
+            $self->aggregateVersion = $versionedEvent->aggregateVersion();
+            $self->apply($versionedEvent->domainEvent());
         }
 
         return $self;
-    }
-
-    /**
-     * @return Goal[]
-     */
-    public function scoredGoals(): array
-    {
-        return $this->scoredGoals;
     }
 }

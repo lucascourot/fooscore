@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\{
-    Goal, GoalWasScored, Match, MatchId, MatchRepository, MatchWasStarted, Scorer, TeamBlue, TeamRed, UseCaseScoreGoal
+    Goal, GoalWasScored, Match, MatchId, MatchRepository, MatchWasStarted, Scorer, TeamBlue, TeamRed, UseCaseScoreGoal, VersionedEvent
 };
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -30,7 +30,7 @@ class ScoreGoalTest extends TestCase
         $matchRepository = Mockery::spy(MatchRepository::class);
         $matchRepository->allows('get')->with($matchId)->andReturns(
             Match::reconstituteFromHistory([
-                new MatchWasStarted($matchId, new TeamBlue('a', 'b'), new TeamRed('c', 'd')),
+                new VersionedEvent(1, new MatchWasStarted($matchId, new TeamBlue('a', 'b'), new TeamRed('c', 'd'))),
             ])
         );
 
@@ -40,7 +40,9 @@ class ScoreGoalTest extends TestCase
         $match = $scoreGoalUseCase->scoreGoal($matchId, $scorer);
 
         // Then
-        self::assertEquals([new GoalWasScored(new Goal(1, $scorer))], $match->recordedEvents());
+        self::assertEquals([
+            new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer))),
+        ], $match->recordedEvents());
         self::assertEquals([new Goal(1, $scorer)], $match->scoredGoals());
         self::assertEquals(1, $match->scoredGoals()[0]->number());
         $matchRepository->shouldHaveReceived()->save($match)->once();
