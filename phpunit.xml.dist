@@ -28,6 +28,7 @@
                 <directory>src/Controller</directory>
                 <directory>src/EventSubscriber</directory>
                 <directory>src/Migrations</directory>
+                <directory>src/CompilerPass</directory>
             </exclude>
         </whitelist>
     </filter>

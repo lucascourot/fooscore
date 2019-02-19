@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Integration\Gaming;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Fooscore\Adapters\Gaming\DomainEventsFinder;
 use Fooscore\Adapters\Gaming\MatchRepositoryPg;
 use Fooscore\Gaming\Match\{
     Match, MatchId, Scorer, TeamBlue, TeamRed
@@ -30,10 +32,15 @@ class MatchRepositoryPgTest extends KernelTestCase
      */
     private $testMatchId = '6df9c8af-afeb-4422-ac60-5f271c738d76';
 
+    /**
+     * @var DomainEventsFinder
+     */
+    private $domainEventsFinder;
+
     public function testShouldReadFromPgsql(): void
     {
         // Given
-        $adapter = new MatchRepositoryPg($this->connection);
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
 
         $teamBlue = new TeamBlue('a', 'b');
         $teamRed = new TeamRed('c', 'd');
@@ -53,7 +60,7 @@ class MatchRepositoryPgTest extends KernelTestCase
     public function testShouldPersistSameEventsTwiceWithDifferentVersionsOfAggregate(): void
     {
         // Given
-        $adapter = new MatchRepositoryPg($this->connection);
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
 
         $teamBlue = new TeamBlue('a', 'b');
         $teamRed = new TeamRed('c', 'd');
@@ -96,7 +103,7 @@ SQL
     public function testShouldAddNewEventsAfterBeingFetched(): void
     {
         // Given
-        $adapter = new MatchRepositoryPg($this->connection);
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
 
         $teamBlue = new TeamBlue('a', 'b');
         $teamRed = new TeamRed('c', 'd');
@@ -137,6 +144,67 @@ SQL
         self::assertSame([1, 2], array_column($domainEventsArray, 'aggregate_version'));
     }
 
+    public function testShouldAvoidRaceConditions(): void
+    {
+        // Given
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
+
+        $teamBlue = new TeamBlue('a', 'b');
+        $teamRed = new TeamRed('c', 'd');
+        $matchId = new MatchId(Uuid::fromString($this->testMatchId));
+
+        $match = Match::start($matchId, $teamBlue, $teamRed);
+        $adapter->save($match);
+
+        // When
+        $firstFetchedAggregate = $adapter->get($matchId);
+        $firstFetchedAggregate->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'));
+
+        $raceConditionAggregate = $adapter->get($matchId);
+        $raceConditionAggregate->scoreGoal(Scorer::fromTeamAndPosition('red', 'front'));
+        $raceConditionAggregate->scoreGoal(Scorer::fromTeamAndPosition('red', 'back'));
+
+        $adapter->save($firstFetchedAggregate);
+
+        $thrownException = null;
+        try {
+            $adapter->save($raceConditionAggregate);
+        } catch (\Exception $exception) {
+            $thrownException = $exception;
+        }
+
+        // Then
+        $statement = $this->connection->prepare(<<<SQL
+                SELECT
+                    *
+                FROM
+                    event_store
+                WHERE
+                    aggregate_id = :aggregate_id
+                    AND aggregate_type = :aggregate_type
+                ORDER BY event_store.event_id;
+SQL
+        );
+        $statement->execute([
+            'aggregate_id' => $matchId->value()->toString(),
+            'aggregate_type' => 'match',
+        ]);
+
+        $domainEventsArray = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
+        self::assertSame([
+            'match_was_started',
+            'goal_was_scored',
+        ], array_column($domainEventsArray, 'event_name'));
+
+        self::assertSame([1, 2], array_column($domainEventsArray, 'aggregate_version'));
+
+        $secondEventData = json_decode($domainEventsArray[1]['event_data'], true);
+        self::assertSame('blue', $secondEventData['team']);
+        self::assertSame('back', $secondEventData['position']);
+        self::assertInstanceOf(UniqueConstraintViolationException::class, $thrownException);
+    }
+
     public function testShouldThrowExceptionIfUnknownEvent(): void
     {
         $this->expectException(\RuntimeException::class);
@@ -157,7 +225,7 @@ SQL
             'aggregate_type' => 'match',
             'aggregate_version' => 1,
         ]);
-        $adapter = new MatchRepositoryPg($this->connection);
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
 
         // When
         $adapter->get($matchId);
@@ -169,8 +237,11 @@ SQL
 
         /** @var Connection $connection */
         $connection = self::$container->get(Connection::class);
-
         $this->connection = $connection;
+
+        /** @var DomainEventsFinder $domainEventsFinder */
+        $domainEventsFinder = self::$container->get(DomainEventsFinder::class);
+        $this->domainEventsFinder = $domainEventsFinder;
 
         $this->deleteTestAggregateEvents();
     }

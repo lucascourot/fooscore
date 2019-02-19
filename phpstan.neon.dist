@@ -8,3 +8,4 @@ parameters:
         - %rootDir%/../../../src/Controller
         - %rootDir%/../../../src/EventSubscriber
         - %rootDir%/../../../src/Migrations
+        - %rootDir%/../../../src/CompilerPass

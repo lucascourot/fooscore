@@ -8,6 +8,7 @@
             "EventSubscriber",
             "Controller",
             "Migrations",
+            "CompilerPass",
             "Kernel.php"
         ]
     },

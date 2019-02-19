@@ -6,7 +6,7 @@ namespace Fooscore\Adapters\Gaming;
 
 use Doctrine\DBAL\Connection;
 use Fooscore\Gaming\Match\{
-    DomainEvent, GoalWasScored, Match, MatchId, MatchRepository, MatchWasStarted, VersionedEvent
+    DomainEvent, Match, MatchId, MatchRepository, VersionedEvent
 };
 use Ramsey\Uuid\Uuid;
 
@@ -22,13 +22,10 @@ final class MatchRepositoryPg implements MatchRepository
      */
     private $knownDomainEvents;
 
-    public function __construct(Connection $connection)
+    public function __construct(Connection $connection, DomainEventsFinder $domainEventsFinder)
     {
         $this->connection = $connection;
-        $this->knownDomainEvents = [
-            MatchWasStarted::eventName() => MatchWasStarted::class,
-            GoalWasScored::eventName() => GoalWasScored::class,
-        ];
+        $this->knownDomainEvents = $domainEventsFinder->getDomainEventsClassesIndexedByNames();
     }
 
     public function save(Match $match): void
@@ -37,7 +34,7 @@ final class MatchRepositoryPg implements MatchRepository
 
         foreach ($versionedEvents as $versionedEvent) {
             $domainEvent = $versionedEvent->domainEvent();
-//            try {
+
             $statement = $this->connection->prepare(<<<SQL
                 INSERT INTO event_store
                     (event_id, event_name, event_data, aggregate_id, aggregate_type, aggregate_version, created_at)
@@ -45,17 +42,13 @@ final class MatchRepositoryPg implements MatchRepository
 SQL
 );
             $statement->execute([
-                    'event_id' => Uuid::uuid1(),
-                    'event_name' => $domainEvent::eventName(),
-                    'event_data' => json_encode($domainEvent->eventDataAsArray()),
-                    'aggregate_id' => $match->id()->value()->toString(),
-                    'aggregate_type' => 'match',
-                    'aggregate_version' => $versionedEvent->aggregateVersion(),
-                ]);
-//                $this->eventDispatcher->dispatch($domainEvent);
-//            } catch (\Throwable $exception) {
-//                $this->logger->error($exception->getMessage());
-//            }
+                'event_id' => Uuid::uuid1(),
+                'event_name' => $domainEvent::eventName(),
+                'event_data' => json_encode($domainEvent->eventDataAsArray()),
+                'aggregate_id' => $match->id()->value()->toString(),
+                'aggregate_type' => 'match',
+                'aggregate_version' => $versionedEvent->aggregateVersion(),
+            ]);
         }
     }
 
