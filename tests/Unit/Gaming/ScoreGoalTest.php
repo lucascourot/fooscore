@@ -40,7 +40,7 @@ class ScoreGoalTest extends TestCase
         $match = $scoreGoalUseCase->scoreGoal($matchId, $scorer);
 
         // Then
-        self::assertEquals([new GoalWasScored(new Goal(1, $scorer))], $match->getRecordedEvents());
+        self::assertEquals([new GoalWasScored(new Goal(1, $scorer))], $match->recordedEvents());
         self::assertEquals([new Goal(1, $scorer)], $match->scoredGoals());
         self::assertEquals(1, $match->scoredGoals()[0]->number());
         $matchRepository->shouldHaveReceived()->save($match)->once();

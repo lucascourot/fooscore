@@ -33,7 +33,7 @@ class MatchTest extends TestCase
             ),
         ]);
 
-        self::assertCount(0, $match->getRecordedEvents());
+        self::assertCount(0, $match->recordedEvents());
     }
 
     public function testShouldNotAcceptUnknownDomainEvents(): void
@@ -42,6 +42,20 @@ class MatchTest extends TestCase
 
         Match::reconstituteFromHistory([
             new class() implements DomainEvent {
+                public static function eventName(): string
+                {
+                    return 'error';
+                }
+
+                public static function fromEventDataArray(array $eventData): DomainEvent
+                {
+                    return new self();
+                }
+
+                public function eventDataAsArray(): array
+                {
+                    return [];
+                }
             },
         ]);
     }

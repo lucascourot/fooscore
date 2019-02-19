@@ -26,4 +26,9 @@ final class Goal
     {
         return $this->number;
     }
+
+    public function scorer(): Scorer
+    {
+        return $this->scorer;
+    }
 }

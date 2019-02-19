@@ -21,4 +21,14 @@ trait Team
         $this->back = $back;
         $this->front = $front;
     }
+
+    public function back(): string
+    {
+        return $this->back;
+    }
+
+    public function front(): string
+    {
+        return $this->front;
+    }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
+use Ramsey\Uuid\Uuid;
+
 final class MatchWasStarted implements DomainEvent
 {
     /**
@@ -28,8 +30,37 @@ final class MatchWasStarted implements DomainEvent
         $this->teamRed = $teamRed;
     }
 
-    public function getMatchId(): MatchId
+    public function matchId(): MatchId
     {
         return $this->matchId;
+    }
+
+    public static function eventName(): string
+    {
+        return 'match_was_started';
+    }
+
+    public static function fromEventDataArray(array $eventData): DomainEvent
+    {
+        return new self(
+            new MatchId(Uuid::fromString($eventData['matchId'])),
+            new TeamBlue($eventData['blue']['back'], $eventData['blue']['front']),
+            new TeamRed($eventData['red']['back'], $eventData['red']['front'])
+        );
+    }
+
+    public function eventDataAsArray(): array
+    {
+        return [
+            'matchId' => $this->matchId->value()->toString(),
+            'blue' => [
+                'back' => $this->teamBlue->back(),
+                'front' => $this->teamBlue->front(),
+            ],
+            'red' => [
+                'back' => $this->teamRed->back(),
+                'front' => $this->teamRed->front(),
+            ],
+        ];
     }
 }

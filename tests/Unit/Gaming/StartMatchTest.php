@@ -45,7 +45,7 @@ class StartMatchTest extends TestCase
         $match = $startMatchUseCase->startMatch($teamBlue, $teamRed);
 
         // Then
-        self::assertEquals([new MatchWasStarted($matchId, $teamBlue, $teamRed)], $match->getRecordedEvents());
+        self::assertEquals([new MatchWasStarted($matchId, $teamBlue, $teamRed)], $match->recordedEvents());
         self::assertSame($matchId->value()->toString(), $match->id()->value()->toString());
         $matchRepository->shouldHaveReceived()->save($match)->once();
     }

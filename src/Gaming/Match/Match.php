@@ -9,6 +9,8 @@ namespace Fooscore\Gaming\Match;
  */
 final class Match
 {
+    use DisableConstruct;
+
     /**
      * @var DomainEvent[]
      */
@@ -44,7 +46,10 @@ final class Match
         return $this;
     }
 
-    public function getRecordedEvents(): array
+    /**
+     * @return DomainEvent[]
+     */
+    public function recordedEvents(): array
     {
         return $this->recordedEvents;
     }
@@ -64,7 +69,7 @@ final class Match
         }
 
         if ($event instanceof MatchWasStarted) {
-            $this->id = $event->getMatchId();
+            $this->id = $event->matchId();
 
             return;
         }
