@@ -73,23 +73,7 @@ class MatchRepositoryPgTest extends KernelTestCase
         $adapter->save($match);
 
         // Then
-        $statement = $this->connection->prepare(<<<SQL
-                SELECT
-                    *
-                FROM
-                    event_store
-                WHERE
-                    aggregate_id = :aggregate_id
-                    AND aggregate_type = :aggregate_type
-                ORDER BY event_store.event_id;
-SQL
-        );
-        $statement->execute([
-            'aggregate_id' => $matchId->value()->toString(),
-            'aggregate_type' => 'match',
-        ]);
-
-        $domainEventsArray = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $domainEventsArray = $this->fetchDomainEventsForAggregate($matchId);
 
         self::assertSame([
             'match_was_started',
@@ -118,23 +102,7 @@ SQL
         $adapter->save($reconstitutedMatch);
 
         // Then
-        $statement = $this->connection->prepare(<<<SQL
-                SELECT
-                    *
-                FROM
-                    event_store
-                WHERE
-                    aggregate_id = :aggregate_id
-                    AND aggregate_type = :aggregate_type
-                ORDER BY event_store.event_id;
-SQL
-        );
-        $statement->execute([
-            'aggregate_id' => $matchId->value()->toString(),
-            'aggregate_type' => 'match',
-        ]);
-
-        $domainEventsArray = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $domainEventsArray = $this->fetchDomainEventsForAggregate($matchId);
 
         self::assertSame([
             'match_was_started',
@@ -174,23 +142,7 @@ SQL
         }
 
         // Then
-        $statement = $this->connection->prepare(<<<SQL
-                SELECT
-                    *
-                FROM
-                    event_store
-                WHERE
-                    aggregate_id = :aggregate_id
-                    AND aggregate_type = :aggregate_type
-                ORDER BY event_store.event_id;
-SQL
-        );
-        $statement->execute([
-            'aggregate_id' => $matchId->value()->toString(),
-            'aggregate_type' => 'match',
-        ]);
-
-        $domainEventsArray = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $domainEventsArray = $this->fetchDomainEventsForAggregate($matchId);
 
         self::assertSame([
             'match_was_started',
@@ -271,5 +223,18 @@ SQL
         $this->connection->exec(
             "DELETE FROM event_store WHERE aggregate_id = '{$this->testMatchId}'"
         );
+    }
+
+    private function fetchDomainEventsForAggregate(MatchId $matchId): array
+    {
+        $statement = $this->connection->prepare(MatchRepositoryPg::FETCH_EVENTS_QUERY);
+        $statement->execute([
+            'aggregate_id' => $matchId->value()->toString(),
+            'aggregate_type' => 'match',
+        ]);
+
+        $domainEventsArray = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $domainEventsArray;
     }
 }

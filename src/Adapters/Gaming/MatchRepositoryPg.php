@@ -12,6 +12,17 @@ use Ramsey\Uuid\Uuid;
 
 final class MatchRepositoryPg implements MatchRepository
 {
+    public const FETCH_EVENTS_QUERY = <<<SQL
+        SELECT
+            *
+        FROM
+            event_store
+        WHERE
+            aggregate_id = :aggregate_id
+            AND aggregate_type = :aggregate_type
+        ORDER BY event_store.aggregate_version ASC;
+SQL;
+
     /**
      * @var Connection
      */
@@ -42,7 +53,7 @@ final class MatchRepositoryPg implements MatchRepository
 SQL
 );
             $statement->execute([
-                'event_id' => Uuid::uuid1(),
+                'event_id' => Uuid::uuid4(),
                 'event_name' => $domainEvent::eventName(),
                 'event_data' => json_encode($domainEvent->eventDataAsArray()),
                 'aggregate_id' => $match->id()->value()->toString(),
@@ -54,17 +65,7 @@ SQL
 
     public function get(MatchId $matchId): Match
     {
-        $statement = $this->connection->prepare(<<<SQL
-            SELECT
-                *
-            FROM
-                event_store
-            WHERE
-                aggregate_id = :aggregate_id
-                AND aggregate_type = :aggregate_type
-            ORDER BY event_store.event_id;
-SQL
-        );
+        $statement = $this->connection->prepare(self::FETCH_EVENTS_QUERY);
         $statement->execute([
             'aggregate_id' => $matchId->value()->toString(),
             'aggregate_type' => 'match',
