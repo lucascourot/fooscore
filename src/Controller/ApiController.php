@@ -10,6 +10,7 @@ use Fooscore\Gaming\Match\Scorer;
 use Fooscore\Gaming\Match\TeamBlue;
 use Fooscore\Gaming\Match\TeamRed;
 use Fooscore\Gaming\ScoreGoal;
+use Fooscore\Gaming\ShowMatchDetails;
 use Fooscore\Gaming\StartMatch;
 use Fooscore\Identity\Credentials;
 use Fooscore\Identity\GetUsers;
@@ -75,57 +76,13 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/matches/{matchId}", name="api_match", methods={"GET"})
      */
-    public function showMatch(string $matchId)
+    public function showMatch(string $matchId, ShowMatchDetails $showMatchDetails)
     {
-        return $this->json([
-            'id' => $matchId,
-            'goals' => [
-                [
-                    'id' => 1,
-                    'scoredAt' => [
-                        'min' => 1,
-                        'sec' => 40,
-                    ],
-                    'scorer' => [
-                        'team' => 'blue',
-                        'position' => 'back',
-                    ],
-                ],
-                [
-                    'id' => 2,
-                    'scoredAt' => [
-                        'min' => 10,
-                        'sec' => 05,
-                    ],
-                    'scorer' => [
-                        'team' => 'red',
-                        'position' => 'back',
-                    ],
-                ],
-            ],
-            'players' => [
-                'blue' => [
-                    'back' => [
-                        'id' => '1',
-                        'name' => 'Lucas Courot',
-                    ],
-                    'front' => [
-                        'id' => '2',
-                        'name' => 'John Doe',
-                    ],
-                ],
-                'red' => [
-                    'back' => [
-                        'id' => '3',
-                        'name' => 'Alice',
-                    ],
-                    'front' => [
-                        'id' => '4',
-                        'name' => 'Bob',
-                    ],
-                ],
-            ],
-        ]);
+        $matchWithDetail = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($matchId)));
+
+        return $this->json(
+            $matchWithDetail->details()
+        );
     }
 
     /**

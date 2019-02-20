@@ -35,6 +35,16 @@ final class MatchWasStarted implements DomainEvent
         return $this->matchId;
     }
 
+    public function teamBlue(): TeamBlue
+    {
+        return $this->teamBlue;
+    }
+
+    public function teamRed(): TeamRed
+    {
+        return $this->teamRed;
+    }
+
     public static function eventName(): string
     {
         return 'match_was_started';

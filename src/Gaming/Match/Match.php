@@ -9,8 +9,6 @@ namespace Fooscore\Gaming\Match;
  */
 final class Match
 {
-    use DisableConstruct;
-
     /**
      * @var MatchId
      */
@@ -30,6 +28,16 @@ final class Match
      * @var int
      */
     private $aggregateVersion = 0;
+
+    /**
+     * @var TeamBlue
+     */
+    private $teamBlue;
+
+    /**
+     * @var TeamRed
+     */
+    private $teamRed;
 
     public static function start(MatchId $matchId, TeamBlue $teamBlue, TeamRed $teamRed): self
     {
@@ -84,6 +92,8 @@ final class Match
 
         if ($event instanceof MatchWasStarted) {
             $this->id = $event->matchId();
+            $this->teamBlue = $event->teamBlue();
+            $this->teamRed = $event->teamRed();
 
             return;
         }
@@ -106,5 +116,60 @@ final class Match
         }
 
         return $self;
+    }
+
+    public function details(): array
+    {
+        return [
+            'id' => $this->id->value()->toString(),
+            'goals' => [],
+//
+//            -            'goals' => [
+//                -                [
+//                    -                    'id' => 1,
+//                    -                    'scoredAt' => [
+//                        -                        'min' => 1,
+//                        -                        'sec' => 40,
+//                        -                    ],
+//                    -                    'scorer' => [
+//                        -                        'team' => 'blue',
+//                        -                        'position' => 'back',
+//                        -                    ],
+//                    -                ],
+//                -                [
+//                    -                    'id' => 2,
+//                    -                    'scoredAt' => [
+//                        -                        'min' => 10,
+//                        -                        'sec' => 05,
+//                        -                    ],
+//                    -                    'scorer' => [
+//                        -                        'team' => 'red',
+//                        -                        'position' => 'back',
+//                        -                    ],
+//                    -                ],
+//                -            ],
+            'players' => [
+                'blue' => [
+                    'back' => [
+                        'id' => $this->teamBlue->back(),
+                        'name' => $this->teamBlue->back(),
+                    ],
+                    'front' => [
+                        'id' => $this->teamBlue->front(),
+                        'name' => $this->teamBlue->front(),
+                    ],
+                ],
+                'red' => [
+                    'back' => [
+                        'id' => $this->teamRed->back(),
+                        'name' => $this->teamRed->back(),
+                    ],
+                    'front' => [
+                        'id' => $this->teamRed->front(),
+                        'name' => $this->teamRed->front(),
+                    ],
+                ],
+            ],
+        ];
     }
 }
