@@ -205,6 +205,19 @@ SQL
         self::assertInstanceOf(UniqueConstraintViolationException::class, $thrownException);
     }
 
+    public function testShouldThrowExceptionIfMatchNotFound(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        // Given
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
+
+        $matchId = new MatchId(Uuid::fromString($this->testMatchId));
+
+        // When
+        $adapter->get($matchId);
+    }
+
     public function testShouldThrowExceptionIfUnknownEvent(): void
     {
         $this->expectException(\RuntimeException::class);

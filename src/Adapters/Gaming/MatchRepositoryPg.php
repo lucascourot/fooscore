@@ -72,6 +72,10 @@ SQL
 
         $domainEventsArray = $statement->fetchAll(\PDO::FETCH_ASSOC);
 
+        if (count($domainEventsArray) === 0) {
+            throw new \InvalidArgumentException('Match not found.');
+        }
+
         $versionedEvents = array_map(function (array $domainEventArray): VersionedEvent {
             foreach ($this->knownDomainEvents as $knownDomainEventName => $knownDomainEventClass) {
                 if ($domainEventArray['event_name'] === $knownDomainEventName) {
