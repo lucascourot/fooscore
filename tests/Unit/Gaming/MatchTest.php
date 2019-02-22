@@ -63,4 +63,43 @@ class MatchTest extends TestCase
             ),
         ]);
     }
+
+    public function testShouldThrowExceptionWhenFetchingLastGoalAndNoScoredGoalYet(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        $teamBlue = new TeamBlue('a', 'b');
+        $teamRed = new TeamRed('c', 'd');
+        $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
+
+        $match = Match::reconstituteFromHistory([
+            new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed)),
+        ]);
+
+        $match->lastScoredGoal();
+    }
+
+    public function testShouldReturnLastScoredGoal(): void
+    {
+        $teamBlue = new TeamBlue('a', 'b');
+        $teamRed = new TeamRed('c', 'd');
+        $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
+
+        $match = Match::reconstituteFromHistory([
+            new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed)),
+            new VersionedEvent(2, new GoalWasScored(
+                    new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'))
+                )
+            ),
+            new VersionedEvent(3, new GoalWasScored(
+                    new Goal(2, Scorer::fromTeamAndPosition('red', 'back'))
+                )
+            ),
+        ]);
+
+        self::assertEquals(
+            new Goal(2, Scorer::fromTeamAndPosition('red', 'back')),
+            $match->lastScoredGoal()
+        );
+    }
 }

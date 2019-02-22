@@ -49,7 +49,7 @@ final class Match
 
     public function scoreGoal(Scorer $scorer): self
     {
-        $this->recordThat(new GoalWasScored(new Goal(1, $scorer)));
+        $this->recordThat(new GoalWasScored(new Goal(count($this->scoredGoals) + 1, $scorer)));
 
         return $this;
     }
@@ -59,12 +59,15 @@ final class Match
         return $this->id;
     }
 
-    /**
-     * @return Goal[]
-     */
-    public function scoredGoals(): array
+    public function lastScoredGoal(): Goal
     {
-        return $this->scoredGoals;
+        if (count($this->scoredGoals) === 0) {
+            throw new \RuntimeException('No goal scored yet.');
+        }
+
+        return array_values(
+            array_slice($this->scoredGoals, -1)
+        )[0];
     }
 
     /**
@@ -122,32 +125,19 @@ final class Match
     {
         return [
             'id' => $this->id->value()->toString(),
-            'goals' => [],
-//
-//            -            'goals' => [
-//                -                [
-//                    -                    'id' => 1,
-//                    -                    'scoredAt' => [
-//                        -                        'min' => 1,
-//                        -                        'sec' => 40,
-//                        -                    ],
-//                    -                    'scorer' => [
-//                        -                        'team' => 'blue',
-//                        -                        'position' => 'back',
-//                        -                    ],
-//                    -                ],
-//                -                [
-//                    -                    'id' => 2,
-//                    -                    'scoredAt' => [
-//                        -                        'min' => 10,
-//                        -                        'sec' => 05,
-//                        -                    ],
-//                    -                    'scorer' => [
-//                        -                        'team' => 'red',
-//                        -                        'position' => 'back',
-//                        -                    ],
-//                    -                ],
-//                -            ],
+            'goals' => array_map(function (Goal $goal): array {
+                return [
+                    'id' => $goal->number(),
+                    'scoredAt' => [
+                        'min' => 1,
+                        'sec' => 30,
+                    ],
+                    'scorer' => [
+                        'team' => $goal->scorer()->team(),
+                        'position' => $goal->scorer()->position(),
+                    ],
+                ];
+            }, $this->scoredGoals),
             'players' => [
                 'blue' => [
                     'back' => [

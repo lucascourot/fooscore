@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\{
-    Match, MatchId, MatchIdGenerator, MatchRepository, MatchWasStarted, ShowMatchDetails, TeamBlue, TeamRed, UseCaseStartMatch, VersionedEvent
+    Goal, GoalWasScored, Match, MatchId, MatchIdGenerator, MatchRepository, MatchWasStarted, Scorer, ShowMatchDetails, TeamBlue, TeamRed, UseCaseStartMatch, VersionedEvent
 };
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -43,6 +43,64 @@ class ShowMatchDetailsTest extends TestCase
         self::assertEquals([
             'id' => $matchId->value()->toString(),
             'goals' => [],
+            'players' => [
+                'blue' => [
+                    'back' => [
+                        'id' => $teamBlue->back(),
+                        'name' => $teamBlue->back(),
+                    ],
+                    'front' => [
+                        'id' => $teamBlue->front(),
+                        'name' => $teamBlue->front(),
+                    ],
+                ],
+                'red' => [
+                    'back' => [
+                        'id' => $teamRed->back(),
+                        'name' => $teamRed->back(),
+                    ],
+                    'front' => [
+                        'id' => $teamRed->front(),
+                        'name' => $teamRed->front(),
+                    ],
+                ],
+            ],
+        ], $match->details());
+    }
+
+    public function testShouldShowDetailsOfScoredRegularGoal(): void
+    {
+        // Given
+        $teamBlue = new TeamBlue('a', 'b');
+        $teamRed = new TeamRed('c', 'd');
+        $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
+        $matchRepository = Mockery::mock(MatchRepository::class, [
+            'get' => Match::reconstituteFromHistory([
+                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed)),
+                new VersionedEvent(2, new GoalWasScored(new Goal(1, Scorer::fromTeamAndPosition('blue', 'back')))),
+            ]),
+        ]);
+
+        // When
+        $showMatchDetails = new ShowMatchDetails($matchRepository);
+        $match = $showMatchDetails->showMatchDetails($matchId);
+
+        // Then
+        self::assertEquals([
+            'id' => $matchId->value()->toString(),
+            'goals' => [
+                [
+                    'id' => 1,
+                    'scoredAt' => [
+                        'min' => 1,
+                        'sec' => 30,
+                    ],
+                    'scorer' => [
+                        'team' => 'blue',
+                        'position' => 'back',
+                    ],
+                ],
+            ],
             'players' => [
                 'blue' => [
                     'back' => [

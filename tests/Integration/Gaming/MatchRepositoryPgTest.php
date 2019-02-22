@@ -54,7 +54,7 @@ class MatchRepositoryPgTest extends KernelTestCase
         $reconstitutedMatch = $adapter->get($matchId);
 
         // Then
-        self::assertEquals($match->scoredGoals(), $reconstitutedMatch->scoredGoals());
+        self::assertEquals($match->details(), $reconstitutedMatch->details());
     }
 
     public function testShouldPersistSameEventsTwiceWithDifferentVersionsOfAggregate(): void

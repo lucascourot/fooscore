@@ -18,6 +18,7 @@ use Fooscore\Identity\LogIn;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ApiController extends AbstractController
@@ -99,36 +100,31 @@ class ApiController extends AbstractController
             new MatchId(Uuid::fromString($matchId)),
             Scorer::fromTeamAndPosition($team, $position)
         );
-        /** @var Goal $lastScoredGoal */
-        $lastScoredGoal = array_values(array_slice($match->scoredGoals(), -1))[0] ?? null;
-
-        if ($lastScoredGoal === null) {
-            return $this->json([
-                'error' => 'Cannot get the scored goal.',
-            ], 400);
-        }
 
         return $this->redirect($this->generateUrl('api_goal', [
             'matchId' => $matchId,
-            'goalId' => $lastScoredGoal->number(),
+            'goalId' => $match->lastScoredGoal()->number(),
         ]));
     }
 
     /**
      * @Route("/api/matches/{matchId}/goals/{goalId}", name="api_goal", methods={"GET"})
      */
-    public function showGoal(string $goalId)
+    public function showGoal(string $matchId, string $goalId, ShowMatchDetails $showMatchDetails)
     {
-        return $this->json([
-            'id' => $goalId,
-            'scoredAt' => [
-                'min' => 1,
-                'sec' => 40,
-            ],
-            'scorer' => [
-                'team' => 'blue',
-                'position' => 'back',
-            ],
-        ]);
+        $matchWithDetail = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($matchId)));
+
+        $askedGoal = null;
+        foreach ($matchWithDetail->details()['goals'] as $scoredGoal) {
+            if (strval($scoredGoal['id']) === $goalId) {
+                $askedGoal = $scoredGoal;
+            }
+        }
+
+        if ($askedGoal === null) {
+            throw new NotFoundHttpException('Goal not found');
+        }
+
+        return $this->json($askedGoal);
     }
 }
