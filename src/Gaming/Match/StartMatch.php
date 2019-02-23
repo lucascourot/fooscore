@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
-use Fooscore\Gaming\StartMatch as StartMatchInputPort;
+use Fooscore\Gaming\CanStartMatch;
 
-final class UseCaseStartMatch implements StartMatchInputPort
+final class StartMatch implements CanStartMatch
 {
     /**
      * @var MatchIdGenerator

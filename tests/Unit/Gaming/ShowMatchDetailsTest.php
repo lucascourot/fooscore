@@ -5,7 +5,19 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\{
-    Goal, GoalWasScored, Match, MatchId, MatchIdGenerator, MatchRepository, MatchWasStarted, Scorer, ShowMatchDetails, TeamBlue, TeamRed, UseCaseStartMatch, VersionedEvent
+    Goal,
+    GoalWasScored,
+    Match,
+    MatchId,
+    MatchIdGenerator,
+    MatchRepository,
+    MatchWasStarted,
+    Scorer,
+    ShowMatchDetails,
+    StartMatch,
+    TeamBlue,
+    TeamRed,
+    VersionedEvent
 };
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;

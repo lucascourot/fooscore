@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
-use Fooscore\Gaming\ScoreGoal as ScoreGoalInputPort;
+use Fooscore\Gaming\CanScoreGoal;
 
-final class UseCaseScoreGoal implements ScoreGoalInputPort
+final class ScoreGoal implements CanScoreGoal
 {
     /**
      * @var MatchRepository

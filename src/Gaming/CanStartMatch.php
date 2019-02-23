@@ -8,7 +8,7 @@ use Fooscore\Gaming\Match\Match;
 use Fooscore\Gaming\Match\TeamBlue;
 use Fooscore\Gaming\Match\TeamRed;
 
-interface StartMatch
+interface CanStartMatch
 {
     public function startMatch(TeamBlue $teamBlue, TeamRed $teamRed): Match;
 }

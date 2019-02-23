@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Fooscore\Controller;
 
+use Fooscore\Gaming\CanScoreGoal;
+use Fooscore\Gaming\CanShowMatchDetails;
+use Fooscore\Gaming\CanStartMatch;
 use Fooscore\Gaming\Match\Goal;
 use Fooscore\Gaming\Match\MatchId;
 use Fooscore\Gaming\Match\Scorer;
 use Fooscore\Gaming\Match\TeamBlue;
 use Fooscore\Gaming\Match\TeamRed;
-use Fooscore\Gaming\ScoreGoal;
-use Fooscore\Gaming\ShowMatchDetails;
-use Fooscore\Gaming\StartMatch;
 use Fooscore\Identity\Credentials;
 use Fooscore\Identity\GetUsers;
 use Fooscore\Identity\LogIn;
@@ -60,7 +60,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/matches", name="api_start_match", methods={"POST"})
      */
-    public function startMatch(Request $request, StartMatch $startMatch)
+    public function startMatch(Request $request, CanStartMatch $startMatch)
     {
         $players = json_decode((string) $request->getContent(), true)['players'];
 
@@ -77,7 +77,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/matches/{matchId}", name="api_match", methods={"GET"})
      */
-    public function showMatch(string $matchId, ShowMatchDetails $showMatchDetails)
+    public function showMatch(string $matchId, CanShowMatchDetails $showMatchDetails)
     {
         $matchWithDetail = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($matchId)));
 
@@ -89,7 +89,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/matches/{matchId}/goals", name="api_score_goal", methods={"POST"})
      */
-    public function scoreGoal(Request $request, string $matchId, ScoreGoal $scoreGoal)
+    public function scoreGoal(Request $request, string $matchId, CanScoreGoal $scoreGoal)
     {
         $content = json_decode((string) $request->getContent(), true);
         $type = $content['type'];
@@ -110,7 +110,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/matches/{matchId}/goals/{goalId}", name="api_goal", methods={"GET"})
      */
-    public function showGoal(string $matchId, string $goalId, ShowMatchDetails $showMatchDetails)
+    public function showGoal(string $matchId, string $goalId, CanShowMatchDetails $showMatchDetails)
     {
         $matchWithDetail = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($matchId)));
 

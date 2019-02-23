@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
-use Fooscore\Gaming\ShowMatchDetails as ShowMatchDetailsInputPort;
+use Fooscore\Gaming\CanShowMatchDetails;
 
-final class ShowMatchDetails implements ShowMatchDetailsInputPort
+final class ShowMatchDetails implements CanShowMatchDetails
 {
     /**
      * @var MatchRepository

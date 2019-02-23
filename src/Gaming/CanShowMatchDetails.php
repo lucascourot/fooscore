@@ -6,9 +6,8 @@ namespace Fooscore\Gaming;
 
 use Fooscore\Gaming\Match\Match;
 use Fooscore\Gaming\Match\MatchId;
-use Fooscore\Gaming\Match\Scorer;
 
-interface ScoreGoal
+interface CanShowMatchDetails
 {
-    public function scoreGoal(MatchId $matchId, Scorer $scorer): Match;
+    public function showMatchDetails(MatchId $matchId): Match;
 }

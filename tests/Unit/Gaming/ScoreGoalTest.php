@@ -5,7 +5,17 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\{
-    Goal, GoalWasScored, Match, MatchId, MatchRepository, MatchWasStarted, Scorer, TeamBlue, TeamRed, UseCaseScoreGoal, VersionedEvent
+    Goal,
+    GoalWasScored,
+    Match,
+    MatchId,
+    MatchRepository,
+    MatchWasStarted,
+    ScoreGoal,
+    Scorer,
+    TeamBlue,
+    TeamRed,
+    VersionedEvent
 };
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -35,7 +45,7 @@ class ScoreGoalTest extends TestCase
         );
 
         // When
-        $scoreGoalUseCase = new UseCaseScoreGoal($matchRepository);
+        $scoreGoalUseCase = new ScoreGoal($matchRepository);
         $scorer = Scorer::fromTeamAndPosition('blue', 'back');
         $match = $scoreGoalUseCase->scoreGoal($matchId, $scorer);
 
@@ -60,7 +70,7 @@ class ScoreGoalTest extends TestCase
         );
 
         // When
-        $scoreGoalUseCase = new UseCaseScoreGoal($matchRepository);
+        $scoreGoalUseCase = new ScoreGoal($matchRepository);
         $scorer = Scorer::fromTeamAndPosition('blue', 'back');
         $scoreGoalUseCase->scoreGoal($matchId, $scorer);
         $match = $scoreGoalUseCase->scoreGoal($matchId, $scorer);
