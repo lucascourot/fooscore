@@ -13,16 +13,22 @@ final class ScoreGoal implements CanScoreGoal
      */
     private $matchRepository;
 
-    public function __construct(MatchRepository $matchRepository)
+    /**
+     * @var Clock
+     */
+    private $clock;
+
+    public function __construct(MatchRepository $matchRepository, Clock $clock)
     {
         $this->matchRepository = $matchRepository;
+        $this->clock = $clock;
     }
 
     public function scoreGoal(MatchId $matchId, Scorer $scorer): Match
     {
         $match = $this->matchRepository->get($matchId);
 
-        $match->scoreGoal($scorer);
+        $match->scoreGoal($scorer, $this->clock);
 
         $this->matchRepository->save($match);
 

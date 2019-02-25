@@ -7,17 +7,16 @@ namespace Fooscore\Controller;
 use Fooscore\Gaming\CanScoreGoal;
 use Fooscore\Gaming\CanShowMatchDetails;
 use Fooscore\Gaming\CanStartMatch;
-use Fooscore\Gaming\Match\Goal;
-use Fooscore\Gaming\Match\MatchId;
-use Fooscore\Gaming\Match\Scorer;
-use Fooscore\Gaming\Match\TeamBlue;
-use Fooscore\Gaming\Match\TeamRed;
+use Fooscore\Gaming\Match\{
+    Goal, MatchId, Scorer, TeamBlue, TeamRed
+};
 use Fooscore\Identity\Credentials;
 use Fooscore\Identity\GetUsers;
 use Fooscore\Identity\LogIn;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -37,9 +36,7 @@ class ApiController extends AbstractController
         );
 
         if ($token === null) {
-            return $this->json([
-                'error' => 'Cannot log in the user.',
-            ], 400);
+            throw new BadRequestHttpException('Cannot log in the user.');
         }
 
         return $this->json([

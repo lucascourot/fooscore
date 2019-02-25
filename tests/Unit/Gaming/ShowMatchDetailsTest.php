@@ -5,19 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\{
-    Goal,
-    GoalWasScored,
-    Match,
-    MatchId,
-    MatchIdGenerator,
-    MatchRepository,
-    MatchWasStarted,
-    Scorer,
-    ShowMatchDetails,
-    StartMatch,
-    TeamBlue,
-    TeamRed,
-    VersionedEvent
+    Goal, GoalWasScored, Match, MatchId, MatchIdGenerator, MatchRepository, MatchWasStarted, ScoredAt, Scorer, ShowMatchDetails, StartMatch, TeamBlue, TeamRed, VersionedEvent
 };
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -43,7 +31,7 @@ class ShowMatchDetailsTest extends TestCase
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
         $matchRepository = Mockery::mock(MatchRepository::class, [
             'get' => Match::reconstituteFromHistory([
-                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed)),
+                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, new \DateTimeImmutable('2000-01-01 00:00:00'))),
             ]),
         ]);
 
@@ -88,8 +76,8 @@ class ShowMatchDetailsTest extends TestCase
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
         $matchRepository = Mockery::mock(MatchRepository::class, [
             'get' => Match::reconstituteFromHistory([
-                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed)),
-                new VersionedEvent(2, new GoalWasScored(new Goal(1, Scorer::fromTeamAndPosition('blue', 'back')))),
+                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, new \DateTimeImmutable('2000-01-01 00:00:00'))),
+                new VersionedEvent(2, new GoalWasScored(new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'), new ScoredAt(1, 30)))),
             ]),
         ]);
 

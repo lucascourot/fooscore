@@ -31,7 +31,8 @@ final class GoalWasScored implements DomainEvent
         return new self(
             new Goal(
                 $eventData['number'],
-                Scorer::fromTeamAndPosition($eventData['team'], $eventData['position'])
+                Scorer::fromTeamAndPosition($eventData['team'], $eventData['position']),
+                new ScoredAt($eventData['min'], $eventData['sec'])
             )
         );
     }
@@ -42,6 +43,8 @@ final class GoalWasScored implements DomainEvent
             'number' => $this->goal->number(),
             'team' => $this->goal->scorer()->team(),
             'position' => $this->goal->scorer()->position(),
+            'min' => $this->goal->scoredAt()->min(),
+            'sec' => $this->goal->scoredAt()->sec(),
         ];
     }
 }

@@ -39,17 +39,24 @@ final class Match
      */
     private $teamRed;
 
-    public static function start(MatchId $matchId, TeamBlue $teamBlue, TeamRed $teamRed): self
+    /**
+     * @var \DateTimeImmutable
+     */
+    private $startedAt;
+
+    public static function start(MatchId $matchId, TeamBlue $teamBlue, TeamRed $teamRed, Clock $clock): self
     {
         $self = new self();
-        $self->recordThat(new MatchWasStarted($matchId, $teamBlue, $teamRed));
+        $self->recordThat(new MatchWasStarted($matchId, $teamBlue, $teamRed, $clock->now()));
 
         return $self;
     }
 
-    public function scoreGoal(Scorer $scorer): self
+    public function scoreGoal(Scorer $scorer, Clock $clock): self
     {
-        $this->recordThat(new GoalWasScored(new Goal(count($this->scoredGoals) + 1, $scorer)));
+        $this->recordThat(new GoalWasScored(
+            new Goal(count($this->scoredGoals) + 1, $scorer, ScoredAt::fromDifference($this->startedAt, $clock->now()))
+        ));
 
         return $this;
     }
@@ -87,16 +94,17 @@ final class Match
 
     private function apply(DomainEvent $event): void
     {
-        if ($event instanceof GoalWasScored) {
-            $this->scoredGoals[] = $event->goal();
-
-            return;
-        }
-
         if ($event instanceof MatchWasStarted) {
             $this->id = $event->matchId();
             $this->teamBlue = $event->teamBlue();
             $this->teamRed = $event->teamRed();
+            $this->startedAt = $event->startedAt();
+
+            return;
+        }
+
+        if ($event instanceof GoalWasScored) {
+            $this->scoredGoals[] = $event->goal();
 
             return;
         }
@@ -129,8 +137,8 @@ final class Match
                 return [
                     'id' => $goal->number(),
                     'scoredAt' => [
-                        'min' => 1,
-                        'sec' => 30,
+                        'min' => $goal->scoredAt()->min(),
+                        'sec' => $goal->scoredAt()->sec(),
                     ],
                     'scorer' => [
                         'team' => $goal->scorer()->team(),

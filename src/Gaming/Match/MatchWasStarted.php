@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
+use DateTimeImmutable;
 use Ramsey\Uuid\Uuid;
 
 final class MatchWasStarted implements DomainEvent
@@ -23,11 +24,17 @@ final class MatchWasStarted implements DomainEvent
      */
     private $teamRed;
 
-    public function __construct(MatchId $matchId, TeamBlue $teamBlue, TeamRed $teamRed)
+    /**
+     * @var DateTimeImmutable
+     */
+    private $startedAt;
+
+    public function __construct(MatchId $matchId, TeamBlue $teamBlue, TeamRed $teamRed, DateTimeImmutable $startedAt)
     {
         $this->matchId = $matchId;
         $this->teamBlue = $teamBlue;
         $this->teamRed = $teamRed;
+        $this->startedAt = $startedAt;
     }
 
     public function matchId(): MatchId
@@ -45,6 +52,11 @@ final class MatchWasStarted implements DomainEvent
         return $this->teamRed;
     }
 
+    public function startedAt(): DateTimeImmutable
+    {
+        return $this->startedAt;
+    }
+
     public static function eventName(): string
     {
         return 'match_was_started';
@@ -55,7 +67,8 @@ final class MatchWasStarted implements DomainEvent
         return new self(
             new MatchId(Uuid::fromString($eventData['matchId'])),
             new TeamBlue($eventData['blue']['back'], $eventData['blue']['front']),
-            new TeamRed($eventData['red']['back'], $eventData['red']['front'])
+            new TeamRed($eventData['red']['back'], $eventData['red']['front']),
+            new DateTimeImmutable($eventData['startedAt'])
         );
     }
 
@@ -71,6 +84,7 @@ final class MatchWasStarted implements DomainEvent
                 'back' => $this->teamRed->back(),
                 'front' => $this->teamRed->front(),
             ],
+            'startedAt' => $this->startedAt->format(DateTimeImmutable::W3C),
         ];
     }
 }

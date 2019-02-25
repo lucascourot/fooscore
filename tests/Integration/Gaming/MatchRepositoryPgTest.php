@@ -8,6 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Fooscore\Adapters\Gaming\DomainEventsFinder;
 use Fooscore\Adapters\Gaming\MatchRepositoryPg;
+use Fooscore\Adapters\Gaming\SystemClock;
 use Fooscore\Gaming\Match\{
     Match, MatchId, Scorer, TeamBlue, TeamRed
 };
@@ -46,8 +47,10 @@ class MatchRepositoryPgTest extends KernelTestCase
         $teamRed = new TeamRed('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
-        $match = Match::start($matchId, $teamBlue, $teamRed);
-        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'));
+        $clock = new SystemClock();
+
+        $match = Match::start($matchId, $teamBlue, $teamRed, $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
         $adapter->save($match);
 
         // When
@@ -66,10 +69,12 @@ class MatchRepositoryPgTest extends KernelTestCase
         $teamRed = new TeamRed('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
+        $clock = new SystemClock();
+
         // When
-        $match = Match::start($matchId, $teamBlue, $teamRed);
-        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'));
-        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'));
+        $match = Match::start($matchId, $teamBlue, $teamRed, $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
         $adapter->save($match);
 
         // Then
@@ -93,12 +98,14 @@ class MatchRepositoryPgTest extends KernelTestCase
         $teamRed = new TeamRed('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
-        $match = Match::start($matchId, $teamBlue, $teamRed);
+        $clock = new SystemClock();
+
+        $match = Match::start($matchId, $teamBlue, $teamRed, $clock);
         $adapter->save($match);
 
         // When
         $reconstitutedMatch = $adapter->get($matchId);
-        $reconstitutedMatch->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'));
+        $reconstitutedMatch->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
         $adapter->save($reconstitutedMatch);
 
         // Then
@@ -121,16 +128,18 @@ class MatchRepositoryPgTest extends KernelTestCase
         $teamRed = new TeamRed('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
-        $match = Match::start($matchId, $teamBlue, $teamRed);
+        $clock = new SystemClock();
+
+        $match = Match::start($matchId, $teamBlue, $teamRed, $clock);
         $adapter->save($match);
 
         // When
         $firstFetchedAggregate = $adapter->get($matchId);
-        $firstFetchedAggregate->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'));
+        $firstFetchedAggregate->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
 
         $raceConditionAggregate = $adapter->get($matchId);
-        $raceConditionAggregate->scoreGoal(Scorer::fromTeamAndPosition('red', 'front'));
-        $raceConditionAggregate->scoreGoal(Scorer::fromTeamAndPosition('red', 'back'));
+        $raceConditionAggregate->scoreGoal(Scorer::fromTeamAndPosition('red', 'front'), $clock);
+        $raceConditionAggregate->scoreGoal(Scorer::fromTeamAndPosition('red', 'back'), $clock);
 
         $adapter->save($firstFetchedAggregate);
 

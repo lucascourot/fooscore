@@ -16,10 +16,16 @@ final class Goal
      */
     private $scorer;
 
-    public function __construct(int $number, Scorer $scorer)
+    /**
+     * @var ScoredAt
+     */
+    private $scoredAt;
+
+    public function __construct(int $number, Scorer $scorer, ScoredAt $scoredAt)
     {
         $this->number = $number;
         $this->scorer = $scorer;
+        $this->scoredAt = $scoredAt;
     }
 
     public function number(): int
@@ -30,5 +36,10 @@ final class Goal
     public function scorer(): Scorer
     {
         return $this->scorer;
+    }
+
+    public function scoredAt(): ScoredAt
+    {
+        return $this->scoredAt;
     }
 }

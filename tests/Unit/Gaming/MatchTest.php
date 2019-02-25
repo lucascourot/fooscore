@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\{
-    DomainEvent, Goal, GoalWasScored, Match, MatchId, MatchWasStarted, Scorer, TeamBlue, TeamRed, VersionedEvent
+    DomainEvent, Goal, GoalWasScored, Match, MatchId, MatchWasStarted, ScoredAt, Scorer, TeamBlue, TeamRed, VersionedEvent
 };
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
@@ -27,9 +27,9 @@ class MatchTest extends TestCase
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
 
         $match = Match::reconstituteFromHistory([
-            new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed)),
+            new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, new \DateTimeImmutable('2000-01-01 00:00:00'))),
             new VersionedEvent(2, new GoalWasScored(
-                    new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'))
+                    new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'), new ScoredAt(1, 30))
                 )
             ),
         ]);
@@ -73,7 +73,7 @@ class MatchTest extends TestCase
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
 
         $match = Match::reconstituteFromHistory([
-            new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed)),
+            new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, new \DateTimeImmutable('2000-01-01 00:00:00'))),
         ]);
 
         $match->lastScoredGoal();
@@ -86,19 +86,19 @@ class MatchTest extends TestCase
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
 
         $match = Match::reconstituteFromHistory([
-            new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed)),
+            new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, new \DateTimeImmutable('2000-01-01 00:00:00'))),
             new VersionedEvent(2, new GoalWasScored(
-                    new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'))
+                    new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'), new ScoredAt(1, 30))
                 )
             ),
             new VersionedEvent(3, new GoalWasScored(
-                    new Goal(2, Scorer::fromTeamAndPosition('red', 'back'))
+                    new Goal(2, Scorer::fromTeamAndPosition('red', 'back'), new ScoredAt(1, 30))
                 )
             ),
         ]);
 
         self::assertEquals(
-            new Goal(2, Scorer::fromTeamAndPosition('red', 'back')),
+            new Goal(2, Scorer::fromTeamAndPosition('red', 'back'), new ScoredAt(1, 30)),
             $match->lastScoredGoal()
         );
     }

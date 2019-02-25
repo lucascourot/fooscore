@@ -40,14 +40,16 @@ class StartMatchTest extends TestCase
             'generate' => $matchId,
         ]);
         $matchRepository = Mockery::spy(MatchRepository::class);
+        $startedAt = new \DateTimeImmutable('2000-01-01 00:00:00');
+        $fixedClock = new FixedClock($startedAt);
 
         // When
-        $startMatchUseCase = new StartMatch($matchIdGenerator, $matchRepository);
+        $startMatchUseCase = new StartMatch($matchIdGenerator, $matchRepository, $fixedClock);
         $match = $startMatchUseCase->startMatch($teamBlue, $teamRed);
 
         // Then
         self::assertEquals([
-            new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed)),
+            new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, $startedAt)),
         ], $match->recordedEvents());
         self::assertSame($matchId->value()->toString(), $match->id()->value()->toString());
         $matchRepository->shouldHaveReceived()->save($match)->once();
