@@ -10,19 +10,19 @@ help: ## This help
 .PHONY: test unit-test mutation_test
 test: cs phpstan ui-test coverage mutation_test
 
-ui-test: ## Run ui tests
+ui-test: vendor ## Run ui tests
 	php bin/phpunit --group=ui
 
-integration-test: ## Run integration tests
+integration-test: vendor ## Run integration tests
 	php bin/phpunit --group=integration
 
-unit-test: ## Run unit tests
+unit-test: vendor ## Run unit tests
 	php bin/phpunit --testdox --group=unit
 
-mutation_test: ## Run mutation tests
+mutation_test: vendor ## Run mutation tests
 	php bin/infection --threads=4
 
-coverage: ## Run test coverage
+coverage: vendor ## Run test coverage
 	php bin/phpunit --exclude-group=ui --coverage-text --coverage-clover ./build/logs/clover.xml --coverage-xml=build/coverage/coverage-xml --log-junit=build/coverage/phpunit.junit.xml
 
 .PHONY: check_security
@@ -32,27 +32,35 @@ check_security: ## Check for dependency vulnerabilities
 # Coding Style
 
 .PHONY: cs cs-fix cs-ci
-cs: ## Check code style
+cs: vendor ## Check code style
 	./bin/php-cs-fixer fix --dry-run --stop-on-violation --diff
 
-cs-fix: ## Fix code style
+cs-fix: vendor ## Fix code style
 	./bin/php-cs-fixer fix
 
-cs-ci: ## Run Continuous Integration code style check
+cs-ci: vendor ## Run Continuous Integration code style check
 	./bin/php-cs-fixer fix --dry-run --using-cache=no --verbose
 
 # Static Analysis
 
 .PHONY: phpstan
-phpstan: ## Check static analysis
+phpstan: vendor ## Check static analysis
 	./bin/phpstan analyse src tests --level=max
 
 # Fooscore
 
+.PHONY: install
+install: vendor
+
+vendor: composer.json composer.lock
+	composer install
+
 .PHONY: start
-start: ## Starts the server
+start: .web-server-pid
+
+.web-server-pid: vendor ## Starts the server
 	php bin/console server:start 127.0.0.1:8080
 
 .PHONY: stop
-stop: ## Stop the server
+stop: vendor ## Stop the server
 	php bin/console server:stop
