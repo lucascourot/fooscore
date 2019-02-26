@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Fooscore\Gaming\Match;
+namespace Fooscore\Gaming\MatchDetails;
 
 use Fooscore\Gaming\CanShowMatchDetails;
+use Fooscore\Gaming\Match\{
+    Match, MatchId, MatchRepository
+};
 
 final class ShowMatchDetails implements CanShowMatchDetails
 {
@@ -18,10 +21,10 @@ final class ShowMatchDetails implements CanShowMatchDetails
         $this->matchRepository = $matchRepository;
     }
 
-    public function showMatchDetails(MatchId $matchId): Match
+    public function showMatchDetails(MatchId $matchId): MatchDetails
     {
         $match = $this->matchRepository->get($matchId);
 
-        return $match;
+        return MatchDetails::fromMatch($match);
     }
 }

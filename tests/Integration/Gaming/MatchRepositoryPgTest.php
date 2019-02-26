@@ -12,6 +12,7 @@ use Fooscore\Adapters\Gaming\SystemClock;
 use Fooscore\Gaming\Match\{
     Match, MatchId, Scorer, TeamBlue, TeamRed
 };
+use Fooscore\Gaming\MatchDetails\MatchDetails;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -57,7 +58,7 @@ class MatchRepositoryPgTest extends KernelTestCase
         $reconstitutedMatch = $adapter->get($matchId);
 
         // Then
-        self::assertEquals($match->details(), $reconstitutedMatch->details());
+        self::assertEquals(MatchDetails::fromMatch($match)->details(), MatchDetails::fromMatch($reconstitutedMatch)->details());
     }
 
     public function testShouldPersistSameEventsTwiceWithDifferentVersionsOfAggregate(): void

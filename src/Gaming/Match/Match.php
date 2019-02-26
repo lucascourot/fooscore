@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
+use DateTimeImmutable;
+
 /**
  * Match aggregate root
  */
 final class Match
 {
-    private const MINUTE_IN_SECONDS = 60;
+    use EventSourcedAggregate;
 
     /**
      * @var MatchId
@@ -22,16 +24,6 @@ final class Match
     private $scoredGoals = [];
 
     /**
-     * @var VersionedEvent[]
-     */
-    private $recordedEvents = [];
-
-    /**
-     * @var int
-     */
-    private $aggregateVersion = 0;
-
-    /**
      * @var TeamBlue
      */
     private $teamBlue;
@@ -42,7 +34,7 @@ final class Match
     private $teamRed;
 
     /**
-     * @var \DateTimeImmutable
+     * @var DateTimeImmutable
      */
     private $startedAt;
 
@@ -57,41 +49,14 @@ final class Match
     public function scoreGoal(Scorer $scorer, Clock $clock): self
     {
         $this->recordThat(new GoalWasScored(
-            new Goal(count($this->scoredGoals) + 1, $scorer, ScoredAt::fromDifference($this->startedAt, $clock->now()))
+            new Goal(
+                count($this->scoredGoals) + 1,
+                $scorer,
+                ScoredAt::fromDifference($this->startedAt, $clock->now())
+            )
         ));
 
         return $this;
-    }
-
-    public function id(): MatchId
-    {
-        return $this->id;
-    }
-
-    public function lastScoredGoal(): Goal
-    {
-        if (count($this->scoredGoals) === 0) {
-            throw new \RuntimeException('No goal scored yet.');
-        }
-
-        return array_values(
-            array_slice($this->scoredGoals, -1)
-        )[0];
-    }
-
-    /**
-     * @return VersionedEvent[]
-     */
-    public function recordedEvents(): array
-    {
-        return $this->recordedEvents;
-    }
-
-    private function recordThat(DomainEvent $event): void
-    {
-        $this->aggregateVersion++;
-        $this->recordedEvents[] = new VersionedEvent($this->aggregateVersion, $event);
-        $this->apply($event);
     }
 
     private function apply(DomainEvent $event): void
@@ -116,60 +81,23 @@ final class Match
         );
     }
 
-    /**
-     * @param VersionedEvent[] $versionedEvents
-     */
-    public static function reconstituteFromHistory(array $versionedEvents): self
+    public function id(): MatchId
     {
-        $self = new self();
-
-        foreach ($versionedEvents as $versionedEvent) {
-            $self->aggregateVersion = $versionedEvent->aggregateVersion();
-            $self->apply($versionedEvent->domainEvent());
-        }
-
-        return $self;
+        return $this->id;
     }
 
-    public function details(): array
+    public function scoredGoals(): array
     {
-        return [
-            'id' => $this->id->value()->toString(),
-            'goals' => array_map(function (Goal $goal): array {
-                return [
-                    'id' => $goal->number(),
-                    'scoredAt' => [
-                        'min' => floor($goal->scoredAt()->sec() / self::MINUTE_IN_SECONDS),
-                        'sec' => $goal->scoredAt()->sec() % self::MINUTE_IN_SECONDS,
-                    ],
-                    'scorer' => [
-                        'team' => $goal->scorer()->team(),
-                        'position' => $goal->scorer()->position(),
-                    ],
-                ];
-            }, $this->scoredGoals),
-            'players' => [
-                'blue' => [
-                    'back' => [
-                        'id' => $this->teamBlue->back(),
-                        'name' => $this->teamBlue->back(),
-                    ],
-                    'front' => [
-                        'id' => $this->teamBlue->front(),
-                        'name' => $this->teamBlue->front(),
-                    ],
-                ],
-                'red' => [
-                    'back' => [
-                        'id' => $this->teamRed->back(),
-                        'name' => $this->teamRed->back(),
-                    ],
-                    'front' => [
-                        'id' => $this->teamRed->front(),
-                        'name' => $this->teamRed->front(),
-                    ],
-                ],
-            ],
-        ];
+        return $this->scoredGoals;
+    }
+
+    public function teamBlue(): TeamBlue
+    {
+        return $this->teamBlue;
+    }
+
+    public function teamRed(): TeamRed
+    {
+        return $this->teamRed;
     }
 }

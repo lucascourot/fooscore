@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\{
-    Goal, GoalWasScored, Match, MatchId, MatchIdGenerator, MatchRepository, MatchWasStarted, ScoredAt, Scorer, ShowMatchDetails, StartMatch, TeamBlue, TeamRed, VersionedEvent
+    Goal, GoalWasScored, Match, MatchId, MatchIdGenerator, MatchRepository, MatchWasStarted, ScoredAt, Scorer, StartMatch, TeamBlue, TeamRed, VersionedEvent
 };
+use Fooscore\Gaming\MatchDetails\ShowMatchDetails;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;

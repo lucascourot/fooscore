@@ -10,6 +10,7 @@ use Fooscore\Gaming\CanStartMatch;
 use Fooscore\Gaming\Match\{
     Goal, MatchId, Scorer, TeamBlue, TeamRed
 };
+use Fooscore\Gaming\MatchDetails\MatchDetails;
 use Fooscore\Identity\Credentials;
 use Fooscore\Identity\GetUsers;
 use Fooscore\Identity\LogIn;
@@ -100,7 +101,7 @@ class ApiController extends AbstractController
 
         return $this->redirect($this->generateUrl('api_goal', [
             'matchId' => $matchId,
-            'goalId' => $match->lastScoredGoal()->number(),
+            'goalId' => MatchDetails::fromMatch($match)->lastScoredGoal()->number(),
         ]));
     }
 
