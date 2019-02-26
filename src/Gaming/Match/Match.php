@@ -9,6 +9,8 @@ namespace Fooscore\Gaming\Match;
  */
 final class Match
 {
+    private const MINUTE_IN_SECONDS = 60;
+
     /**
      * @var MatchId
      */
@@ -137,8 +139,8 @@ final class Match
                 return [
                     'id' => $goal->number(),
                     'scoredAt' => [
-                        'min' => $goal->scoredAt()->min(),
-                        'sec' => $goal->scoredAt()->sec(),
+                        'min' => floor($goal->scoredAt()->sec() / self::MINUTE_IN_SECONDS),
+                        'sec' => $goal->scoredAt()->sec() % self::MINUTE_IN_SECONDS,
                     ],
                     'scorer' => [
                         'team' => $goal->scorer()->team(),

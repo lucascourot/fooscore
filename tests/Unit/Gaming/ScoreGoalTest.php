@@ -58,9 +58,9 @@ class ScoreGoalTest extends TestCase
 
         // Then
         self::assertEquals([
-            new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(1, 30)))),
+            new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(90)))),
         ], $match->recordedEvents());
-        self::assertEquals(new Goal(1, $scorer, new ScoredAt(1, 30)), $match->lastScoredGoal());
+        self::assertEquals(new Goal(1, $scorer, new ScoredAt(90)), $match->lastScoredGoal());
         self::assertEquals(1, $match->lastScoredGoal()->number());
         $matchRepository->shouldHaveReceived()->save($match)->once();
     }
@@ -89,10 +89,10 @@ class ScoreGoalTest extends TestCase
 
         // Then
         self::assertEquals([
-            new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(1, 30)))),
-            new VersionedEvent(3, new GoalWasScored(new Goal(2, $scorer, new ScoredAt(1, 30)))),
+            new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(90)))),
+            new VersionedEvent(3, new GoalWasScored(new Goal(2, $scorer, new ScoredAt(90)))),
         ], $match->recordedEvents());
-        self::assertEquals(new Goal(2, $scorer, new ScoredAt(1, 30)), $match->lastScoredGoal());
+        self::assertEquals(new Goal(2, $scorer, new ScoredAt(90)), $match->lastScoredGoal());
         self::assertEquals(2, $match->lastScoredGoal()->number());
         $matchRepository->shouldHaveReceived()->save($match)->twice();
     }

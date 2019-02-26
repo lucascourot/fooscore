@@ -29,7 +29,7 @@ class MatchTest extends TestCase
         $match = Match::reconstituteFromHistory([
             new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, new \DateTimeImmutable('2000-01-01 00:00:00'))),
             new VersionedEvent(2, new GoalWasScored(
-                    new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'), new ScoredAt(1, 30))
+                    new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'), new ScoredAt(90))
                 )
             ),
         ]);
@@ -88,17 +88,17 @@ class MatchTest extends TestCase
         $match = Match::reconstituteFromHistory([
             new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, new \DateTimeImmutable('2000-01-01 00:00:00'))),
             new VersionedEvent(2, new GoalWasScored(
-                    new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'), new ScoredAt(1, 30))
+                    new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'), new ScoredAt(90))
                 )
             ),
             new VersionedEvent(3, new GoalWasScored(
-                    new Goal(2, Scorer::fromTeamAndPosition('red', 'back'), new ScoredAt(1, 30))
+                    new Goal(2, Scorer::fromTeamAndPosition('red', 'back'), new ScoredAt(90))
                 )
             ),
         ]);
 
         self::assertEquals(
-            new Goal(2, Scorer::fromTeamAndPosition('red', 'back'), new ScoredAt(1, 30)),
+            new Goal(2, Scorer::fromTeamAndPosition('red', 'back'), new ScoredAt(90)),
             $match->lastScoredGoal()
         );
     }
