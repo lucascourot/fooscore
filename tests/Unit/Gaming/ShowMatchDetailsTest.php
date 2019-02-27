@@ -126,4 +126,56 @@ class ShowMatchDetailsTest extends TestCase
             ],
         ], $match->details());
     }
+
+    public function testShouldThrowExceptionWhenFetchingLastGoalAndNoScoredGoalYet(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        // Given
+        $teamBlue = new TeamBlue('a', 'b');
+        $teamRed = new TeamRed('c', 'd');
+        $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
+        $matchRepository = Mockery::mock(MatchRepository::class, [
+            'get' => Match::reconstituteFromHistory([
+                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, new \DateTimeImmutable('2000-01-01 00:00:00'))),
+            ]),
+        ]);
+
+        // When
+        $showMatchDetails = new ShowMatchDetails($matchRepository);
+        $matchWithDetails = $showMatchDetails->showMatchDetails($matchId);
+
+        $matchWithDetails->lastScoredGoal();
+    }
+
+    public function testShouldReturnLastScoredGoal(): void
+    {
+        // Given
+        $teamBlue = new TeamBlue('a', 'b');
+        $teamRed = new TeamRed('c', 'd');
+        $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
+        $matchRepository = Mockery::mock(MatchRepository::class, [
+            'get' => Match::reconstituteFromHistory([
+                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, new \DateTimeImmutable('2000-01-01 00:00:00'))),
+                new VersionedEvent(2, new GoalWasScored(
+                        new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'), new ScoredAt(90))
+                    )
+                ),
+                new VersionedEvent(3, new GoalWasScored(
+                        new Goal(2, Scorer::fromTeamAndPosition('red', 'back'), new ScoredAt(90))
+                    )
+                ),
+            ]),
+        ]);
+
+        // When
+        $showMatchDetails = new ShowMatchDetails($matchRepository);
+        $matchWithDetails = $showMatchDetails->showMatchDetails($matchId);
+
+        // Then
+        self::assertEquals(
+            new Goal(2, Scorer::fromTeamAndPosition('red', 'back'), new ScoredAt(90)),
+            $matchWithDetails->lastScoredGoal()
+        );
+    }
 }
