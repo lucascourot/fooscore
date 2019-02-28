@@ -120,6 +120,56 @@ class MatchRepositoryPgTest extends KernelTestCase
         self::assertSame([1, 2], array_column($domainEventsArray, 'aggregate_version'));
     }
 
+    public function testShouldPersistAndReadMatchWasWon(): void
+    {
+        // Given
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
+
+        $teamBlue = new TeamBlue('a', 'b');
+        $teamRed = new TeamRed('c', 'd');
+        $matchId = new MatchId(Uuid::fromString($this->testMatchId));
+
+        $clock = new SystemClock();
+
+        $match = Match::start($matchId, $teamBlue, $teamRed, $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+
+        // When
+        $adapter->save($match);
+        $reconstitutedMatch = $adapter->get($matchId);
+
+        // Then
+        $domainEventsArray = $this->fetchDomainEventsForAggregate($matchId);
+
+        self::assertInstanceOf(Match::class, $reconstitutedMatch);
+
+        self::assertSame([
+            'match_was_started',
+            'goal_was_scored',
+            'goal_was_scored',
+            'goal_was_scored',
+            'goal_was_scored',
+            'goal_was_scored',
+            'goal_was_scored',
+            'goal_was_scored',
+            'goal_was_scored',
+            'goal_was_scored',
+            'goal_was_scored',
+            'match_was_won',
+        ], array_column($domainEventsArray, 'event_name'));
+
+        self::assertSame(end($domainEventsArray)['event_data'], '{"teamWinner": "blue"}');
+    }
+
     public function testShouldAvoidRaceConditions(): void
     {
         // Given

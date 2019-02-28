@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Fooscore\Gaming\Match;
 
 use DateTimeImmutable;
+use RuntimeException;
 
 /**
  * Match aggregate root
  */
 final class Match
 {
+    private const MAX_SCORE = 10;
+
     use EventSourcedAggregate;
 
     /**
@@ -38,6 +41,21 @@ final class Match
      */
     private $startedAt;
 
+    /**
+     * @var int
+     */
+    private $scoreBlue = 0;
+
+    /**
+     * @var int
+     */
+    private $scoreRed = 0;
+
+    /**
+     * @var bool
+     */
+    private $isWon = false;
+
     public static function start(MatchId $matchId, TeamBlue $teamBlue, TeamRed $teamRed, Clock $clock): self
     {
         $self = new self();
@@ -48,6 +66,10 @@ final class Match
 
     public function scoreGoal(Scorer $scorer, Clock $clock): self
     {
+        if ($this->isWon) {
+            throw new RuntimeException('Match has already been won.');
+        }
+
         $this->recordThat(new GoalWasScored(
             new Goal(
                 count($this->scoredGoals) + 1,
@@ -55,6 +77,10 @@ final class Match
                 ScoredAt::fromDifference($this->startedAt, $clock->now())
             )
         ));
+
+        if ($this->scoreBlue === self::MAX_SCORE || $this->scoreRed === self::MAX_SCORE) {
+            $this->recordThat(new MatchWasWon($scorer->team()));
+        }
 
         return $this;
     }
@@ -72,6 +98,19 @@ final class Match
 
         if ($event instanceof GoalWasScored) {
             $this->scoredGoals[] = $event->goal();
+
+            if ($event->goal()->scorer()->team() === 'blue') {
+                $this->scoreBlue++;
+            }
+            if ($event->goal()->scorer()->team() === 'red') {
+                $this->scoreRed++;
+            }
+
+            return;
+        }
+
+        if ($event instanceof MatchWasWon) {
+            $this->isWon = true;
 
             return;
         }
