@@ -122,6 +122,26 @@
         #goal-types.position-back #middlefield {
             display: none;
         }
+
+        .scores p {
+            color: #ffffff;
+            position: absolute;
+            width: 60px;
+            margin: 0 0 0 -30px;
+            left: 50%;
+            user-select: none;
+            font-size: xx-large;
+            text-align: center;
+            line-height: 80px;
+        }
+
+        #blue-score {
+            top: 0;
+        }
+
+        #red-score {
+            top: 520px;
+        }
     </style>
 </head>
 <body>
@@ -144,6 +164,11 @@
             <rect height="80" width="160" y="518" x="200" stroke-width="0"></rect>
         </g>
     </svg>
+</div>
+
+<div class="scores">
+    <p id="blue-score"></p>
+    <p id="red-score"></p>
 </div>
 
 <div class="labels names">
@@ -193,10 +218,27 @@
                 headers,
                 body: JSON.stringify({team, position, type})
             });
+
+            const response = await rawResponse.json();
+
             if (rawResponse.status >= 400) {
-                throw Error('Server error: please retry :(');
+                throw Error(response.message);
             }
-            return await rawResponse.json();
+
+            return response;
+        };
+
+        const updateScore = (scoreBlue, scoreRed) => {
+            document.getElementById('blue-score').innerText = scoreBlue;
+            document.getElementById('red-score').innerText = scoreRed;
+        };
+
+        const fetchMatchState = async () => {
+            const matchInfo = await fetchMatchInfo();
+            matchInfo.goals.forEach(appendGoalToList);
+            updateScore(matchInfo.score.blue, matchInfo.score.red);
+
+            return matchInfo;
         };
 
         const scoreGoal = async (type) => {
@@ -206,7 +248,12 @@
             try {
                 const goal = await sendGoalToServer(team, position, type);
 
-                appendGoalToList(goal);
+                // appendGoalToList(goal);
+
+                document.getElementById(`blue-goals`).innerHTML = '';
+                document.getElementById(`red-goals`).innerHTML = '';
+
+                await fetchMatchState();
             } catch (e) {
                 alert(e.message);
             }
@@ -245,9 +292,7 @@
         };
 
         // ===== Main
-        const matchInfo = await fetchMatchInfo();
-
-        matchInfo.goals.forEach(appendGoalToList);
+        const matchInfo = await fetchMatchState();
 
         renderPlayers(matchInfo.players);
 

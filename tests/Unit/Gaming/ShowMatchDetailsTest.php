@@ -43,6 +43,11 @@ class ShowMatchDetailsTest extends TestCase
         // Then
         self::assertEquals([
             'id' => $matchId->value()->toString(),
+            'isWon' => false,
+            'score' => [
+                'blue' => 0,
+                'red' => 0,
+            ],
             'goals' => [],
             'players' => [
                 'blue' => [
@@ -79,6 +84,8 @@ class ShowMatchDetailsTest extends TestCase
             'get' => Match::reconstituteFromHistory([
                 new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, new \DateTimeImmutable('2000-01-01 00:00:00'))),
                 new VersionedEvent(2, new GoalWasScored(new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'), new ScoredAt(90)))),
+                new VersionedEvent(3, new GoalWasScored(new Goal(2, Scorer::fromTeamAndPosition('red', 'back'), new ScoredAt(90)))),
+                new VersionedEvent(4, new GoalWasScored(new Goal(3, Scorer::fromTeamAndPosition('red', 'back'), new ScoredAt(90)))),
             ]),
         ]);
 
@@ -89,6 +96,11 @@ class ShowMatchDetailsTest extends TestCase
         // Then
         self::assertEquals([
             'id' => $matchId->value()->toString(),
+            'isWon' => false,
+            'score' => [
+                'blue' => 1,
+                'red' => 2,
+            ],
             'goals' => [
                 [
                     'id' => 1,
@@ -98,6 +110,28 @@ class ShowMatchDetailsTest extends TestCase
                     ],
                     'scorer' => [
                         'team' => 'blue',
+                        'position' => 'back',
+                    ],
+                ],
+                [
+                    'id' => 2,
+                    'scoredAt' => [
+                        'min' => 1,
+                        'sec' => 30,
+                    ],
+                    'scorer' => [
+                        'team' => 'red',
+                        'position' => 'back',
+                    ],
+                ],
+                [
+                    'id' => 3,
+                    'scoredAt' => [
+                        'min' => 1,
+                        'sec' => 30,
+                    ],
+                    'scorer' => [
+                        'team' => 'red',
                         'position' => 'back',
                     ],
                 ],

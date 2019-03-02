@@ -6,6 +6,7 @@ namespace Fooscore\Gaming\MatchDetails;
 
 use Fooscore\Gaming\Match\Goal;
 use Fooscore\Gaming\Match\Match;
+use RuntimeException;
 
 /**
  * Match read model
@@ -30,7 +31,7 @@ final class MatchDetails
     public function lastScoredGoal(): Goal
     {
         if (count($this->match->scoredGoals()) === 0) {
-            throw new \RuntimeException('No goal scored yet.');
+            throw new RuntimeException('No goal scored yet.');
         }
 
         return array_values(
@@ -42,6 +43,15 @@ final class MatchDetails
     {
         return [
             'id' => $this->match->id()->value()->toString(),
+            'isWon' => $this->match->isWon(),
+            'score' => [
+                'blue' => array_reduce($this->match->scoredGoals(), function (int $acc, Goal $goal): int {
+                    return $goal->scorer()->team() === 'blue' ? ++$acc : $acc;
+                }, 0),
+                'red' => array_reduce($this->match->scoredGoals(), function (int $acc, Goal $goal): int {
+                    return $goal->scorer()->team() === 'red' ? ++$acc : $acc;
+                }, 0),
+            ],
             'goals' => array_map(function (Goal $goal): array {
                 return [
                     'id' => $goal->number(),

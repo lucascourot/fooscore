@@ -139,4 +139,9 @@ final class Match
     {
         return $this->teamRed;
     }
+
+    public function isWon(): bool
+    {
+        return $this->isWon;
+    }
 }
