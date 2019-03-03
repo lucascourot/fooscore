@@ -21,7 +21,7 @@ final class AuthTokenSubscriber implements EventSubscriberInterface
     private $checkToken;
 
     private $whitelist = [
-        ApiController::class.'::index',
+        ApiController::class.'::login',
         IndexController::class.'::index',
         HealthcheckController::class.'::index',
     ];

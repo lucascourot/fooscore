@@ -26,7 +26,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/login", name="api_login", methods={"POST"})
      */
-    public function index(Request $request, LogIn $logIn)
+    public function login(Request $request, LogIn $logIn)
     {
         $credentials = json_decode((string) $request->getContent(), true);
         $token = $logIn->logIn(
