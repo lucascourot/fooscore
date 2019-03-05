@@ -14,8 +14,10 @@ use Fooscore\Gaming\Match\{
 };
 use Fooscore\Gaming\MatchDetails\MatchDetails;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @group integration
@@ -39,10 +41,15 @@ class MatchRepositoryPgTest extends KernelTestCase
      */
     private $domainEventsFinder;
 
+    /**
+     * @var EventDispatcherInterface|MockInterface
+     */
+    private $eventDispatcher;
+
     public function testShouldReadFromPgsql(): void
     {
         // Given
-        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
 
         $teamBlue = new TeamBlue('a', 'b');
         $teamRed = new TeamRed('c', 'd');
@@ -64,7 +71,7 @@ class MatchRepositoryPgTest extends KernelTestCase
     public function testShouldPersistSameEventsTwiceWithDifferentVersionsOfAggregate(): void
     {
         // Given
-        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
 
         $teamBlue = new TeamBlue('a', 'b');
         $teamRed = new TeamRed('c', 'd');
@@ -88,12 +95,13 @@ class MatchRepositoryPgTest extends KernelTestCase
         ], array_column($domainEventsArray, 'event_name'));
 
         self::assertSame([1, 2, 3], array_column($domainEventsArray, 'aggregate_version'));
+        $this->eventDispatcher->shouldHaveReceived('dispatch')->times(3);
     }
 
     public function testShouldAddNewEventsAfterBeingFetched(): void
     {
         // Given
-        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
 
         $teamBlue = new TeamBlue('a', 'b');
         $teamRed = new TeamRed('c', 'd');
@@ -118,12 +126,13 @@ class MatchRepositoryPgTest extends KernelTestCase
         ], array_column($domainEventsArray, 'event_name'));
 
         self::assertSame([1, 2], array_column($domainEventsArray, 'aggregate_version'));
+        $this->eventDispatcher->shouldHaveReceived('dispatch')->twice();
     }
 
     public function testShouldPersistAndReadMatchWasWon(): void
     {
         // Given
-        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
 
         $teamBlue = new TeamBlue('a', 'b');
         $teamRed = new TeamRed('c', 'd');
@@ -168,12 +177,13 @@ class MatchRepositoryPgTest extends KernelTestCase
         ], array_column($domainEventsArray, 'event_name'));
 
         self::assertSame(end($domainEventsArray)['event_data'], '{"teamWinner": "blue"}');
+        $this->eventDispatcher->shouldHaveReceived('dispatch')->times(12);
     }
 
     public function testShouldAvoidRaceConditions(): void
     {
         // Given
-        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
 
         $teamBlue = new TeamBlue('a', 'b');
         $teamRed = new TeamRed('c', 'd');
@@ -222,7 +232,7 @@ class MatchRepositoryPgTest extends KernelTestCase
         $this->expectException(\InvalidArgumentException::class);
 
         // Given
-        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
 
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
@@ -250,7 +260,7 @@ SQL
             'aggregate_type' => 'match',
             'aggregate_version' => 1,
         ]);
-        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder);
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
 
         // When
         $adapter->get($matchId);
@@ -267,6 +277,8 @@ SQL
         /** @var DomainEventsFinder $domainEventsFinder */
         $domainEventsFinder = self::$container->get(DomainEventsFinder::class);
         $this->domainEventsFinder = $domainEventsFinder;
+
+        $this->eventDispatcher = \Mockery::spy(EventDispatcherInterface::class);
 
         $this->deleteTestAggregateEvents();
     }

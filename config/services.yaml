@@ -27,9 +27,17 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-    Fooscore\EventSubscriber\ApiExceptionSubscriber:
-        bind:
-            $env: '%env(APP_ENV)%'
-
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    Fooscore\EventSubscriber\ApiExceptionSubscriber:
+        arguments:
+            $env: '%env(APP_ENV)%'
+
+    Fooscore\Adapters\Gaming\MatchDetailsProjector:
+        arguments:
+            $dir: '%kernel.project_dir%/public/game/'
+        tags:
+            - { name: kernel.event_listener, event: match_was_started, method: on }
+            - { name: kernel.event_listener, event: goal_was_scored, method: on }
+            - { name: kernel.event_listener, event: match_was_won, method: on }

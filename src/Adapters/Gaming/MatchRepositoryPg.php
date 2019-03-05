@@ -9,6 +9,7 @@ use Fooscore\Gaming\Match\{
     DomainEvent, Match, MatchId, MatchRepository, VersionedEvent
 };
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class MatchRepositoryPg implements MatchRepository
 {
@@ -33,10 +34,16 @@ SQL;
      */
     private $knownDomainEvents;
 
-    public function __construct(Connection $connection, DomainEventsFinder $domainEventsFinder)
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    public function __construct(Connection $connection, DomainEventsFinder $domainEventsFinder, EventDispatcherInterface $eventDispatcher)
     {
         $this->connection = $connection;
         $this->knownDomainEvents = $domainEventsFinder->getDomainEventsClassesIndexedByNames();
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function save(Match $match): void
@@ -60,6 +67,11 @@ SQL
                 'aggregate_type' => 'match',
                 'aggregate_version' => $versionedEvent->aggregateVersion(),
             ]);
+
+            $this->eventDispatcher->dispatch(
+                $domainEvent::eventName(),
+                new MatchSymfonyEvent($match->id(), $domainEvent)
+            );
         }
     }
 
