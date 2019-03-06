@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fooscore\Adapters\Gaming;
+namespace Fooscore\Gaming\Adapters;
 
 use Fooscore\Gaming\Match\DomainEvent;
 

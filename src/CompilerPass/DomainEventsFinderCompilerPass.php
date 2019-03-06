@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Fooscore\CompilerPass;
 
-use Fooscore\Adapters\Gaming\DomainEventsFinder;
-use Fooscore\Adapters\Gaming\SymfonyDomainEventsFinder;
+use Fooscore\Gaming\Adapters\DomainEventsFinder;
+use Fooscore\Gaming\Adapters\SymfonyDomainEventsFinder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 

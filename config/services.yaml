@@ -35,7 +35,7 @@ services:
         arguments:
             $env: '%env(APP_ENV)%'
 
-    Fooscore\Adapters\Gaming\MatchDetailsProjector:
+    Fooscore\Gaming\Adapters\MatchDetailsProjector:
         arguments:
             $dir: '%projection_dir%'
         tags:
@@ -43,6 +43,6 @@ services:
             - { name: kernel.event_listener, event: goal_was_scored, method: on }
             - { name: kernel.event_listener, event: match_was_won, method: on }
 
-    Fooscore\Adapters\Gaming\ShowMatchDetails:
+    Fooscore\Gaming\Adapters\ShowMatchDetails:
         arguments:
             $dir: '%projection_dir%'

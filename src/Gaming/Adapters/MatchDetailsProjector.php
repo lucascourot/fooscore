@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Fooscore\Adapters\Gaming;
+namespace Fooscore\Gaming\Adapters;
 
-use Fooscore\Gaming\Match\{
-    DomainEvent, Goal, GoalWasScored, Match, MatchId, MatchRepository, MatchWasStarted, MatchWasWon
-};
+use Fooscore\Gaming\Match\GoalWasScored;
+use Fooscore\Gaming\Match\MatchWasStarted;
+use Fooscore\Gaming\Match\MatchWasWon;
 use RuntimeException;
 
 final class MatchDetailsProjector

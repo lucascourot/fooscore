@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Integration\Gaming;
 
 use DateTimeImmutable;
-use Fooscore\Adapters\Gaming\MatchDetailsProjector;
-use Fooscore\Adapters\Gaming\MatchSymfonyEvent;
+use Fooscore\Gaming\Adapters\MatchDetailsProjector;
+use Fooscore\Gaming\Adapters\MatchSymfonyEvent;
 use Fooscore\Gaming\Match\{
-    DomainEvent, Goal, GoalWasScored, Match, MatchId, MatchWasStarted, MatchWasWon, ScoredAt, Scorer, TeamBlue, TeamRed
+    DomainEvent, Goal, GoalWasScored, MatchId, MatchWasStarted, MatchWasWon, ScoredAt, Scorer, TeamBlue, TeamRed
 };
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Ramsey\Uuid\Uuid;

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Fooscore\Tests\Integration\Gaming;
 
-use Fooscore\Adapters\Gaming\ShowMatchDetails;
-use Fooscore\Gaming\Match\{
-    DomainEvent, Goal, GoalWasScored, Match, MatchId, MatchWasStarted, MatchWasWon, ScoredAt, Scorer, TeamBlue, TeamRed
-};
+use Fooscore\Gaming\Adapters\ShowMatchDetails;
+use Fooscore\Gaming\Match\MatchId;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

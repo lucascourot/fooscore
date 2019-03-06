@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fooscore\Adapters\Gaming;
+namespace Fooscore\Gaming\Adapters;
 
 use Doctrine\DBAL\Connection;
 use Fooscore\Gaming\Match\{
