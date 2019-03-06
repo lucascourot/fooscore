@@ -3,6 +3,8 @@
 !/bin/console
 /build
 /.phpunit.result.cache
+/public/projections/*
+!/public/projections/.gitkeep
 
 ###> phpunit/phpunit ###
 /phpunit.xml

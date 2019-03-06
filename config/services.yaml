@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    projection_dir: '%kernel.project_dir%/public/projections/'
 
 services:
     # default configuration for services in *this* file
@@ -36,8 +37,12 @@ services:
 
     Fooscore\Adapters\Gaming\MatchDetailsProjector:
         arguments:
-            $dir: '%kernel.project_dir%/public/game/'
+            $dir: '%projection_dir%'
         tags:
             - { name: kernel.event_listener, event: match_was_started, method: on }
             - { name: kernel.event_listener, event: goal_was_scored, method: on }
             - { name: kernel.event_listener, event: match_was_won, method: on }
+
+    Fooscore\Adapters\Gaming\ShowMatchDetails:
+        arguments:
+            $dir: '%projection_dir%'

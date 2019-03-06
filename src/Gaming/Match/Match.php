@@ -124,24 +124,4 @@ final class Match
     {
         return $this->id;
     }
-
-    public function scoredGoals(): array
-    {
-        return $this->scoredGoals;
-    }
-
-    public function teamBlue(): TeamBlue
-    {
-        return $this->teamBlue;
-    }
-
-    public function teamRed(): TeamRed
-    {
-        return $this->teamRed;
-    }
-
-    public function isWon(): bool
-    {
-        return $this->isWon;
-    }
 }

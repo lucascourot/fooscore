@@ -8,9 +8,8 @@ use Fooscore\Gaming\CanScoreGoal;
 use Fooscore\Gaming\CanShowMatchDetails;
 use Fooscore\Gaming\CanStartMatch;
 use Fooscore\Gaming\Match\{
-    Goal, MatchId, Scorer, TeamBlue, TeamRed
+    Goal, GoalWasScored, MatchId, Scorer, TeamBlue, TeamRed
 };
-use Fooscore\Gaming\MatchDetails\MatchDetails;
 use Fooscore\Identity\Credentials;
 use Fooscore\Identity\GetUsers;
 use Fooscore\Identity\LogIn;
@@ -79,9 +78,7 @@ class ApiController extends AbstractController
     {
         $matchWithDetail = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($matchId)));
 
-        return $this->json(
-            $matchWithDetail->details()
-        );
+        return $this->json($matchWithDetail);
     }
 
     /**
@@ -99,10 +96,17 @@ class ApiController extends AbstractController
             Scorer::fromTeamAndPosition($team, $position)
         );
 
-        return $this->redirect($this->generateUrl('api_goal', [
-            'matchId' => $matchId,
-            'goalId' => MatchDetails::fromMatch($match)->lastScoredGoal()->number(),
-        ]));
+        foreach ($match->recordedEvents() as $recordedEvent) {
+            $domainEvent = $recordedEvent->domainEvent();
+            if ($domainEvent instanceof GoalWasScored) {
+                return $this->redirect($this->generateUrl('api_goal', [
+                    'matchId' => $matchId,
+                    'goalId' => $domainEvent->goal()->number(),
+                ]));
+            }
+        }
+
+        throw new \RuntimeException('No goal has been scored');
     }
 
     /**
@@ -113,7 +117,7 @@ class ApiController extends AbstractController
         $matchWithDetail = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($matchId)));
 
         $askedGoal = null;
-        foreach ($matchWithDetail->details()['goals'] as $scoredGoal) {
+        foreach ($matchWithDetail['goals'] as $scoredGoal) {
             if (strval($scoredGoal['id']) === $goalId) {
                 $askedGoal = $scoredGoal;
             }
