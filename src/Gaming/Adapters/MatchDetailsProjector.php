@@ -12,6 +12,8 @@ use RuntimeException;
 final class MatchDetailsProjector
 {
     private const MINUTE_IN_SECONDS = 60;
+    private const INITIAL_IS_WON_MATCH = false;
+    private const INITIAL_SCORE = 0;
 
     /**
      * @var string
@@ -31,10 +33,10 @@ final class MatchDetailsProjector
             file_put_contents($this->dir.$event->matchId()->value()->toString().'.json', json_encode(
                 [
                     'id' => $domainEvent->matchId()->value()->toString(),
-                    'isWon' => false,
+                    'isWon' => self::INITIAL_IS_WON_MATCH,
                     'score' => [
-                        'blue' => 0,
-                        'red' => 0,
+                        'blue' => self::INITIAL_SCORE,
+                        'red' => self::INITIAL_SCORE,
                     ],
                     'goals' => [],
                     'players' => [
