@@ -11,6 +11,8 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $projectionDir: '%projection_dir%'
 
     _instanceof:
         Fooscore\Gaming\Match\DomainEvent:
@@ -36,13 +38,7 @@ services:
             $env: '%env(APP_ENV)%'
 
     Fooscore\Gaming\Adapters\MatchDetailsProjector:
-        arguments:
-            $dir: '%projection_dir%'
         tags:
             - { name: kernel.event_listener, event: match_was_started, method: on }
             - { name: kernel.event_listener, event: goal_was_scored, method: on }
             - { name: kernel.event_listener, event: match_was_won, method: on }
-
-    Fooscore\Gaming\Adapters\ShowMatchDetails:
-        arguments:
-            $dir: '%projection_dir%'

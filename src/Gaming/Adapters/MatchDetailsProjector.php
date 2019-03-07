@@ -20,9 +20,9 @@ final class MatchDetailsProjector
      */
     private $dir;
 
-    public function __construct(string $dir)
+    public function __construct(string $projectionDir)
     {
-        $this->dir = $dir;
+        $this->dir = $projectionDir;
     }
 
     public function on(MatchSymfonyEvent $event): void

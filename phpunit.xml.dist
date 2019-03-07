@@ -29,6 +29,7 @@
                 <directory>src/EventSubscriber</directory>
                 <directory>src/Migrations</directory>
                 <directory>src/CompilerPass</directory>
+                <directory>src/Command</directory>
             </exclude>
         </whitelist>
     </filter>

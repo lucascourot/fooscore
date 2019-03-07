@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Gaming\Match;
 
 use DateTimeImmutable;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * Match aggregate root
@@ -67,7 +67,7 @@ final class Match
     public function scoreGoal(Scorer $scorer, Clock $clock): self
     {
         if ($this->isWon) {
-            throw new RuntimeException('Match has already been won.');
+            throw new MatchAlreadyWon('Match has already been won.');
         }
 
         $this->recordThat(new GoalWasScored(
@@ -115,7 +115,7 @@ final class Match
             return;
         }
 
-        throw new \InvalidArgumentException(
+        throw new InvalidArgumentException(
             sprintf('Unknown domain event "%s"', get_class($event))
         );
     }

@@ -6,7 +6,7 @@ namespace Fooscore\Tests\Unit\Gaming;
 
 use DateInterval;
 use Fooscore\Gaming\Match\{
-    Goal, GoalWasScored, Match, MatchId, MatchRepository, MatchWasStarted, MatchWasWon, ScoreGoal, ScoredAt, Scorer, TeamBlue, TeamRed, VersionedEvent
+    Goal, GoalWasScored, Match, MatchAlreadyWon, MatchId, MatchRepository, MatchWasStarted, MatchWasWon, ScoreGoal, ScoredAt, Scorer, TeamBlue, TeamRed, VersionedEvent
 };
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -158,7 +158,7 @@ class ScoreGoalTest extends TestCase
 
     public function testShouldNotScoreGoalAfterMatchHasBeenWon(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(MatchAlreadyWon::class);
 
         // Given
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));

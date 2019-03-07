@@ -17,9 +17,9 @@ final class ShowMatchDetails implements CanShowMatchDetails
      */
     private $dir;
 
-    public function __construct(string $dir)
+    public function __construct(string $projectionDir)
     {
-        $this->dir = $dir;
+        $this->dir = $projectionDir;
     }
 
     public function showMatchDetails(MatchId $matchId): array

@@ -9,3 +9,4 @@ parameters:
         - %rootDir%/../../../src/EventSubscriber
         - %rootDir%/../../../src/Migrations
         - %rootDir%/../../../src/CompilerPass
+        - %rootDir%/../../../src/Command

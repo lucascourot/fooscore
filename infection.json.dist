@@ -9,6 +9,7 @@
             "Controller",
             "Migrations",
             "CompilerPass",
+            "Command",
             "Kernel.php"
         ]
     },

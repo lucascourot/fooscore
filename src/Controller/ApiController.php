@@ -8,12 +8,13 @@ use Fooscore\Gaming\CanScoreGoal;
 use Fooscore\Gaming\CanShowMatchDetails;
 use Fooscore\Gaming\CanStartMatch;
 use Fooscore\Gaming\Match\{
-    Goal, GoalWasScored, MatchId, Scorer, TeamBlue, TeamRed
+    GoalWasScored, MatchId, Scorer, TeamBlue, TeamRed
 };
 use Fooscore\Identity\Credentials;
 use Fooscore\Identity\GetUsers;
 use Fooscore\Identity\LogIn;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -106,7 +107,7 @@ class ApiController extends AbstractController
             }
         }
 
-        throw new \RuntimeException('No goal has been scored');
+        throw new RuntimeException('No goal has been scored');
     }
 
     /**
