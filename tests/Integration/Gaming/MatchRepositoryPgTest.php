@@ -10,8 +10,9 @@ use Fooscore\Gaming\Adapters\DomainEventsFinder;
 use Fooscore\Gaming\Adapters\MatchRepositoryPg;
 use Fooscore\Gaming\Adapters\SystemClock;
 use Fooscore\Gaming\Match\{
-    Match, MatchId, Scorer, TeamBlue, TeamRed
+    Match, MatchId, Scorer
 };
+use Fooscore\Tests\Unit\Gaming\FakeTeam;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use Ramsey\Uuid\Uuid;
@@ -50,8 +51,8 @@ class MatchRepositoryPgTest extends KernelTestCase
         // Given
         $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
 
-        $teamBlue = new TeamBlue('a', 'b');
-        $teamRed = new TeamRed('c', 'd');
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
         $clock = new SystemClock();
@@ -72,8 +73,8 @@ class MatchRepositoryPgTest extends KernelTestCase
         // Given
         $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
 
-        $teamBlue = new TeamBlue('a', 'b');
-        $teamRed = new TeamRed('c', 'd');
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
         $clock = new SystemClock();
@@ -102,8 +103,8 @@ class MatchRepositoryPgTest extends KernelTestCase
         // Given
         $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
 
-        $teamBlue = new TeamBlue('a', 'b');
-        $teamRed = new TeamRed('c', 'd');
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
         $clock = new SystemClock();
@@ -133,8 +134,8 @@ class MatchRepositoryPgTest extends KernelTestCase
         // Given
         $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
 
-        $teamBlue = new TeamBlue('a', 'b');
-        $teamRed = new TeamRed('c', 'd');
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
         $clock = new SystemClock();
@@ -184,8 +185,8 @@ class MatchRepositoryPgTest extends KernelTestCase
         // Given
         $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
 
-        $teamBlue = new TeamBlue('a', 'b');
-        $teamRed = new TeamRed('c', 'd');
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
         $clock = new SystemClock();

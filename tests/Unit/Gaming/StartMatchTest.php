@@ -10,8 +10,6 @@ use Fooscore\Gaming\Match\{
     MatchRepository,
     MatchWasStarted,
     StartMatch,
-    TeamBlue,
-    TeamRed,
     VersionedEvent
 };
 use Mockery;
@@ -33,8 +31,8 @@ class StartMatchTest extends TestCase
     public function testShouldStartMatch(): void
     {
         // Given
-        $teamBlue = new TeamBlue('a', 'b');
-        $teamRed = new TeamRed('c', 'd');
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
         $matchIdGenerator = Mockery::mock(MatchIdGenerator::class, [
             'generate' => $matchId,

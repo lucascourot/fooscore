@@ -66,8 +66,14 @@ final class MatchWasStarted implements DomainEvent
     {
         return new self(
             new MatchId(Uuid::fromString($eventData['matchId'])),
-            new TeamBlue($eventData['blue']['back'], $eventData['blue']['front']),
-            new TeamRed($eventData['red']['back'], $eventData['red']['front']),
+            new TeamBlue(
+                new Player($eventData['blue']['back']['id'], $eventData['blue']['back']['name']),
+                new Player($eventData['blue']['front']['id'], $eventData['blue']['front']['name'])
+            ),
+            new TeamRed(
+                new Player($eventData['red']['back']['id'], $eventData['red']['back']['name']),
+                new Player($eventData['red']['front']['id'], $eventData['red']['front']['name'])
+            ),
             new DateTimeImmutable($eventData['startedAt'])
         );
     }
@@ -77,12 +83,24 @@ final class MatchWasStarted implements DomainEvent
         return [
             'matchId' => $this->matchId->value()->toString(),
             'blue' => [
-                'back' => $this->teamBlue->back(),
-                'front' => $this->teamBlue->front(),
+                'back' => [
+                    'id' => $this->teamBlue->back()->id(),
+                    'name' => $this->teamBlue->back()->name(),
+                ],
+                'front' => [
+                    'id' => $this->teamBlue->front()->id(),
+                    'name' => $this->teamBlue->front()->name(),
+                ],
             ],
             'red' => [
-                'back' => $this->teamRed->back(),
-                'front' => $this->teamRed->front(),
+                'back' => [
+                    'id' => $this->teamRed->back()->id(),
+                    'name' => $this->teamRed->back()->name(),
+                ],
+                'front' => [
+                    'id' => $this->teamRed->front()->id(),
+                    'name' => $this->teamRed->front()->name(),
+                ],
             ],
             'startedAt' => $this->startedAt->format(DateTimeImmutable::W3C),
         ];

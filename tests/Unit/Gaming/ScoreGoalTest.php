@@ -31,11 +31,13 @@ class ScoreGoalTest extends TestCase
 
         $startedAt = new \DateTimeImmutable('2000-01-01 00:00:00');
         $fixedClock = new FixedClock($startedAt);
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
 
         $matchRepository = Mockery::spy(MatchRepository::class);
         $matchRepository->allows('get')->with($matchId)->andReturns(
             Match::reconstituteFromHistory([
-                new VersionedEvent(1, new MatchWasStarted($matchId, new TeamBlue('a', 'b'), new TeamRed('c', 'd'), $startedAt)),
+                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, $startedAt)),
             ])
         );
 
@@ -59,11 +61,13 @@ class ScoreGoalTest extends TestCase
 
         $startedAt = new \DateTimeImmutable('2000-01-01 00:00:00');
         $fixedClock = new FixedClock($startedAt);
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
 
         $matchRepository = Mockery::spy(MatchRepository::class);
         $matchRepository->allows('get')->with($matchId)->andReturns(
             Match::reconstituteFromHistory([
-                new VersionedEvent(1, new MatchWasStarted($matchId, new TeamBlue('a', 'b'), new TeamRed('c', 'd'), $startedAt)),
+                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, $startedAt)),
             ])
         );
 
@@ -90,11 +94,13 @@ class ScoreGoalTest extends TestCase
 
         $startedAt = new \DateTimeImmutable('2000-01-01 00:00:00');
         $fixedClock = new FixedClock($startedAt);
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
 
         $matchRepository = Mockery::spy(MatchRepository::class);
         $matchRepository->allows('get')->with($matchId)->andReturns(
             Match::reconstituteFromHistory([
-                new VersionedEvent(1, new MatchWasStarted($matchId, new TeamBlue('a', 'b'), new TeamRed('c', 'd'), $startedAt)),
+                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, $startedAt)),
                 new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(0)))),
                 new VersionedEvent(3, new GoalWasScored(new Goal(2, $scorer, new ScoredAt(0)))),
                 new VersionedEvent(4, new GoalWasScored(new Goal(3, $scorer, new ScoredAt(0)))),
@@ -127,11 +133,13 @@ class ScoreGoalTest extends TestCase
 
         $startedAt = new \DateTimeImmutable('2000-01-01 00:00:00');
         $fixedClock = new FixedClock($startedAt);
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
 
         $matchRepository = Mockery::spy(MatchRepository::class);
         $matchRepository->allows('get')->with($matchId)->andReturns(
             Match::reconstituteFromHistory([
-                new VersionedEvent(1, new MatchWasStarted($matchId, new TeamBlue('a', 'b'), new TeamRed('c', 'd'), $startedAt)),
+                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, $startedAt)),
                 new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(0)))),
                 new VersionedEvent(3, new GoalWasScored(new Goal(2, $scorer, new ScoredAt(0)))),
                 new VersionedEvent(4, new GoalWasScored(new Goal(3, $scorer, new ScoredAt(0)))),
@@ -166,11 +174,13 @@ class ScoreGoalTest extends TestCase
 
         $startedAt = new \DateTimeImmutable('2000-01-01 00:00:00');
         $fixedClock = new FixedClock($startedAt);
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
 
         $matchRepository = Mockery::spy(MatchRepository::class);
         $matchRepository->allows('get')->with($matchId)->andReturns(
             Match::reconstituteFromHistory([
-                new VersionedEvent(1, new MatchWasStarted($matchId, new TeamBlue('a', 'b'), new TeamRed('c', 'd'), $startedAt)),
+                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, $startedAt)),
                 new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(0)))),
                 new VersionedEvent(3, new GoalWasScored(new Goal(2, $scorer, new ScoredAt(0)))),
                 new VersionedEvent(4, new GoalWasScored(new Goal(3, $scorer, new ScoredAt(0)))),

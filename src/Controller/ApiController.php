@@ -8,7 +8,7 @@ use Fooscore\Gaming\CanScoreGoal;
 use Fooscore\Gaming\CanShowMatchDetails;
 use Fooscore\Gaming\CanStartMatch;
 use Fooscore\Gaming\Match\{
-    GoalWasScored, MatchId, Scorer, TeamBlue, TeamRed
+    GoalWasScored, MatchId, Player, Scorer, TeamBlue, TeamRed
 };
 use Fooscore\Identity\CanGetUsers;
 use Fooscore\Identity\CanLogIn;
@@ -63,8 +63,14 @@ class ApiController extends AbstractController
         $players = json_decode((string) $request->getContent(), true)['players'];
 
         $match = $startMatch->startMatch(
-            new TeamBlue($players['blueBack'], $players['blueFront']),
-            new TeamRed($players['redBack'], $players['redFront'])
+            new TeamBlue(
+                new Player($players['blueBack']['id'], $players['blueBack']['name']),
+                new Player($players['blueFront']['id'], $players['blueFront']['name'])
+            ),
+            new TeamRed(
+                new Player($players['redBack']['id'], $players['redBack']['name']),
+                new Player($players['redFront']['id'], $players['redFront']['name'])
+            )
         );
 
         return $this->redirect($this->generateUrl('api_match', [

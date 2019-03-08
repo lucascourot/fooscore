@@ -42,22 +42,22 @@ final class MatchDetailsProjector
                     'players' => [
                         'blue' => [
                             'back' => [
-                                'id' => $domainEvent->teamBlue()->back(),
-                                'name' => $domainEvent->teamBlue()->back(),
+                                'id' => $domainEvent->teamBlue()->back()->id(),
+                                'name' => $domainEvent->teamBlue()->back()->name(),
                             ],
                             'front' => [
-                                'id' => $domainEvent->teamBlue()->front(),
-                                'name' => $domainEvent->teamBlue()->front(),
+                                'id' => $domainEvent->teamBlue()->front()->id(),
+                                'name' => $domainEvent->teamBlue()->front()->name(),
                             ],
                         ],
                         'red' => [
                             'back' => [
-                                'id' => $domainEvent->teamRed()->back(),
-                                'name' => $domainEvent->teamRed()->back(),
+                                'id' => $domainEvent->teamRed()->back()->id(),
+                                'name' => $domainEvent->teamRed()->back()->name(),
                             ],
                             'front' => [
-                                'id' => $domainEvent->teamRed()->front(),
-                                'name' => $domainEvent->teamRed()->front(),
+                                'id' => $domainEvent->teamRed()->front()->id(),
+                                'name' => $domainEvent->teamRed()->front()->name(),
                             ],
                         ],
                     ],

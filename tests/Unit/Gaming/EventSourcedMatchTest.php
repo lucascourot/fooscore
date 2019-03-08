@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\{
-    DomainEvent, Goal, GoalWasScored, Match, MatchId, MatchWasStarted, ScoredAt, Scorer, TeamBlue, TeamRed, VersionedEvent
+    DomainEvent, Goal, GoalWasScored, Match, MatchId, MatchWasStarted, ScoredAt, Scorer, VersionedEvent
 };
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
@@ -20,8 +20,8 @@ class EventSourcedMatchTest extends TestCase
 
     public function testShouldBeConstructedFromHistory(): void
     {
-        $teamBlue = new TeamBlue('a', 'b');
-        $teamRed = new TeamRed('c', 'd');
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('a', 'b');
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
 
         $match = Match::reconstituteFromHistory([

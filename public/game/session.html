@@ -123,6 +123,8 @@
 </div>
 <script>
     (async () => {
+        const playerNames = {};
+
         const getSelectedValueForId = (id) => {
             const player = document.getElementById(id);
             return player.options[player.selectedIndex];
@@ -146,6 +148,10 @@
             if (!response.players) {
                 alert('Server Error: cannot fetch players.');
             }
+
+            response.players.forEach(player => {
+                playerNames[player.id] = player.name;
+            });
 
             return response.players;
         };
@@ -200,10 +206,22 @@
             e.preventDefault();
 
             const players = {
-                blueBack: getSelectedValueForId('player-blue-back').value,
-                blueFront: getSelectedValueForId('player-blue-front').value,
-                redBack: getSelectedValueForId('player-red-back').value,
-                redFront: getSelectedValueForId('player-red-front').value,
+                blueBack: {
+                    id: getSelectedValueForId('player-blue-back').value,
+                    name: playerNames[getSelectedValueForId('player-blue-back').value],
+                },
+                blueFront: {
+                    id: getSelectedValueForId('player-blue-front').value,
+                    name: playerNames[getSelectedValueForId('player-blue-front').value],
+                },
+                redBack: {
+                    id: getSelectedValueForId('player-red-back').value,
+                    name: playerNames[getSelectedValueForId('player-red-back').value],
+                },
+                redFront: {
+                    id: getSelectedValueForId('player-red-front').value,
+                    name: playerNames[getSelectedValueForId('player-red-front').value],
+                },
             };
             console.log('Players: ', players);
 

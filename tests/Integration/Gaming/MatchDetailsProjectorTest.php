@@ -8,8 +8,9 @@ use DateTimeImmutable;
 use Fooscore\Gaming\Adapters\MatchDetailsProjector;
 use Fooscore\Gaming\Adapters\MatchSymfonyEvent;
 use Fooscore\Gaming\Match\{
-    DomainEvent, Goal, GoalWasScored, MatchId, MatchWasStarted, MatchWasWon, ScoredAt, Scorer, TeamBlue, TeamRed
+    DomainEvent, Goal, GoalWasScored, MatchId, MatchWasStarted, MatchWasWon, ScoredAt, Scorer
 };
+use Fooscore\Tests\Unit\Gaming\FakeTeam;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -48,8 +49,8 @@ class MatchDetailsProjectorTest extends KernelTestCase
     {
         // Given
         $projector = new MatchDetailsProjector($this->dir);
-        $teamBlue = new TeamBlue('a', 'b');
-        $teamRed = new TeamRed('c', 'd');
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
         $matchWasStarted = new MatchWasStarted(
@@ -103,8 +104,8 @@ JSON
     {
         // Given
         $projector = new MatchDetailsProjector($this->dir);
-        $teamBlue = new TeamBlue('a', 'b');
-        $teamRed = new TeamRed('c', 'd');
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
         $projector->on(new MatchSymfonyEvent(
@@ -201,8 +202,8 @@ JSON
     {
         // Given
         $projector = new MatchDetailsProjector($this->dir);
-        $teamBlue = new TeamBlue('a', 'b');
-        $teamRed = new TeamRed('c', 'd');
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
         $projector->on(new MatchSymfonyEvent(
