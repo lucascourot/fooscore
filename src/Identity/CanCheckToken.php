@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fooscore\Identity;
 
-interface CheckToken
+interface CanCheckToken
 {
     public function isValid(string $token): bool;
 }

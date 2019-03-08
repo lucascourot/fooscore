@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fooscore\Identity;
 
-final class Identity implements LogIn, CheckToken, GetUsers
+final class Identity implements CanLogIn, CanCheckToken, CanGetUsers
 {
     /**
      * @var RegisteredUsers

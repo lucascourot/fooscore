@@ -7,7 +7,7 @@ namespace Fooscore\EventSubscriber;
 use Fooscore\Controller\ApiController;
 use Fooscore\Controller\HealthcheckController;
 use Fooscore\Controller\IndexController;
-use Fooscore\Identity\CheckToken;
+use Fooscore\Identity\CanCheckToken;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 final class AuthTokenSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var CheckToken
+     * @var CanCheckToken
      */
     private $checkToken;
 
@@ -26,7 +26,7 @@ final class AuthTokenSubscriber implements EventSubscriberInterface
         HealthcheckController::class.'::index',
     ];
 
-    public function __construct(CheckToken $checkToken)
+    public function __construct(CanCheckToken $checkToken)
     {
         $this->checkToken = $checkToken;
     }

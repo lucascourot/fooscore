@@ -10,9 +10,9 @@ use Fooscore\Gaming\CanStartMatch;
 use Fooscore\Gaming\Match\{
     GoalWasScored, MatchId, Scorer, TeamBlue, TeamRed
 };
+use Fooscore\Identity\CanGetUsers;
+use Fooscore\Identity\CanLogIn;
 use Fooscore\Identity\Credentials;
-use Fooscore\Identity\GetUsers;
-use Fooscore\Identity\LogIn;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +26,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/login", name="api_login", methods={"POST"})
      */
-    public function login(Request $request, LogIn $logIn)
+    public function login(Request $request, CanLogIn $logIn)
     {
         $credentials = json_decode((string) $request->getContent(), true);
         $token = $logIn->logIn(
@@ -48,7 +48,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/players", name="api_players", methods={"GET"})
      */
-    public function players(GetUsers $getUsers)
+    public function players(CanGetUsers $getUsers)
     {
         return $this->json([
             'players' => $getUsers->getUsers(),
