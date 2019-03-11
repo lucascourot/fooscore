@@ -16,6 +16,8 @@ use Fooscore\Identity\Credentials;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -26,7 +28,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/login", name="api_login", methods={"POST"})
      */
-    public function login(Request $request, CanLogIn $logIn)
+    public function login(Request $request, CanLogIn $logIn): JsonResponse
     {
         $credentials = json_decode((string) $request->getContent(), true);
         $token = $logIn->logIn(
@@ -48,7 +50,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/players", name="api_players", methods={"GET"})
      */
-    public function players(CanGetUsers $getUsers)
+    public function players(CanGetUsers $getUsers): JsonResponse
     {
         return $this->json([
             'players' => $getUsers->getUsers(),
@@ -58,7 +60,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/matches", name="api_start_match", methods={"POST"})
      */
-    public function startMatch(Request $request, CanStartMatch $startMatch)
+    public function startMatch(Request $request, CanStartMatch $startMatch): RedirectResponse
     {
         $players = json_decode((string) $request->getContent(), true)['players'];
 
@@ -81,7 +83,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/matches/{matchId}", name="api_match", methods={"GET"})
      */
-    public function showMatch(string $matchId, CanShowMatchDetails $showMatchDetails)
+    public function showMatch(string $matchId, CanShowMatchDetails $showMatchDetails): JsonResponse
     {
         $matchWithDetail = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($matchId)));
 
@@ -91,7 +93,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/matches/{matchId}/goals", name="api_score_goal", methods={"POST"})
      */
-    public function scoreGoal(Request $request, string $matchId, CanScoreGoal $scoreGoal)
+    public function scoreGoal(Request $request, string $matchId, CanScoreGoal $scoreGoal): RedirectResponse
     {
         $content = json_decode((string) $request->getContent(), true);
         $type = $content['type'];
@@ -119,7 +121,7 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/matches/{matchId}/goals/{goalId}", name="api_goal", methods={"GET"})
      */
-    public function showGoal(string $matchId, string $goalId, CanShowMatchDetails $showMatchDetails)
+    public function showGoal(string $matchId, string $goalId, CanShowMatchDetails $showMatchDetails): JsonResponse
     {
         $matchWithDetail = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($matchId)));
 

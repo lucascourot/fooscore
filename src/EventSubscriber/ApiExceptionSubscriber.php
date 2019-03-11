@@ -29,7 +29,7 @@ final class ApiExceptionSubscriber implements EventSubscriberInterface
         $this->env = $env;
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(GetResponseForExceptionEvent $event): void
     {
         if (!$event->isMasterRequest()) {
             return;

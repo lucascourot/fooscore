@@ -45,7 +45,7 @@ class FooscoreBuildProjectionsCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Build projections for all matches.')
@@ -67,6 +67,7 @@ class FooscoreBuildProjectionsCommand extends Command
             $sql .= ' AND aggregate_id = :aggregate_id';
             $params += ['aggregate_id' => $matchId];
         }
+        $sql .= ' ORDER BY event_store.aggregate_version ASC';
 
         $statement = $this->connection->prepare($sql);
         $statement->execute($params);

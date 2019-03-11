@@ -20,6 +20,9 @@ final class AuthTokenSubscriber implements EventSubscriberInterface
      */
     private $checkToken;
 
+    /**
+     * @var array
+     */
     private $whitelist = [
         ApiController::class.'::login',
         IndexController::class.'::index',
@@ -31,17 +34,17 @@ final class AuthTokenSubscriber implements EventSubscriberInterface
         $this->checkToken = $checkToken;
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(GetResponseEvent $event): void
     {
         $action = $event->getRequest()->get('_controller');
 
-        if (in_array($action, $this->whitelist)) {
+        if (in_array($action, $this->whitelist, true)) {
             return;
         }
 
         $authToken = $event->getRequest()->headers->get('Authorization', '');
 
-        if ($this->checkToken->isValid($authToken) === false) {
+        if (!is_string($authToken) || $this->checkToken->isValid($authToken) === false) {
             $event->setResponse(
                 new JsonResponse([
                     'error' => 'Invalid auth token.',

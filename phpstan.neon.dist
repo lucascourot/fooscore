@@ -4,9 +4,4 @@ includes:
 
 parameters:
     excludes_analyse:
-        - %rootDir%/../../../src/Kernel.php
-        - %rootDir%/../../../src/Controller
-        - %rootDir%/../../../src/EventSubscriber
         - %rootDir%/../../../src/Migrations
-        - %rootDir%/../../../src/CompilerPass
-        - %rootDir%/../../../src/Command
