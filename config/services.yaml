@@ -37,7 +37,7 @@ services:
         arguments:
             $env: '%env(APP_ENV)%'
 
-    Fooscore\Gaming\Adapters\MatchDetailsProjector:
+    Fooscore\Gaming\Infrastructure\MatchDetailsProjector:
         tags:
             - { name: kernel.event_listener, event: match_was_started, method: on }
             - { name: kernel.event_listener, event: goal_was_scored, method: on }

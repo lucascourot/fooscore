@@ -6,9 +6,9 @@ namespace Fooscore\Tests\Integration\Gaming;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Fooscore\Gaming\Adapters\DomainEventsFinder;
-use Fooscore\Gaming\Adapters\MatchRepositoryPg;
-use Fooscore\Gaming\Adapters\SystemClock;
+use Fooscore\Gaming\Infrastructure\DomainEventsFinder;
+use Fooscore\Gaming\Infrastructure\MatchRepositoryPg;
+use Fooscore\Gaming\Infrastructure\SystemClock;
 use Fooscore\Gaming\Match\{
     Match, MatchId, Scorer
 };

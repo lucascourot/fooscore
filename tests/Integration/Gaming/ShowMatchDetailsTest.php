@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fooscore\Tests\Integration\Gaming;
 
-use Fooscore\Gaming\Adapters\ShowMatchDetails;
+use Fooscore\Gaming\Infrastructure\ShowMatchDetails;
 use Fooscore\Gaming\Match\MatchId;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Ramsey\Uuid\Uuid;

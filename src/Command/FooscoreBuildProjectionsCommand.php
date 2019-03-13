@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Fooscore\Command;
 
 use Doctrine\DBAL\Connection;
-use Fooscore\Gaming\Adapters\DomainEventsFinder;
-use Fooscore\Gaming\Adapters\MatchDetailsProjector;
-use Fooscore\Gaming\Adapters\MatchSymfonyEvent;
+use Fooscore\Gaming\Infrastructure\DomainEventsFinder;
+use Fooscore\Gaming\Infrastructure\MatchDetailsProjector;
+use Fooscore\Gaming\Infrastructure\MatchSymfonyEvent;
 use Fooscore\Gaming\Match\DomainEvent;
 use Fooscore\Gaming\Match\MatchId;
 use Ramsey\Uuid\Uuid;

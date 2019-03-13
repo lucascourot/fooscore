@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fooscore\Identity\Adapters;
+namespace Fooscore\Identity\Infrastructure;
 
 use Fooscore\Identity\Credentials;
 use Fooscore\Identity\RegisteredUsers;

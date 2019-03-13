@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Fooscore\Tests\Integration\Identity;
 
-use Fooscore\Identity\Adapters\RegisteredUsersInMemory;
 use Fooscore\Identity\Credentials;
+use Fooscore\Identity\Infrastructure\RegisteredUsersInMemory;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 

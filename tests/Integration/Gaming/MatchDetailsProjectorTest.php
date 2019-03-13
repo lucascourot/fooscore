@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Integration\Gaming;
 
 use DateTimeImmutable;
-use Fooscore\Gaming\Adapters\MatchDetailsProjector;
-use Fooscore\Gaming\Adapters\MatchSymfonyEvent;
+use Fooscore\Gaming\Infrastructure\MatchDetailsProjector;
+use Fooscore\Gaming\Infrastructure\MatchSymfonyEvent;
 use Fooscore\Gaming\Match\{
     DomainEvent, Goal, GoalWasScored, MatchId, MatchWasStarted, MatchWasWon, ScoredAt, Scorer
 };
