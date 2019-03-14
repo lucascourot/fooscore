@@ -16,7 +16,7 @@
         "psr-4": { "Fooscore\\Tests\\": "tests/" }
     },
     "require": {
-        "php": "^7.2",
+        "php": "^7.1.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/doctrine-migrations-bundle": "^2.0",
