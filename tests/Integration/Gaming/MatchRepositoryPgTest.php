@@ -159,8 +159,6 @@ class MatchRepositoryPgTest extends KernelTestCase
         // Then
         $domainEventsArray = $this->fetchDomainEventsForAggregate($matchId);
 
-        self::assertInstanceOf(Match::class, $reconstitutedMatch);
-
         self::assertSame([
             'match_was_started',
             'goal_was_scored',
