@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Integration\Gaming;
 
 use Fooscore\Gaming\Infrastructure\MatchIdGeneratorUuidv4;
-use Fooscore\Gaming\Match\MatchId;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +24,6 @@ class MatchIdGeneratorUuidv4Test extends TestCase
         $matchId = $adapter->generate();
 
         // Then
-        self::assertInstanceOf(MatchId::class, $matchId);
         self::assertSame(4, $matchId->value()->getVersion());
     }
 }

@@ -41,7 +41,7 @@ class RegisteredUsersInMemoryTest extends TestCase
         $user = $adapter->getUser(new Credentials($email, $password));
 
         // Then
-        self::assertSame(null, $user);
+        self::assertNull($user);
     }
 
     public function testReturnsNullIfWrongPassword(): void
@@ -55,7 +55,7 @@ class RegisteredUsersInMemoryTest extends TestCase
         $user = $adapter->getUser(new Credentials($email, $password));
 
         // Then
-        self::assertSame(null, $user);
+        self::assertNull($user);
     }
 
     public function testShouldCheckValidToken(): void

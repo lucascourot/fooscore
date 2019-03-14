@@ -56,6 +56,6 @@ class LogInTest extends TestCase
         $token = $identity->logIn(new Credentials('john@example.com', 'foo'));
 
         // Then
-        self::assertSame(null, $token);
+        self::assertNull($token);
     }
 }
