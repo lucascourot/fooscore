@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fooscore\Ranking;
 
-final class UpdateEloScore
+final class UpdateEloScore implements CanUpdateEloScore
 {
     /**
      * @var EloScoresRepository

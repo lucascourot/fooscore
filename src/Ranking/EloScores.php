@@ -18,7 +18,7 @@ final class EloScores
     private $matchResult;
 
     /**
-     * @var array => $eloScore
+     * @var array
      */
     private $playersWithScores;
 
@@ -60,5 +60,10 @@ final class EloScores
         $winExpectancyPercentage = 1 / (1 + \pow(self::BASE_TEN, (-$ratingDifference / self::RATING_INTERVAL_SCALE_WEIGHT_FACTOR)));
 
         return (int) round(self::RATING_COEFFICIENT * (1 - $winExpectancyPercentage));
+    }
+
+    public function playersWithScores(): array
+    {
+        return $this->playersWithScores;
     }
 }

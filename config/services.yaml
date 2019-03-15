@@ -13,6 +13,7 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $projectionDir: '%projection_dir%'
+            $rakingDir: '%kernel.project_dir%/var/'
 
     _instanceof:
         Fooscore\Gaming\Match\DomainEvent:

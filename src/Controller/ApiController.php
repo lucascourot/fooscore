@@ -13,6 +13,10 @@ use Fooscore\Gaming\Match\{
 use Fooscore\Identity\CanGetUsers;
 use Fooscore\Identity\CanLogIn;
 use Fooscore\Identity\Credentials;
+use Fooscore\Ranking\CanUpdateEloScore;
+use Fooscore\Ranking\LosingTeam;
+use Fooscore\Ranking\MatchResult;
+use Fooscore\Ranking\WinningTeam;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -137,5 +141,20 @@ class ApiController extends AbstractController
         }
 
         return $this->json($askedGoal);
+    }
+
+    /**
+     * @Route("/api/scores", name="api_update_score", methods={"POST"})
+     */
+    public function updateEloScore(Request $request, CanUpdateEloScore $canUpdateEloScore): JsonResponse
+    {
+        $content = json_decode((string) $request->getContent(), true);
+
+        $eloScores = $canUpdateEloScore->updatePlayersScores(new MatchResult(
+            new WinningTeam($content['winning']['playerA'], $content['winning']['playerB']),
+            new LosingTeam($content['losing']['playerA'], $content['losing']['playerB'])
+        ));
+
+        return $this->json($eloScores->playersWithScores());
     }
 }
