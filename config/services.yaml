@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     projection_dir: '%kernel.project_dir%/public/projections/'
+    score_file: '%kernel.project_dir%/var/score.json'
 
 services:
     # default configuration for services in *this* file
@@ -13,6 +14,7 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $projectionDir: '%projection_dir%'
+            $scoreFile: '%score_file%'
 
     _instanceof:
         Fooscore\Gaming\Match\DomainEvent:

@@ -22,6 +22,11 @@ class Player
         $this->score = $score;
     }
 
+    public function id(): string
+    {
+        return $this->id;
+    }
+
     public function score(): int
     {
         return $this->score;

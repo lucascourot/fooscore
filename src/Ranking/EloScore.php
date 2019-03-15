@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fooscore\Ranking;
 
-class EloScore
+class EloScore implements CanUpdateScore
 {
     const COEFFICIENT = 20;
     const A = 400;
@@ -21,7 +21,7 @@ class EloScore
         $this->playerRepository = $playerRepository;
     }
 
-    public function updateEloScore(string $winningPlayerId1, string $winningPlayerId2, string $losingPlayerId1, string $losingPlayerId2): void
+    public function updateScore(string $winningPlayerId1, string $winningPlayerId2, string $losingPlayerId1, string $losingPlayerId2): void
     {
         $winningPlayer1 = $this->playerRepository->get($winningPlayerId1);
         $winningPlayer2 = $this->playerRepository->get($winningPlayerId2);

@@ -30,7 +30,7 @@ class EloScoreTest extends TestCase
 
         // When
         $eloScore = new EloScore($playerRepository);
-        $eloScore->updateEloScore('a1', 'a2', 'a3', 'a4');
+        $eloScore->updateScore('a1', 'a2', 'a3', 'a4');
 
         // Then
         static::assertEquals(1616, $winningPlayer1->score());
@@ -55,7 +55,7 @@ class EloScoreTest extends TestCase
 
         // When
         $eloScore = new EloScore($playerRepository);
-        $eloScore->updateEloScore('a1', 'a2', 'a3', 'a4');
+        $eloScore->updateScore('a1', 'a2', 'a3', 'a4');
 
         // Then
         static::assertEquals(1910, $winningPlayer1->score());

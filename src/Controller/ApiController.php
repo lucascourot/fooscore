@@ -7,12 +7,11 @@ namespace Fooscore\Controller;
 use Fooscore\Gaming\CanScoreGoal;
 use Fooscore\Gaming\CanShowMatchDetails;
 use Fooscore\Gaming\CanStartMatch;
-use Fooscore\Gaming\Match\{
-    GoalWasScored, MatchId, Player, Scorer, TeamBlue, TeamRed
-};
+use Fooscore\Gaming\Match\{GoalWasScored, MatchId, MatchRepository, Player, Scorer, TeamBlue, TeamRed};
 use Fooscore\Identity\CanGetUsers;
 use Fooscore\Identity\CanLogIn;
 use Fooscore\Identity\Credentials;
+use Fooscore\Ranking\CanUpdateScore;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -137,5 +136,22 @@ class ApiController extends AbstractController
         }
 
         return $this->json($askedGoal);
+    }
+
+    /**
+     * @Route("/api/score", name="api_update_score", methods={"POST"})
+     */
+    public function updateScore(Request $request, CanUpdateScore $updateScore): JsonResponse
+    {
+        $players = json_decode((string) $request->getContent(), true)['players'];
+
+        $updateScore->updateScore(
+            $players['winning'][0]['id'],
+            $players['winning'][1]['id'],
+            $players['losing'][0]['id'],
+            $players['losing'][1]['id']
+        );
+
+        return $this->json(['success' => true]);
     }
 }
