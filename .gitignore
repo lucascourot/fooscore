@@ -5,6 +5,8 @@
 /.phpunit.result.cache
 /public/projections/*
 !/public/projections/.gitkeep
+/public/ranking/*
+!/public/ranking/.gitkeep
 
 ###> phpunit/phpunit ###
 /phpunit.xml

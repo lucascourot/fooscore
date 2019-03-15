@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     projection_dir: '%kernel.project_dir%/public/projections/'
+    ranking_dir: '%kernel.project_dir%/public/ranking/'
 
 services:
     # default configuration for services in *this* file
@@ -13,7 +14,7 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $projectionDir: '%projection_dir%'
-            $rakingDir: '%kernel.project_dir%/var/'
+            $rakingDir: '%ranking_dir'
 
     _instanceof:
         Fooscore\Gaming\Match\DomainEvent:
