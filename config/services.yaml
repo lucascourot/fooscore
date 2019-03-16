@@ -14,7 +14,7 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $projectionDir: '%projection_dir%'
-            $rakingDir: '%ranking_dir'
+            $rakingDir: '%ranking_dir%'
 
     _instanceof:
         Fooscore\Gaming\Match\DomainEvent:
@@ -43,4 +43,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: match_was_started, method: on }
             - { name: kernel.event_listener, event: goal_was_scored, method: on }
+            - { name: kernel.event_listener, event: match_was_won, method: on }
+
+    Fooscore\Gaming\Infrastructure\UpdateEloWhenMatchWonPolicy:
+        tags:
             - { name: kernel.event_listener, event: match_was_won, method: on }

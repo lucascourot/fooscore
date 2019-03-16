@@ -9,12 +9,12 @@ trait BackAndFrontPlayers
     /**
      * @var Player
      */
-    public $back;
+    private $back;
 
     /**
      * @var Player
      */
-    public $front;
+    private $front;
 
     public function __construct(Player $back, Player $front)
     {

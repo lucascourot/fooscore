@@ -85,6 +85,21 @@ final class Match
         return $this;
     }
 
+    public function id(): MatchId
+    {
+        return $this->id;
+    }
+
+    public function getTeamBlue(): TeamBlue
+    {
+        return $this->teamBlue;
+    }
+
+    public function getTeamRed(): TeamRed
+    {
+        return $this->teamRed;
+    }
+
     private function apply(DomainEvent $event): void
     {
         if ($event instanceof MatchWasStarted) {
@@ -118,10 +133,5 @@ final class Match
         throw new InvalidArgumentException(
             sprintf('Unknown domain event "%s"', get_class($event))
         );
-    }
-
-    public function id(): MatchId
-    {
-        return $this->id;
     }
 }

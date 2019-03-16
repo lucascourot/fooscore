@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Fooscore\Ranking;
 
-/**
- * @codeCoverageIgnore
- */
 final class AverageEloScore
 {
     public static function team(int $playerAScore, int $playerBScore): int

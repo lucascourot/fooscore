@@ -34,4 +34,9 @@ final class MatchWasWon implements DomainEvent
     {
         return 'match_was_won';
     }
+
+    public function teamWinner(): string
+    {
+        return $this->teamWinner;
+    }
 }

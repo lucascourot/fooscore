@@ -21,4 +21,11 @@ class AverageEloScoreTest extends TestCase
 
         self::assertSame(11, $average);
     }
+
+    public function testShouldRoundAverage(): void
+    {
+        $average = AverageEloScore::team(-3, -2);
+
+        self::assertSame(-2, $average);
+    }
 }
