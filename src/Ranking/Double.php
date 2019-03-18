@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace Fooscore\Ranking;
 
-trait Double
+abstract class Double
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $playerAId;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $playerBId;
 
     public function __construct(string $playerAId, string $playerBId)
@@ -22,12 +18,12 @@ trait Double
         $this->playerBId = $playerBId;
     }
 
-    public function playerAId(): string
+    public function playerAId() : string
     {
         return $this->playerAId;
     }
 
-    public function playerBId(): string
+    public function playerBId() : string
     {
         return $this->playerBId;
     }

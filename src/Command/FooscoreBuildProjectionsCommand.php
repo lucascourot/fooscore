@@ -10,30 +10,31 @@ use Fooscore\Gaming\Infrastructure\MatchDetailsProjector;
 use Fooscore\Gaming\Infrastructure\MatchSymfonyEvent;
 use Fooscore\Gaming\Match\DomainEvent;
 use Fooscore\Gaming\Match\MatchId;
+use PDO;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use function array_map;
+use function is_string;
+use function json_decode;
+use function sprintf;
 
 class FooscoreBuildProjectionsCommand extends Command
 {
+    /** @var string */
     protected static $defaultName = 'fooscore:build-projections';
 
-    /**
-     * @var MatchDetailsProjector
-     */
+    /** @var MatchDetailsProjector */
     private $matchDetailsProjector;
 
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     private $connection;
 
-    /**
-     * @var array
-     */
+    /** @var string[]|DomainEvent[] */
     private $knownDomainEvents;
 
     public function __construct(Connection $connection, DomainEventsFinder $domainEventsFinder, string $projectionDir)
@@ -45,15 +46,14 @@ class FooscoreBuildProjectionsCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
+    protected function configure() : void
     {
         $this
             ->setDescription('Build projections for all matches.')
-            ->addArgument('id', InputArgument::OPTIONAL, 'Only for match id.')
-        ;
+            ->addArgument('id', InputArgument::OPTIONAL, 'Only for match id.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $io = new SymfonyStyle($input, $output);
         $matchId = $input->getArgument('id');
@@ -71,21 +71,24 @@ class FooscoreBuildProjectionsCommand extends Command
 
         $statement = $this->connection->prepare($sql);
         $statement->execute($params);
-        $domainEventsArray = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $domainEventsArray = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        $events = array_map(function (array $domainEventArray): MatchSymfonyEvent {
+        $events = array_map(function (array $domainEventArray) : MatchSymfonyEvent {
             foreach ($this->knownDomainEvents as $knownDomainEventName => $knownDomainEventClass) {
                 if ($domainEventArray['event_name'] === $knownDomainEventName) {
-                    /* @var DomainEvent $knownDomainEventClass */
+                    /** @var DomainEvent $knownDomainEventClass */
                     $domainEvent = $knownDomainEventClass::fromEventDataArray(
                         json_decode($domainEventArray['event_data'], true)
                     );
 
-                    return new MatchSymfonyEvent(new MatchId(Uuid::fromString($domainEventArray['aggregate_id'])), $domainEvent);
+                    return new MatchSymfonyEvent(
+                        new MatchId(Uuid::fromString($domainEventArray['aggregate_id'])),
+                        $domainEvent
+                    );
                 }
             }
 
-            throw new \RuntimeException(sprintf('Unknown domain event name : %s', $domainEventArray['event_name']));
+            throw new RuntimeException(sprintf('Unknown domain event name : %s', $domainEventArray['event_name']));
         }, $domainEventsArray);
 
         foreach ($events as $event) {
@@ -93,5 +96,7 @@ class FooscoreBuildProjectionsCommand extends Command
         }
 
         $io->success('Done.');
+
+        return 0;
     }
 }

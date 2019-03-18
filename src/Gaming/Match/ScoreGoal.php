@@ -8,14 +8,10 @@ use Fooscore\Gaming\CanScoreGoal;
 
 final class ScoreGoal implements CanScoreGoal
 {
-    /**
-     * @var MatchRepository
-     */
+    /** @var MatchRepository */
     private $matchRepository;
 
-    /**
-     * @var Clock
-     */
+    /** @var Clock */
     private $clock;
 
     public function __construct(MatchRepository $matchRepository, Clock $clock)
@@ -24,7 +20,7 @@ final class ScoreGoal implements CanScoreGoal
         $this->clock = $clock;
     }
 
-    public function scoreGoal(MatchId $matchId, Scorer $scorer): Match
+    public function scoreGoal(MatchId $matchId, Scorer $scorer) : Match
     {
         $match = $this->matchRepository->get($matchId);
 

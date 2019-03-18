@@ -6,5 +6,5 @@ namespace Fooscore\Ranking;
 
 interface CanUpdateEloScore
 {
-    public function updatePlayersScores(MatchResult $matchResult): EloScores;
+    public function updatePlayersScores(MatchResult $matchResult) : EloScores;
 }

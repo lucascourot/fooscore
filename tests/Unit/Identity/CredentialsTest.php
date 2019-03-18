@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Identity;
 
 use Fooscore\Identity\Credentials;
+use InvalidArgumentException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
@@ -15,9 +16,9 @@ class CredentialsTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testUsernameShouldBeAnEmail(): void
+    public function testUsernameShouldBeAnEmail() : void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         // Given
         $username = 'john';
@@ -26,9 +27,9 @@ class CredentialsTest extends TestCase
         new Credentials($username, 'test');
     }
 
-    public function testShouldNotBeAnEmptyPassword(): void
+    public function testShouldNotBeAnEmptyPassword() : void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         // Given
         $username = 'john@example.com';

@@ -8,7 +8,11 @@ use Fooscore\Gaming\Infrastructure\ShowMatchDetails;
 use Fooscore\Gaming\Match\MatchId;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use const DIRECTORY_SEPARATOR;
+use function file_put_contents;
+use function unlink;
 
 /**
  * @group integration
@@ -17,33 +21,29 @@ class ShowMatchDetailsTest extends KernelTestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $testMatchId = '6df9c8af-afeb-4422-ac60-5f271c738d76';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $dir;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $kernel = self::bootKernel();
-        $this->dir = $kernel->getProjectDir().DIRECTORY_SEPARATOR.'var/';
+        $this->dir = $kernel->getProjectDir() . DIRECTORY_SEPARATOR . 'var/';
     }
 
-    protected function tearDown(): void
+    protected function tearDown() : void
     {
         parent::tearDown();
 
-        @unlink($this->dir.$this->testMatchId.'.json');
+        @unlink($this->dir . $this->testMatchId . '.json');
     }
 
-    public function testShouldShowMatchDetails(): void
+    public function testShouldShowMatchDetails() : void
     {
         // Given
-        file_put_contents($this->dir.$this->testMatchId.'.json', <<<JSON
+        file_put_contents($this->dir . $this->testMatchId . '.json', <<<JSON
 {
     "id": "6df9c8af-afeb-4422-ac60-5f271c738d76",
     "isWon": false,
@@ -117,9 +117,9 @@ JSON
         ]);
     }
 
-    public function testCannotReadProjection(): void
+    public function testCannotReadProjection() : void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         // Given
         $showMatchDetails = new ShowMatchDetails('unknowndir');

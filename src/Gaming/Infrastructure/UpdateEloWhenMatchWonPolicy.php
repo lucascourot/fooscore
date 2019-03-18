@@ -15,14 +15,10 @@ use RuntimeException;
 
 final class UpdateEloWhenMatchWonPolicy
 {
-    /**
-     * @var MatchRepository
-     */
+    /** @var MatchRepository */
     private $matchRepository;
 
-    /**
-     * @var CanUpdateEloScore
-     */
+    /** @var CanUpdateEloScore */
     private $canUpdateEloScore;
 
     public function __construct(MatchRepository $matchRepository, CanUpdateEloScore $canUpdateEloScore)
@@ -31,7 +27,7 @@ final class UpdateEloWhenMatchWonPolicy
         $this->canUpdateEloScore = $canUpdateEloScore;
     }
 
-    public function on(MatchSymfonyEvent $event): EloScores
+    public function on(MatchSymfonyEvent $event) : EloScores
     {
         $domainEvent = $event->domainEvent();
 
@@ -65,6 +61,6 @@ final class UpdateEloWhenMatchWonPolicy
             return $this->canUpdateEloScore->updatePlayersScores($matchResult);
         }
 
-        throw new RuntimeException('Expected event should be of type '.MatchWasWon::class);
+        throw new RuntimeException('Expected event should be of type ' . MatchWasWon::class);
     }
 }

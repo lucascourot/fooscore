@@ -11,6 +11,8 @@ use Fooscore\Ranking\MatchResult;
 use Fooscore\Ranking\WinningTeam;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use const DIRECTORY_SEPARATOR;
+use function unlink;
 
 /**
  * @group integration
@@ -19,25 +21,23 @@ class JsonEloScoreRepositoryTest extends KernelTestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $dir;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $kernel = self::bootKernel();
-        $this->dir = $kernel->getProjectDir().DIRECTORY_SEPARATOR.'var/';
+        $this->dir = $kernel->getProjectDir() . DIRECTORY_SEPARATOR . 'var/';
     }
 
-    protected function tearDown(): void
+    protected function tearDown() : void
     {
         parent::tearDown();
 
-        @unlink($this->dir.'ranking.json');
+        @unlink($this->dir . 'ranking.json');
     }
 
-    public function testShouldSaveWhenNoFileExists(): void
+    public function testShouldSaveWhenNoFileExists() : void
     {
         // Given
         $matchResult = new MatchResult(
@@ -55,7 +55,7 @@ class JsonEloScoreRepositoryTest extends KernelTestCase
         ]));
 
         // Then
-        self::assertJsonStringEqualsJsonFile($this->dir.'ranking.json', <<<JSON
+        self::assertJsonStringEqualsJsonFile($this->dir . 'ranking.json', <<<JSON
 {
     "w1": 1000,
     "w2": 1000,
@@ -66,7 +66,7 @@ JSON
 );
     }
 
-    public function testShouldGetScoresForMatchPlayers(): void
+    public function testShouldGetScoresForMatchPlayers() : void
     {
         // Given
         $matchResult = new MatchResult(
@@ -93,7 +93,7 @@ JSON
         ]), $eloScores);
     }
 
-    public function testShouldGetDefaultScoreIfNewPlayer(): void
+    public function testShouldGetDefaultScoreIfNewPlayer() : void
     {
         // Given
         $matchResult = new MatchResult(

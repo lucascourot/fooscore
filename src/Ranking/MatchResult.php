@@ -6,14 +6,10 @@ namespace Fooscore\Ranking;
 
 final class MatchResult
 {
-    /**
-     * @var WinningTeam
-     */
+    /** @var WinningTeam */
     private $winningTeam;
 
-    /**
-     * @var LosingTeam
-     */
+    /** @var LosingTeam */
     private $losingTeam;
 
     public function __construct(WinningTeam $winningTeam, LosingTeam $losingTeam)
@@ -22,12 +18,12 @@ final class MatchResult
         $this->losingTeam = $losingTeam;
     }
 
-    public function winningTeam(): WinningTeam
+    public function winningTeam() : WinningTeam
     {
         return $this->winningTeam;
     }
 
-    public function losingTeam(): LosingTeam
+    public function losingTeam() : LosingTeam
     {
         return $this->losingTeam;
     }

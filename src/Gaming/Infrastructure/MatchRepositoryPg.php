@@ -5,11 +5,21 @@ declare(strict_types=1);
 namespace Fooscore\Gaming\Infrastructure;
 
 use Doctrine\DBAL\Connection;
-use Fooscore\Gaming\Match\{
-    DomainEvent, Match, MatchId, MatchRepository, VersionedEvent
-};
+use Fooscore\Gaming\Match\DomainEvent;
+use Fooscore\Gaming\Match\Match;
+use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Match\MatchRepository;
+use Fooscore\Gaming\Match\VersionedEvent;
+use InvalidArgumentException;
+use PDO;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use function array_map;
+use function count;
+use function json_decode;
+use function json_encode;
+use function sprintf;
 
 final class MatchRepositoryPg implements MatchRepository
 {
@@ -24,29 +34,26 @@ final class MatchRepositoryPg implements MatchRepository
         ORDER BY event_store.aggregate_version ASC;
 SQL;
 
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     private $connection;
 
-    /**
-     * @var array
-     */
+    /** @var string[]|DomainEvent[] */
     private $knownDomainEvents;
 
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
-    public function __construct(Connection $connection, DomainEventsFinder $domainEventsFinder, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        Connection $connection,
+        DomainEventsFinder $domainEventsFinder,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->connection = $connection;
         $this->knownDomainEvents = $domainEventsFinder->getDomainEventsClassesIndexedByNames();
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function save(Match $match): void
+    public function save(Match $match) : void
     {
         $versionedEvents = $match->recordedEvents();
 
@@ -75,7 +82,7 @@ SQL
         }
     }
 
-    public function get(MatchId $matchId): Match
+    public function get(MatchId $matchId) : Match
     {
         $statement = $this->connection->prepare(self::FETCH_EVENTS_QUERY);
         $statement->execute([
@@ -83,16 +90,16 @@ SQL
             'aggregate_type' => 'match',
         ]);
 
-        $domainEventsArray = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $domainEventsArray = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         if (count($domainEventsArray) === 0) {
-            throw new \InvalidArgumentException('Match not found.');
+            throw new InvalidArgumentException('Match not found.');
         }
 
-        $versionedEvents = array_map(function (array $domainEventArray): VersionedEvent {
+        $versionedEvents = array_map(function (array $domainEventArray) : VersionedEvent {
             foreach ($this->knownDomainEvents as $knownDomainEventName => $knownDomainEventClass) {
                 if ($domainEventArray['event_name'] === $knownDomainEventName) {
-                    /* @var DomainEvent $knownDomainEventClass */
+                    /** @var DomainEvent $knownDomainEventClass */
                     $domainEvent = $knownDomainEventClass::fromEventDataArray(
                         json_decode($domainEventArray['event_data'], true)
                     );
@@ -101,7 +108,7 @@ SQL
                 }
             }
 
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf('Unknown domain event name : %s', $domainEventArray['event_name'])
             );
         }, $domainEventsArray);

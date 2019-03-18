@@ -25,7 +25,7 @@ class UpdateEloScoreTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testShouldUpdateEloScoreWithChallengerTeamWinning(): void
+    public function testShouldUpdateEloScoreWithChallengerTeamWinning() : void
     {
         // Given
         $matchResult = new MatchResult(
@@ -53,7 +53,7 @@ class UpdateEloScoreTest extends TestCase
         self::assertEquals(1900, $updatedEloScores->getScoreForPlayerId('l2'));
     }
 
-    public function testShouldUpdateEloScoreWithFavoriteTeamWinning(): void
+    public function testShouldUpdateEloScoreWithFavoriteTeamWinning() : void
     {
         // Given
         $matchResult = new MatchResult(

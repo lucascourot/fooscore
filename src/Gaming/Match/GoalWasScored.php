@@ -6,9 +6,7 @@ namespace Fooscore\Gaming\Match;
 
 final class GoalWasScored implements DomainEvent
 {
-    /**
-     * @var Goal
-     */
+    /** @var Goal */
     private $goal;
 
     public function __construct(Goal $goal)
@@ -16,17 +14,20 @@ final class GoalWasScored implements DomainEvent
         $this->goal = $goal;
     }
 
-    public function goal(): Goal
+    public function goal() : Goal
     {
         return $this->goal;
     }
 
-    public static function eventName(): string
+    public static function eventName() : string
     {
         return 'goal_was_scored';
     }
 
-    public static function fromEventDataArray(array $eventData): DomainEvent
+    /**
+     * {@inheritdoc}
+     */
+    public static function fromEventDataArray(array $eventData) : DomainEvent
     {
         return new self(
             new Goal(
@@ -37,7 +38,10 @@ final class GoalWasScored implements DomainEvent
         );
     }
 
-    public function eventDataAsArray(): array
+    /**
+     * {@inheritdoc}
+     */
+    public function eventDataAsArray() : array
     {
         return [
             'number' => $this->goal->number(),

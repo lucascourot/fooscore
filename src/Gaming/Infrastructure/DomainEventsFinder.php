@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Infrastructure;
 
+use Fooscore\Gaming\Match\DomainEvent;
+
 interface DomainEventsFinder
 {
-    public function getDomainEventsClassesIndexedByNames(): array;
+    /**
+     * @return string[]|DomainEvent[]
+     */
+    public function getDomainEventsClassesIndexedByNames() : array;
 }

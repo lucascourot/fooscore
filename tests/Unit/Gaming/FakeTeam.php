@@ -10,7 +10,7 @@ use Fooscore\Gaming\Match\TeamRed;
 
 final class FakeTeam
 {
-    public static function blue(string $back, string $front): TeamBlue
+    public static function blue(string $back, string $front) : TeamBlue
     {
         return new TeamBlue(
             new Player($back, $back),
@@ -18,7 +18,7 @@ final class FakeTeam
         );
     }
 
-    public static function red(string $back, string $front): TeamRed
+    public static function red(string $back, string $front) : TeamRed
     {
         return new TeamRed(
             new Player($back, $back),

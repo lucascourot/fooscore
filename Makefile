@@ -33,13 +33,13 @@ check_security: ## Check for dependency vulnerabilities
 
 .PHONY: cs cs-fix cs-ci
 cs: vendor ## Check code style
-	./bin/php-cs-fixer fix --dry-run --stop-on-violation --diff
+	./bin/phpcs
 
 cs-fix: vendor ## Fix code style
-	./bin/php-cs-fixer fix
+	./bin/phpcbf
 
 cs-ci: vendor ## Run Continuous Integration code style check
-	./bin/php-cs-fixer fix --dry-run --using-cache=no --verbose
+	./bin/phpcs
 
 # Static Analysis
 

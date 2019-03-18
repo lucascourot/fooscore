@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
-trait BackAndFrontPlayers
+abstract class BackAndFrontPlayers
 {
-    /**
-     * @var Player
-     */
+    /** @var Player */
     private $back;
 
-    /**
-     * @var Player
-     */
+    /** @var Player */
     private $front;
 
     public function __construct(Player $back, Player $front)
@@ -22,12 +18,12 @@ trait BackAndFrontPlayers
         $this->front = $front;
     }
 
-    public function back(): Player
+    public function back() : Player
     {
         return $this->back;
     }
 
-    public function front(): Player
+    public function front() : Player
     {
         return $this->front;
     }

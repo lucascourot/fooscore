@@ -8,9 +8,7 @@ use Ramsey\Uuid\UuidInterface;
 
 final class MatchId
 {
-    /**
-     * @var UuidInterface
-     */
+    /** @var UuidInterface */
     private $uuid;
 
     public function __construct(UuidInterface $uuid)
@@ -18,7 +16,7 @@ final class MatchId
         $this->uuid = $uuid;
     }
 
-    public function value(): UuidInterface
+    public function value() : UuidInterface
     {
         return $this->uuid;
     }

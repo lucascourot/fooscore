@@ -21,7 +21,7 @@ class GetUsersTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testShouldGetAllUsers(): void
+    public function testShouldGetAllUsers() : void
     {
         // Given
         $users = [
@@ -41,9 +41,7 @@ class GetUsersTest extends TestCase
             ],
         ];
 
-        $registeredUsers = Mockery::mock(RegisteredUsers::class, [
-            'getAllUsers' => $users,
-        ]);
+        $registeredUsers = Mockery::mock(RegisteredUsers::class, ['getAllUsers' => $users]);
 
         // When
         $identity = new Identity($registeredUsers);
@@ -62,7 +60,7 @@ class GetUsersTest extends TestCase
         ]);
     }
 
-    public function testNoUserExists(): void
+    public function testNoUserExists() : void
     {
         // Given
         $registeredUsers = Mockery::mock(RegisteredUsers::class, [

@@ -11,9 +11,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class IndexController extends AbstractController
 {
     /**
+     * Redirects to game
+     *
      * @Route("/", name="index")
      */
-    public function index(): RedirectResponse
+    public function index() : RedirectResponse
     {
         return $this->redirect('game');
     }

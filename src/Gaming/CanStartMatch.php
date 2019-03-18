@@ -10,5 +10,5 @@ use Fooscore\Gaming\Match\TeamRed;
 
 interface CanStartMatch
 {
-    public function startMatch(TeamBlue $teamBlue, TeamRed $teamRed): Match;
+    public function startMatch(TeamBlue $teamBlue, TeamRed $teamRed) : Match;
 }

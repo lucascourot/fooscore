@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace Fooscore\EventSubscriber;
 
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Throwable;
+use function get_class;
+use function sprintf;
 
 final class ApiExceptionSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $env;
 
     public function __construct(LoggerInterface $logger, string $env)
@@ -29,9 +29,9 @@ final class ApiExceptionSubscriber implements EventSubscriberInterface
         $this->env = $env;
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event): void
+    public function onKernelException(GetResponseForExceptionEvent $event) : void
     {
-        if (!$event->isMasterRequest()) {
+        if (! $event->isMasterRequest()) {
             return;
         }
 
@@ -67,19 +67,22 @@ final class ApiExceptionSubscriber implements EventSubscriberInterface
         $event->setResponse($response);
     }
 
-    private function getStatusCodeFromException(\Throwable $thrownException): int
+    private function getStatusCodeFromException(Throwable $thrownException) : int
     {
         if ($thrownException instanceof HttpExceptionInterface) {
             return $thrownException->getStatusCode();
         }
 
-        return $thrownException instanceof \InvalidArgumentException ? Response::HTTP_BAD_REQUEST : Response::HTTP_INTERNAL_SERVER_ERROR;
+        return $thrownException instanceof InvalidArgumentException
+            ? Response::HTTP_BAD_REQUEST
+            : Response::HTTP_INTERNAL_SERVER_ERROR;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public static function getSubscribedEvents()
     {
-        return [
-            'kernel.exception' => 'onKernelException',
-        ];
+        return ['kernel.exception' => 'onKernelException'];
     }
 }

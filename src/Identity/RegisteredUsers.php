@@ -6,9 +6,15 @@ namespace Fooscore\Identity;
 
 interface RegisteredUsers
 {
-    public function getUser(Credentials $username): ?array;
+    /**
+     * @return mixed[]|null
+     */
+    public function getUser(Credentials $username) : ?array;
 
-    public function tokenExists(string $token): bool;
+    public function tokenExists(string $token) : bool;
 
-    public function getAllUsers(): array;
+    /**
+     * @return mixed[][]
+     */
+    public function getAllUsers() : array;
 }

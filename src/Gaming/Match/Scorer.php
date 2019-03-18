@@ -4,29 +4,29 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
+use InvalidArgumentException;
+use function in_array;
+use function strtolower;
+
 final class Scorer
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $team;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $position;
 
-    public static function fromTeamAndPosition(string $team, string $position): self
+    public static function fromTeamAndPosition(string $team, string $position) : self
     {
         $team = strtolower($team);
         $position = strtolower($position);
 
         if (in_array($team, ['blue', 'red'], true) === false) {
-            throw new \InvalidArgumentException('Unknown team.');
+            throw new InvalidArgumentException('Unknown team.');
         }
 
         if (in_array($position, ['back', 'front'], true) === false) {
-            throw new \InvalidArgumentException('Unknown position.');
+            throw new InvalidArgumentException('Unknown position.');
         }
 
         $self = new self();
@@ -36,12 +36,12 @@ final class Scorer
         return $self;
     }
 
-    public function team(): string
+    public function team() : string
     {
         return $this->team;
     }
 
-    public function position(): string
+    public function position() : string
     {
         return $this->position;
     }

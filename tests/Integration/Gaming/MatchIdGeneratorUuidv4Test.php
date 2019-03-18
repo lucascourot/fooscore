@@ -15,7 +15,7 @@ class MatchIdGeneratorUuidv4Test extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testShouldGenerateUuidV4MatchId(): void
+    public function testShouldGenerateUuidV4MatchId() : void
     {
         // Given
         $adapter = new MatchIdGeneratorUuidv4();

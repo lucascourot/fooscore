@@ -8,22 +8,26 @@ use Fooscore\Gaming\Match\DomainEvent;
 
 final class SymfonyDomainEventsFinder implements DomainEventsFinder
 {
-    /**
-     * @var array
-     */
+    /** @var string[]|DomainEvent[] */
     private $domainEventsClassesIndexedByNames;
 
+    /**
+     * @param string[]|DomainEvent[] $domainEventClasses
+     */
     public function __construct(array $domainEventClasses)
     {
         $this->domainEventsClassesIndexedByNames = [];
 
-        /** @var DomainEvent $domainEventClass */
+        /** @var DomainEvent|string $domainEventClass */
         foreach ($domainEventClasses as $domainEventClass) {
             $this->domainEventsClassesIndexedByNames[$domainEventClass::eventName()] = $domainEventClass;
         }
     }
 
-    public function getDomainEventsClassesIndexedByNames(): array
+    /**
+     * @return string[]|DomainEvent[]
+     */
+    public function getDomainEventsClassesIndexedByNames() : array
     {
         return $this->domainEventsClassesIndexedByNames;
     }

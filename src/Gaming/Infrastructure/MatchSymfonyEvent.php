@@ -10,14 +10,10 @@ use Symfony\Component\EventDispatcher\Event;
 
 final class MatchSymfonyEvent extends Event
 {
-    /**
-     * @var MatchId
-     */
+    /** @var MatchId */
     private $matchId;
 
-    /**
-     * @var DomainEvent
-     */
+    /** @var DomainEvent */
     private $domainEvent;
 
     public function __construct(MatchId $matchId, DomainEvent $domainEvent)
@@ -26,12 +22,12 @@ final class MatchSymfonyEvent extends Event
         $this->matchId = $matchId;
     }
 
-    public function matchId(): MatchId
+    public function matchId() : MatchId
     {
         return $this->matchId;
     }
 
-    public function domainEvent(): DomainEvent
+    public function domainEvent() : DomainEvent
     {
         return $this->domainEvent;
     }

@@ -9,12 +9,12 @@ use Doctrine\Migrations\AbstractMigration;
 
 final class Version20190218165044 extends AbstractMigration
 {
-    public function getDescription(): string
+    public function getDescription() : string
     {
         return 'Init event store';
     }
 
-    public function up(Schema $schema): void
+    public function up(Schema $schema) : void
     {
         $this->addSql(<<<SQL
 CREATE SCHEMA IF NOT EXISTS public;
@@ -36,17 +36,19 @@ SQL
         );
 
         $this->addSql(<<<SQL
-CREATE UNIQUE INDEX event_store_event_id_uindex ON public.event_store (event_id);
+CREATE UNIQUE INDEX event_store_event_id_uindex
+ON public.event_store (event_id);
 SQL
         );
 
         $this->addSql(<<<SQL
-CREATE UNIQUE INDEX event_store_aggregate_id_aggregate_type_aggregate_version_uindex ON public.event_store (aggregate_id, aggregate_type, aggregate_version);
+CREATE UNIQUE INDEX event_store_aggregate_id_aggregate_type_aggregate_version_uindex
+ON public.event_store (aggregate_id, aggregate_type, aggregate_version);
 SQL
         );
     }
 
-    public function down(Schema $schema): void
+    public function down(Schema $schema) : void
     {
         $this->addSql(<<<SQL
 DROP TABLE IF EXISTS public.event_store;

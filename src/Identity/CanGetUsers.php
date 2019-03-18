@@ -6,5 +6,8 @@ namespace Fooscore\Identity;
 
 interface CanGetUsers
 {
-    public function getUsers(): array;
+    /**
+     * @return mixed[]
+     */
+    public function getUsers() : array;
 }

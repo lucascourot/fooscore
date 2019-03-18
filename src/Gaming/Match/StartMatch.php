@@ -8,19 +8,13 @@ use Fooscore\Gaming\CanStartMatch;
 
 final class StartMatch implements CanStartMatch
 {
-    /**
-     * @var MatchIdGenerator
-     */
+    /** @var MatchIdGenerator */
     private $matchIdGenerator;
 
-    /**
-     * @var MatchRepository
-     */
+    /** @var MatchRepository */
     private $matchRepository;
 
-    /**
-     * @var Clock
-     */
+    /** @var Clock */
     private $clock;
 
     public function __construct(MatchIdGenerator $matchIdGenerator, MatchRepository $matchRepository, Clock $clock)
@@ -30,7 +24,7 @@ final class StartMatch implements CanStartMatch
         $this->clock = $clock;
     }
 
-    public function startMatch(TeamBlue $teamBlue, TeamRed $teamRed): Match
+    public function startMatch(TeamBlue $teamBlue, TeamRed $teamRed) : Match
     {
         $match = Match::start($this->matchIdGenerator->generate(), $teamBlue, $teamRed, $this->clock);
 

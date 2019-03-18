@@ -6,9 +6,7 @@ namespace Fooscore\Ranking;
 
 final class UpdateEloScore implements CanUpdateEloScore
 {
-    /**
-     * @var EloScoresRepository
-     */
+    /** @var EloScoresRepository */
     private $playerRepository;
 
     public function __construct(EloScoresRepository $playerRepository)
@@ -16,7 +14,7 @@ final class UpdateEloScore implements CanUpdateEloScore
         $this->playerRepository = $playerRepository;
     }
 
-    public function updatePlayersScores(MatchResult $matchResult): EloScores
+    public function updatePlayersScores(MatchResult $matchResult) : EloScores
     {
         $eloScoresForMatch = $this->playerRepository->get($matchResult);
 

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Fooscore\Identity;
 
+use function array_map;
+
 final class Identity implements CanLogIn, CanCheckToken, CanGetUsers
 {
-    /**
-     * @var RegisteredUsers
-     */
+    /** @var RegisteredUsers */
     private $registeredUsers;
 
     public function __construct(RegisteredUsers $registeredUsers)
@@ -16,21 +16,24 @@ final class Identity implements CanLogIn, CanCheckToken, CanGetUsers
         $this->registeredUsers = $registeredUsers;
     }
 
-    public function logIn(Credentials $credentials): ?string
+    public function logIn(Credentials $credentials) : ?string
     {
         $user = $this->registeredUsers->getUser($credentials);
 
         return $user['token'] ?? null;
     }
 
-    public function isValid(string $token): bool
+    public function isValid(string $token) : bool
     {
         return $this->registeredUsers->tokenExists($token);
     }
 
-    public function getUsers(): array
+    /**
+     * {@inheritdoc}
+     */
+    public function getUsers() : array
     {
-        return array_map(function (array $user): array {
+        return array_map(static function (array $user) : array {
             return [
                 'id' => $user['id'],
                 'name' => $user['name'],

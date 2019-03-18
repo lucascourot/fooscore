@@ -7,13 +7,15 @@ namespace Fooscore\Ranking\Infrastructure;
 use Fooscore\Ranking\EloScores;
 use Fooscore\Ranking\EloScoresRepository;
 use Fooscore\Ranking\MatchResult;
+use function file_get_contents;
+use function file_put_contents;
+use function json_decode;
+use function json_encode;
 
 final class JsonEloScoreRepository implements EloScoresRepository
 {
     private const DEFAULT_ELO = 1000;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $rakingDir;
 
     public function __construct(string $rakingDir)
@@ -21,7 +23,7 @@ final class JsonEloScoreRepository implements EloScoresRepository
         $this->rakingDir = $rakingDir;
     }
 
-    public function get(MatchResult $matchResult): EloScores
+    public function get(MatchResult $matchResult) : EloScores
     {
         $player1 = $matchResult->winningTeam()->playerAId();
         $player2 = $matchResult->winningTeam()->playerBId();
@@ -36,7 +38,7 @@ final class JsonEloScoreRepository implements EloScoresRepository
         ]);
     }
 
-    public function save(EloScores $updatedEloScores): void
+    public function save(EloScores $updatedEloScores) : void
     {
         $state = $this->getState();
 
@@ -44,12 +46,15 @@ final class JsonEloScoreRepository implements EloScoresRepository
             $state[$playerId] = $scoreId;
         }
 
-        file_put_contents($this->rakingDir.'ranking.json', json_encode($state));
+        file_put_contents($this->rakingDir . 'ranking.json', json_encode($state));
     }
 
-    private function getState(): array
+    /**
+     * @return mixed[]
+     */
+    private function getState() : array
     {
-        $content = @file_get_contents($this->rakingDir.'ranking.json');
+        $content = @file_get_contents($this->rakingDir . 'ranking.json');
 
         if ($content === false) {
             return [];

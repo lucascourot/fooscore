@@ -9,7 +9,7 @@ use Fooscore\Gaming\Match\Clock;
 
 final class SystemClock implements Clock
 {
-    public function now(): DateTimeImmutable
+    public function now() : DateTimeImmutable
     {
         return new DateTimeImmutable();
     }

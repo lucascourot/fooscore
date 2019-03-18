@@ -22,7 +22,7 @@ class LogInTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testShouldLogInAsARegisteredUser(): void
+    public function testShouldLogInAsARegisteredUser() : void
     {
         // Given
         $john = [
@@ -32,9 +32,7 @@ class LogInTest extends TestCase
             'token' => 'abc',
         ];
 
-        $registeredUsers = Mockery::mock(RegisteredUsers::class, [
-            'getUser' => $john,
-        ]);
+        $registeredUsers = Mockery::mock(RegisteredUsers::class, ['getUser' => $john]);
 
         // When
         $identity = new Identity($registeredUsers);
@@ -44,12 +42,10 @@ class LogInTest extends TestCase
         self::assertSame($john['token'], $token);
     }
 
-    public function testShouldNotLogInIfNotRegistered(): void
+    public function testShouldNotLogInIfNotRegistered() : void
     {
         // Given
-        $registeredUsers = Mockery::mock(RegisteredUsers::class, [
-            'getUser' => null,
-        ]);
+        $registeredUsers = Mockery::mock(RegisteredUsers::class, ['getUser' => null]);
 
         // When
         $identity = new Identity($registeredUsers);

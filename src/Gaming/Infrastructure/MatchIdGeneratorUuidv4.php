@@ -10,7 +10,7 @@ use Ramsey\Uuid\Uuid;
 
 final class MatchIdGeneratorUuidv4 implements MatchIdGenerator
 {
-    public function generate(): MatchId
+    public function generate() : MatchId
     {
         return new MatchId(Uuid::uuid4());
     }

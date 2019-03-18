@@ -8,9 +8,7 @@ use DateTimeImmutable;
 
 final class ScoredAt
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $sec;
 
     public function __construct(int $sec)
@@ -18,14 +16,14 @@ final class ScoredAt
         $this->sec = $sec;
     }
 
-    public static function fromDifference(DateTimeImmutable $startTime, DateTimeImmutable $scoredTime): self
+    public static function fromDifference(DateTimeImmutable $startTime, DateTimeImmutable $scoredTime) : self
     {
         return new self(
             $scoredTime->getTimestamp() - $startTime->getTimestamp()
         );
     }
 
-    public function sec(): int
+    public function sec() : int
     {
         return $this->sec;
     }

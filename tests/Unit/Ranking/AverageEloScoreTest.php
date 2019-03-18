@@ -15,14 +15,14 @@ class AverageEloScoreTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testShouldCalculateAverageForTeam(): void
+    public function testShouldCalculateAverageForTeam() : void
     {
         $average = AverageEloScore::team(10, 11);
 
         self::assertSame(11, $average);
     }
 
-    public function testShouldRoundAverage(): void
+    public function testShouldRoundAverage() : void
     {
         $average = AverageEloScore::team(-3, -2);
 

@@ -6,7 +6,7 @@ namespace Fooscore\Ranking;
 
 interface EloScoresRepository
 {
-    public function get(MatchResult $matchResult): EloScores;
+    public function get(MatchResult $matchResult) : EloScores;
 
-    public function save(EloScores $updatedEloScores): void;
+    public function save(EloScores $updatedEloScores) : void;
 }

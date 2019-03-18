@@ -7,13 +7,22 @@ namespace Fooscore\Tests\Integration\Gaming;
 use DateTimeImmutable;
 use Fooscore\Gaming\Infrastructure\MatchDetailsProjector;
 use Fooscore\Gaming\Infrastructure\MatchSymfonyEvent;
-use Fooscore\Gaming\Match\{
-    DomainEvent, Goal, GoalWasScored, MatchId, MatchWasStarted, MatchWasWon, ScoredAt, Scorer
-};
+use Fooscore\Gaming\Match\DomainEvent;
+use Fooscore\Gaming\Match\Goal;
+use Fooscore\Gaming\Match\GoalWasScored;
+use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Match\MatchWasStarted;
+use Fooscore\Gaming\Match\MatchWasWon;
+use Fooscore\Gaming\Match\ScoredAt;
+use Fooscore\Gaming\Match\Scorer;
 use Fooscore\Tests\Unit\Gaming\FakeTeam;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use const DIRECTORY_SEPARATOR;
+use function range;
+use function unlink;
 
 /**
  * @group integration
@@ -22,30 +31,26 @@ class MatchDetailsProjectorTest extends KernelTestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $testMatchId = '6df9c8af-afeb-4422-ac60-5f271c738d76';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $dir;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $kernel = self::bootKernel();
-        $this->dir = $kernel->getProjectDir().DIRECTORY_SEPARATOR.'var/';
+        $this->dir = $kernel->getProjectDir() . DIRECTORY_SEPARATOR . 'var/';
     }
 
-    protected function tearDown(): void
+    protected function tearDown() : void
     {
         parent::tearDown();
 
-        @unlink($this->dir.$this->testMatchId.'.json');
+        @unlink($this->dir . $this->testMatchId . '.json');
     }
 
-    public function testProjectMatchWasStartedEvent(): void
+    public function testProjectMatchWasStartedEvent() : void
     {
         // Given
         $projector = new MatchDetailsProjector($this->dir);
@@ -64,7 +69,7 @@ class MatchDetailsProjectorTest extends KernelTestCase
         $projector->on(new MatchSymfonyEvent($matchId, $matchWasStarted));
 
         // Then
-        self::assertJsonStringEqualsJsonFile($this->dir.$this->testMatchId.'.json', <<<JSON
+        self::assertJsonStringEqualsJsonFile($this->dir . $this->testMatchId . '.json', <<<JSON
 {
     "id": "6df9c8af-afeb-4422-ac60-5f271c738d76",
     "isWon": false,
@@ -100,7 +105,7 @@ JSON
         );
     }
 
-    public function testProjectGoalWasScoredEvent(): void
+    public function testProjectGoalWasScoredEvent() : void
     {
         // Given
         $projector = new MatchDetailsProjector($this->dir);
@@ -110,7 +115,7 @@ JSON
 
         $projector->on(new MatchSymfonyEvent(
             $matchId,
-            new MatchWasStarted($matchId, $teamBlue, $teamRed, new \DateTimeImmutable('2000-01-01 00:00:00'))
+            new MatchWasStarted($matchId, $teamBlue, $teamRed, new DateTimeImmutable('2000-01-01 00:00:00'))
         ));
 
         // When
@@ -128,7 +133,7 @@ JSON
         ));
 
         // Then
-        self::assertJsonStringEqualsJsonFile($this->dir.$this->testMatchId.'.json', <<<JSON
+        self::assertJsonStringEqualsJsonFile($this->dir . $this->testMatchId . '.json', <<<JSON
 {
     "id": "6df9c8af-afeb-4422-ac60-5f271c738d76",
     "isWon": false,
@@ -198,7 +203,7 @@ JSON
         );
     }
 
-    public function testProjectMatchWasWon(): void
+    public function testProjectMatchWasWon() : void
     {
         // Given
         $projector = new MatchDetailsProjector($this->dir);
@@ -208,7 +213,7 @@ JSON
 
         $projector->on(new MatchSymfonyEvent(
             $matchId,
-            new MatchWasStarted($matchId, $teamBlue, $teamRed, new \DateTimeImmutable('2000-01-01 00:00:00'))
+            new MatchWasStarted($matchId, $teamBlue, $teamRed, new DateTimeImmutable('2000-01-01 00:00:00'))
         ));
         foreach (range(1, 5) as $number) {
             $projector->on(new MatchSymfonyEvent(
@@ -223,7 +228,7 @@ JSON
         ));
 
         // Then
-        self::assertJsonStringEqualsJsonFile($this->dir.$this->testMatchId.'.json', <<<JSON
+        self::assertJsonStringEqualsJsonFile($this->dir . $this->testMatchId . '.json', <<<JSON
 {
     "id": "6df9c8af-afeb-4422-ac60-5f271c738d76",
     "isWon": true,
@@ -315,9 +320,9 @@ JSON
         );
     }
 
-    public function testCannotReadProjection(): void
+    public function testCannotReadProjection() : void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         // Given
         $projector = new MatchDetailsProjector($this->dir);
@@ -330,9 +335,9 @@ JSON
         $projector->on(new MatchSymfonyEvent($matchId, $goalWasScored));
     }
 
-    public function testCannotProjectUnknownEvent(): void
+    public function testCannotProjectUnknownEvent() : void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         // Given
         $projector = new MatchDetailsProjector($this->dir);
@@ -340,17 +345,23 @@ JSON
 
         // When
         $unknownEvent = new class() implements DomainEvent {
-            public static function eventName(): string
+            public static function eventName() : string
             {
                 return 'error';
             }
 
-            public static function fromEventDataArray(array $eventData): DomainEvent
+            /**
+             * {@inheritdoc}
+             */
+            public static function fromEventDataArray(array $eventData) : DomainEvent
             {
                 return new self();
             }
 
-            public function eventDataAsArray(): array
+            /**
+             * {@inheritdoc}
+             */
+            public function eventDataAsArray() : array
             {
                 return [];
             }

@@ -9,24 +9,16 @@ use Ramsey\Uuid\Uuid;
 
 final class MatchWasStarted implements DomainEvent
 {
-    /**
-     * @var MatchId
-     */
+    /** @var MatchId */
     private $matchId;
 
-    /**
-     * @var TeamBlue
-     */
+    /** @var TeamBlue */
     private $teamBlue;
 
-    /**
-     * @var TeamRed
-     */
+    /** @var TeamRed */
     private $teamRed;
 
-    /**
-     * @var DateTimeImmutable
-     */
+    /** @var DateTimeImmutable */
     private $startedAt;
 
     public function __construct(MatchId $matchId, TeamBlue $teamBlue, TeamRed $teamRed, DateTimeImmutable $startedAt)
@@ -37,32 +29,35 @@ final class MatchWasStarted implements DomainEvent
         $this->startedAt = $startedAt;
     }
 
-    public function matchId(): MatchId
+    public function matchId() : MatchId
     {
         return $this->matchId;
     }
 
-    public function teamBlue(): TeamBlue
+    public function teamBlue() : TeamBlue
     {
         return $this->teamBlue;
     }
 
-    public function teamRed(): TeamRed
+    public function teamRed() : TeamRed
     {
         return $this->teamRed;
     }
 
-    public function startedAt(): DateTimeImmutable
+    public function startedAt() : DateTimeImmutable
     {
         return $this->startedAt;
     }
 
-    public static function eventName(): string
+    public static function eventName() : string
     {
         return 'match_was_started';
     }
 
-    public static function fromEventDataArray(array $eventData): DomainEvent
+    /**
+     * {@inheritdoc}
+     */
+    public static function fromEventDataArray(array $eventData) : DomainEvent
     {
         return new self(
             new MatchId(Uuid::fromString($eventData['matchId'])),
@@ -78,7 +73,10 @@ final class MatchWasStarted implements DomainEvent
         );
     }
 
-    public function eventDataAsArray(): array
+    /**
+     * {@inheritdoc}
+     */
+    public function eventDataAsArray() : array
     {
         return [
             'matchId' => $this->matchId->value()->toString(),

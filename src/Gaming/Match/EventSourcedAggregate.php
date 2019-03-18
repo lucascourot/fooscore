@@ -4,45 +4,45 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
-trait EventSourcedAggregate
+abstract class EventSourcedAggregate
 {
-    /**
-     * @var VersionedEvent[]
-     */
+    /** @var VersionedEvent[] */
     private $recordedEvents = [];
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $aggregateVersion = 0;
+
+    /**
+     * @param VersionedEvent[] $versionedEvents
+     *
+     * @return static AggregateRoot
+     */
+    public static function reconstituteFromHistory(array $versionedEvents)
+    {
+        $aggregateRoot = new static();
+
+        foreach ($versionedEvents as $versionedEvent) {
+            $aggregateRoot->aggregateVersion = $versionedEvent->aggregateVersion();
+            $aggregateRoot->apply($versionedEvent->domainEvent());
+        }
+
+        return $aggregateRoot;
+    }
 
     /**
      * @return VersionedEvent[]
      */
-    public function recordedEvents(): array
+    public function recordedEvents() : array
     {
         return $this->recordedEvents;
     }
 
-    private function recordThat(DomainEvent $event): void
+    protected function recordThat(DomainEvent $event) : void
     {
         $this->aggregateVersion++;
         $this->recordedEvents[] = new VersionedEvent($this->aggregateVersion, $event);
         $this->apply($event);
     }
 
-    /**
-     * @param VersionedEvent[] $versionedEvents
-     */
-    public static function reconstituteFromHistory(array $versionedEvents): self
-    {
-        $self = new self();
-
-        foreach ($versionedEvents as $versionedEvent) {
-            $self->aggregateVersion = $versionedEvent->aggregateVersion();
-            $self->apply($versionedEvent->domainEvent());
-        }
-
-        return $self;
-    }
+    abstract protected function apply(DomainEvent $event) : void;
 }

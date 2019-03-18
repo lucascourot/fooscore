@@ -5,9 +5,19 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use DateInterval;
-use Fooscore\Gaming\Match\{
-    Goal, GoalWasScored, Match, MatchAlreadyWon, MatchId, MatchRepository, MatchWasStarted, MatchWasWon, ScoreGoal, ScoredAt, Scorer, TeamBlue, TeamRed, VersionedEvent
-};
+use DateTimeImmutable;
+use Fooscore\Gaming\Match\Goal;
+use Fooscore\Gaming\Match\GoalWasScored;
+use Fooscore\Gaming\Match\Match;
+use Fooscore\Gaming\Match\MatchAlreadyWon;
+use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Match\MatchRepository;
+use Fooscore\Gaming\Match\MatchWasStarted;
+use Fooscore\Gaming\Match\MatchWasWon;
+use Fooscore\Gaming\Match\ScoredAt;
+use Fooscore\Gaming\Match\ScoreGoal;
+use Fooscore\Gaming\Match\Scorer;
+use Fooscore\Gaming\Match\VersionedEvent;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
@@ -24,12 +34,12 @@ class ScoreGoalTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testShouldScoreRegularGoal(): void
+    public function testShouldScoreRegularGoal() : void
     {
         // Given
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
 
-        $startedAt = new \DateTimeImmutable('2000-01-01 00:00:00');
+        $startedAt = new DateTimeImmutable('2000-01-01 00:00:00');
         $fixedClock = new FixedClock($startedAt);
         $teamBlue = FakeTeam::blue('a', 'b');
         $teamRed = FakeTeam::red('c', 'd');
@@ -54,12 +64,12 @@ class ScoreGoalTest extends TestCase
         $matchRepository->shouldHaveReceived()->save($match)->once();
     }
 
-    public function testShouldScoreIncrementGoalIds(): void
+    public function testShouldScoreIncrementGoalIds() : void
     {
         // Given
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
 
-        $startedAt = new \DateTimeImmutable('2000-01-01 00:00:00');
+        $startedAt = new DateTimeImmutable('2000-01-01 00:00:00');
         $fixedClock = new FixedClock($startedAt);
         $teamBlue = FakeTeam::blue('a', 'b');
         $teamRed = FakeTeam::red('c', 'd');
@@ -86,13 +96,13 @@ class ScoreGoalTest extends TestCase
         $matchRepository->shouldHaveReceived()->save($match)->twice();
     }
 
-    public function testTeamBlueShouldWinWhen10GoalsScored(): void
+    public function testTeamBlueShouldWinWhen10GoalsScored() : void
     {
         // Given
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
         $scorer = Scorer::fromTeamAndPosition('blue', 'back');
 
-        $startedAt = new \DateTimeImmutable('2000-01-01 00:00:00');
+        $startedAt = new DateTimeImmutable('2000-01-01 00:00:00');
         $fixedClock = new FixedClock($startedAt);
         $teamBlue = FakeTeam::blue('a', 'b');
         $teamRed = FakeTeam::red('c', 'd');
@@ -125,13 +135,13 @@ class ScoreGoalTest extends TestCase
         $matchRepository->shouldHaveReceived()->save($match)->once();
     }
 
-    public function testTeamRedShouldWinWhen10GoalsScored(): void
+    public function testTeamRedShouldWinWhen10GoalsScored() : void
     {
         // Given
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
         $scorer = Scorer::fromTeamAndPosition('red', 'back');
 
-        $startedAt = new \DateTimeImmutable('2000-01-01 00:00:00');
+        $startedAt = new DateTimeImmutable('2000-01-01 00:00:00');
         $fixedClock = new FixedClock($startedAt);
         $teamBlue = FakeTeam::blue('a', 'b');
         $teamRed = FakeTeam::red('c', 'd');
@@ -164,7 +174,7 @@ class ScoreGoalTest extends TestCase
         $matchRepository->shouldHaveReceived()->save($match)->once();
     }
 
-    public function testShouldNotScoreGoalAfterMatchHasBeenWon(): void
+    public function testShouldNotScoreGoalAfterMatchHasBeenWon() : void
     {
         $this->expectException(MatchAlreadyWon::class);
 
@@ -172,7 +182,7 @@ class ScoreGoalTest extends TestCase
         $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
         $scorer = Scorer::fromTeamAndPosition('blue', 'back');
 
-        $startedAt = new \DateTimeImmutable('2000-01-01 00:00:00');
+        $startedAt = new DateTimeImmutable('2000-01-01 00:00:00');
         $fixedClock = new FixedClock($startedAt);
         $teamBlue = FakeTeam::blue('a', 'b');
         $teamRed = FakeTeam::red('c', 'd');

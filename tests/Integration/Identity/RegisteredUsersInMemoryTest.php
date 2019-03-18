@@ -16,7 +16,7 @@ class RegisteredUsersInMemoryTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testGetsRegisteredUserByUsername(): void
+    public function testGetsRegisteredUserByUsername() : void
     {
         // Given
         $email = 'john@example.com';
@@ -30,7 +30,7 @@ class RegisteredUsersInMemoryTest extends TestCase
         self::assertSame('John Doe', $user['name']);
     }
 
-    public function testReturnsNullIfUserNotFound(): void
+    public function testReturnsNullIfUserNotFound() : void
     {
         // Given
         $email = 'notfound@example.com';
@@ -44,7 +44,7 @@ class RegisteredUsersInMemoryTest extends TestCase
         self::assertNull($user);
     }
 
-    public function testReturnsNullIfWrongPassword(): void
+    public function testReturnsNullIfWrongPassword() : void
     {
         // Given
         $email = 'john@example.com';
@@ -58,7 +58,7 @@ class RegisteredUsersInMemoryTest extends TestCase
         self::assertNull($user);
     }
 
-    public function testShouldCheckValidToken(): void
+    public function testShouldCheckValidToken() : void
     {
         // Given
         $token = 'johnToken';
@@ -71,7 +71,7 @@ class RegisteredUsersInMemoryTest extends TestCase
         self::assertTrue($isValid);
     }
 
-    public function testShouldCheckInvalidToken(): void
+    public function testShouldCheckInvalidToken() : void
     {
         // Given
         $token = 'not valid';
@@ -84,7 +84,7 @@ class RegisteredUsersInMemoryTest extends TestCase
         self::assertFalse($isValid);
     }
 
-    public function testShouldFetchAllUsers(): void
+    public function testShouldFetchAllUsers() : void
     {
         // Given
         $adapter = new RegisteredUsersInMemory();

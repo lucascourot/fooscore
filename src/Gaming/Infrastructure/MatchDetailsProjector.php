@@ -8,16 +8,20 @@ use Fooscore\Gaming\Match\GoalWasScored;
 use Fooscore\Gaming\Match\MatchWasStarted;
 use Fooscore\Gaming\Match\MatchWasWon;
 use RuntimeException;
+use const JSON_PRETTY_PRINT;
+use function file_get_contents;
+use function file_put_contents;
+use function floor;
+use function json_decode;
+use function json_encode;
 
 final class MatchDetailsProjector
 {
-    private const MINUTE_IN_SECONDS = 60;
+    private const MINUTE_IN_SECONDS    = 60;
     private const INITIAL_IS_WON_MATCH = false;
-    private const INITIAL_SCORE = 0;
+    private const INITIAL_SCORE        = 0;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $dir;
 
     public function __construct(string $projectionDir)
@@ -25,12 +29,12 @@ final class MatchDetailsProjector
         $this->dir = $projectionDir;
     }
 
-    public function on(MatchSymfonyEvent $event): void
+    public function on(MatchSymfonyEvent $event) : void
     {
         $domainEvent = $event->domainEvent();
 
         if ($domainEvent instanceof MatchWasStarted) {
-            file_put_contents($this->dir.$event->matchId()->value()->toString().'.json', json_encode(
+            file_put_contents($this->dir . $event->matchId()->value()->toString() . '.json', json_encode(
                 [
                     'id' => $domainEvent->matchId()->value()->toString(),
                     'isWon' => self::INITIAL_IS_WON_MATCH,
@@ -91,7 +95,7 @@ final class MatchDetailsProjector
                 $matchState['score']['red']++;
             }
 
-            file_put_contents($this->dir.$event->matchId()->value()->toString().'.json', json_encode(
+            file_put_contents($this->dir . $event->matchId()->value()->toString() . '.json', json_encode(
                 $matchState,
                 JSON_PRETTY_PRINT
             ));
@@ -106,7 +110,7 @@ final class MatchDetailsProjector
 
             $matchState['isWon'] = true;
 
-            file_put_contents($this->dir.$event->matchId()->value()->toString().'.json', json_encode(
+            file_put_contents($this->dir . $event->matchId()->value()->toString() . '.json', json_encode(
                 $matchState,
                 JSON_PRETTY_PRINT
             ));
@@ -114,12 +118,12 @@ final class MatchDetailsProjector
             return;
         }
 
-        throw new RuntimeException('Cannot find projector for event "'.$domainEvent::eventName().'"');
+        throw new RuntimeException('Cannot find projector for event "' . $domainEvent::eventName() . '"');
     }
 
-    private function getFileContent(MatchSymfonyEvent $event): string
+    private function getFileContent(MatchSymfonyEvent $event) : string
     {
-        $content = @file_get_contents($this->dir.$event->matchId()->value()->toString().'.json');
+        $content = @file_get_contents($this->dir . $event->matchId()->value()->toString() . '.json');
 
         if ($content === false) {
             throw new RuntimeException('Cannot read projection.');

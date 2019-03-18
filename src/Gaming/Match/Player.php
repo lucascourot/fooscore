@@ -6,28 +6,24 @@ namespace Fooscore\Gaming\Match;
 
 final class Player
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $id;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $name;
 
     public function __construct(string $id, string $name)
     {
-        $this->id = $id;
+        $this->id   = $id;
         $this->name = $name;
     }
 
-    public function id(): string
+    public function id() : string
     {
         return $this->id;
     }
 
-    public function name(): string
+    public function name() : string
     {
         return $this->name;
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
-final class TeamBlue
+final class TeamBlue extends BackAndFrontPlayers
 {
-    use BackAndFrontPlayers;
 }

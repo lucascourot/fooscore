@@ -6,5 +6,5 @@ namespace Fooscore\Gaming\Match;
 
 interface MatchIdGenerator
 {
-    public function generate(): MatchId;
+    public function generate() : MatchId;
 }

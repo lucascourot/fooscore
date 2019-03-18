@@ -9,9 +9,7 @@ use Fooscore\Identity\RegisteredUsers;
 
 final class RegisteredUsersInMemory implements RegisteredUsers
 {
-    /**
-     * @var array
-     */
+    /** @var mixed[][] */
     private $users = [
         [
             'id' => 1,
@@ -43,7 +41,10 @@ final class RegisteredUsersInMemory implements RegisteredUsers
         ],
     ];
 
-    public function getUser(Credentials $credentials): ?array
+    /**
+     * {@inheritdoc}
+     */
+    public function getUser(Credentials $credentials) : ?array
     {
         foreach ($this->users as $user) {
             if ($credentials->match($user['username'], $user['password'])) {
@@ -54,7 +55,7 @@ final class RegisteredUsersInMemory implements RegisteredUsers
         return null;
     }
 
-    public function tokenExists(string $token): bool
+    public function tokenExists(string $token) : bool
     {
         foreach ($this->users as $user) {
             if ($user['token'] === $token) {
@@ -65,7 +66,10 @@ final class RegisteredUsersInMemory implements RegisteredUsers
         return false;
     }
 
-    public function getAllUsers(): array
+    /**
+     * {@inheritdoc}
+     */
+    public function getAllUsers() : array
     {
         return $this->users;
     }

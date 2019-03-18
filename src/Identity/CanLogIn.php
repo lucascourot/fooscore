@@ -6,5 +6,5 @@ namespace Fooscore\Identity;
 
 interface CanLogIn
 {
-    public function logIn(Credentials $username): ?string;
+    public function logIn(Credentials $username) : ?string;
 }

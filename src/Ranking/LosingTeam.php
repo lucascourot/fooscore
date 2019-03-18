@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fooscore\Ranking;
 
-final class LosingTeam
+final class LosingTeam extends Double
 {
-    use Double;
 }

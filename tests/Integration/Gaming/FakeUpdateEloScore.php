@@ -10,14 +10,10 @@ use Fooscore\Ranking\MatchResult;
 
 final class FakeUpdateEloScore implements CanUpdateEloScore
 {
-    /**
-     * @var EloScores
-     */
+    /** @var EloScores */
     private $eloScoresToReturn;
 
-    /**
-     * @var MatchResult
-     */
+    /** @var MatchResult */
     private $matchResult;
 
     public function __construct(EloScores $eloScoresToReturn)
@@ -25,14 +21,14 @@ final class FakeUpdateEloScore implements CanUpdateEloScore
         $this->eloScoresToReturn = $eloScoresToReturn;
     }
 
-    public function updatePlayersScores(MatchResult $matchResult): EloScores
+    public function updatePlayersScores(MatchResult $matchResult) : EloScores
     {
         $this->matchResult = $matchResult;
 
         return $this->eloScoresToReturn;
     }
 
-    public function getUsedMatchResult(): ?MatchResult
+    public function getUsedMatchResult() : ?MatchResult
     {
         return $this->matchResult;
     }

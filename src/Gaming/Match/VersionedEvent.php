@@ -6,14 +6,10 @@ namespace Fooscore\Gaming\Match;
 
 final class VersionedEvent
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $aggregateVersion;
 
-    /**
-     * @var DomainEvent
-     */
+    /** @var DomainEvent */
     private $domainEvent;
 
     public function __construct(int $aggregateVersion, DomainEvent $domainEvent)
@@ -22,12 +18,12 @@ final class VersionedEvent
         $this->domainEvent = $domainEvent;
     }
 
-    public function aggregateVersion(): int
+    public function aggregateVersion() : int
     {
         return $this->aggregateVersion;
     }
 
-    public function domainEvent(): DomainEvent
+    public function domainEvent() : DomainEvent
     {
         return $this->domainEvent;
     }

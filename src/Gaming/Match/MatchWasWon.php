@@ -6,9 +6,7 @@ namespace Fooscore\Gaming\Match;
 
 final class MatchWasWon implements DomainEvent
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $teamWinner;
 
     public function __construct(string $teamWinner)
@@ -16,26 +14,32 @@ final class MatchWasWon implements DomainEvent
         $this->teamWinner = $teamWinner;
     }
 
-    public static function fromEventDataArray(array $eventData): DomainEvent
+    /**
+     * {@inheritdoc}
+     */
+    public static function fromEventDataArray(array $eventData) : DomainEvent
     {
         return new self(
             $eventData['teamWinner']
         );
     }
 
-    public function eventDataAsArray(): array
+    /**
+     * {@inheritdoc}
+     */
+    public function eventDataAsArray() : array
     {
         return [
             'teamWinner' => $this->teamWinner,
         ];
     }
 
-    public static function eventName(): string
+    public static function eventName() : string
     {
         return 'match_was_won';
     }
 
-    public function teamWinner(): string
+    public function teamWinner() : string
     {
         return $this->teamWinner;
     }

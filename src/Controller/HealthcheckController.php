@@ -11,12 +11,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class HealthcheckController extends AbstractController
 {
     /**
+     * Healcheck
+     *
      * @Route("/status", name="healthcheck")
      */
-    public function index(): JsonResponse
+    public function index() : JsonResponse
     {
-        return $this->json([
-            'status' => 'ok',
-        ]);
+        return $this->json(['status' => 'ok']);
     }
 }

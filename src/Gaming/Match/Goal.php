@@ -6,19 +6,13 @@ namespace Fooscore\Gaming\Match;
 
 final class Goal
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $number;
 
-    /**
-     * @var Scorer
-     */
+    /** @var Scorer */
     private $scorer;
 
-    /**
-     * @var ScoredAt
-     */
+    /** @var ScoredAt */
     private $scoredAt;
 
     public function __construct(int $number, Scorer $scorer, ScoredAt $scoredAt)
@@ -28,17 +22,17 @@ final class Goal
         $this->scoredAt = $scoredAt;
     }
 
-    public function number(): int
+    public function number() : int
     {
         return $this->number;
     }
 
-    public function scorer(): Scorer
+    public function scorer() : Scorer
     {
         return $this->scorer;
     }
 
-    public function scoredAt(): ScoredAt
+    public function scoredAt() : ScoredAt
     {
         return $this->scoredAt;
     }

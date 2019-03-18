@@ -21,14 +21,12 @@ class CheckTokenTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testShouldCheckValidToken(): void
+    public function testShouldCheckValidToken() : void
     {
         // Given
         $token = 'johnToken';
 
-        $registeredUsers = Mockery::mock(RegisteredUsers::class, [
-            'tokenExists' => true,
-        ]);
+        $registeredUsers = Mockery::mock(RegisteredUsers::class, ['tokenExists' => true]);
 
         // When
         $identity = new Identity($registeredUsers);

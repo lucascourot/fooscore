@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\Scorer;
+use InvalidArgumentException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
@@ -17,7 +18,7 @@ class ScorerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testShouldBeBlueBack(): void
+    public function testShouldBeBlueBack() : void
     {
         $scorer = Scorer::fromTeamAndPosition('blue', 'back');
 
@@ -25,7 +26,7 @@ class ScorerTest extends TestCase
         self::assertSame('back', $scorer->position());
     }
 
-    public function testShouldBeBlueFront(): void
+    public function testShouldBeBlueFront() : void
     {
         $scorer = Scorer::fromTeamAndPosition('blue', 'front');
 
@@ -33,7 +34,7 @@ class ScorerTest extends TestCase
         self::assertSame('front', $scorer->position());
     }
 
-    public function testShouldBeRedBack(): void
+    public function testShouldBeRedBack() : void
     {
         $scorer = Scorer::fromTeamAndPosition('red', 'back');
 
@@ -41,7 +42,7 @@ class ScorerTest extends TestCase
         self::assertSame('back', $scorer->position());
     }
 
-    public function testShouldBeRedFront(): void
+    public function testShouldBeRedFront() : void
     {
         $scorer = Scorer::fromTeamAndPosition('red', 'front');
 
@@ -49,19 +50,19 @@ class ScorerTest extends TestCase
         self::assertSame('front', $scorer->position());
     }
 
-    public function testShouldOnlyBelongToTeamBlueOrRed(): void
+    public function testShouldOnlyBelongToTeamBlueOrRed() : void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Scorer::fromTeamAndPosition('yellow', 'front');
     }
 
-    public function testShouldOnlyBelongToPositionBackOrFront(): void
+    public function testShouldOnlyBelongToPositionBackOrFront() : void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Scorer::fromTeamAndPosition('blue', 'middle');
     }
 
-    public function testShouldConvertToLowercase(): void
+    public function testShouldConvertToLowercase() : void
     {
         $scorer = Scorer::fromTeamAndPosition('rEd', 'froNt');
 

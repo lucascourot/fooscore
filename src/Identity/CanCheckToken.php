@@ -6,5 +6,5 @@ namespace Fooscore\Identity;
 
 interface CanCheckToken
 {
-    public function isValid(string $token): bool;
+    public function isValid(string $token) : bool;
 }

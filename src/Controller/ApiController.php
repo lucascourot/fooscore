@@ -7,9 +7,12 @@ namespace Fooscore\Controller;
 use Fooscore\Gaming\CanScoreGoal;
 use Fooscore\Gaming\CanShowMatchDetails;
 use Fooscore\Gaming\CanStartMatch;
-use Fooscore\Gaming\Match\{
-    GoalWasScored, MatchId, Player, Scorer, TeamBlue, TeamRed
-};
+use Fooscore\Gaming\Match\GoalWasScored;
+use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Match\Player;
+use Fooscore\Gaming\Match\Scorer;
+use Fooscore\Gaming\Match\TeamBlue;
+use Fooscore\Gaming\Match\TeamRed;
 use Fooscore\Identity\CanGetUsers;
 use Fooscore\Identity\CanLogIn;
 use Fooscore\Identity\Credentials;
@@ -26,13 +29,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use function json_decode;
+use function strval;
 
 class ApiController extends AbstractController
 {
     /**
+     * Login
+     *
      * @Route("/api/login", name="api_login", methods={"POST"})
      */
-    public function login(Request $request, CanLogIn $logIn): JsonResponse
+    public function login(Request $request, CanLogIn $logIn) : JsonResponse
     {
         $credentials = json_decode((string) $request->getContent(), true);
         $token = $logIn->logIn(
@@ -46,15 +53,15 @@ class ApiController extends AbstractController
             throw new BadRequestHttpException('Cannot log in the user.');
         }
 
-        return $this->json([
-            'token' => $token,
-        ]);
+        return $this->json(['token' => $token]);
     }
 
     /**
+     * Get players
+     *
      * @Route("/api/players", name="api_players", methods={"GET"})
      */
-    public function players(CanGetUsers $getUsers): JsonResponse
+    public function players(CanGetUsers $getUsers) : JsonResponse
     {
         return $this->json([
             'players' => $getUsers->getUsers(),
@@ -62,9 +69,11 @@ class ApiController extends AbstractController
     }
 
     /**
+     * Start match
+     *
      * @Route("/api/matches", name="api_start_match", methods={"POST"})
      */
-    public function startMatch(Request $request, CanStartMatch $startMatch): RedirectResponse
+    public function startMatch(Request $request, CanStartMatch $startMatch) : RedirectResponse
     {
         $players = json_decode((string) $request->getContent(), true)['players'];
 
@@ -85,9 +94,11 @@ class ApiController extends AbstractController
     }
 
     /**
+     * Show match
+     *
      * @Route("/api/matches/{matchId}", name="api_match", methods={"GET"})
      */
-    public function showMatch(string $matchId, CanShowMatchDetails $showMatchDetails): JsonResponse
+    public function showMatch(string $matchId, CanShowMatchDetails $showMatchDetails) : JsonResponse
     {
         $matchWithDetail = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($matchId)));
 
@@ -95,9 +106,11 @@ class ApiController extends AbstractController
     }
 
     /**
+     * Score goal
+     *
      * @Route("/api/matches/{matchId}/goals", name="api_score_goal", methods={"POST"})
      */
-    public function scoreGoal(Request $request, string $matchId, CanScoreGoal $scoreGoal): RedirectResponse
+    public function scoreGoal(Request $request, string $matchId, CanScoreGoal $scoreGoal) : RedirectResponse
     {
         $content = json_decode((string) $request->getContent(), true);
         $type = $content['type'];
@@ -123,17 +136,21 @@ class ApiController extends AbstractController
     }
 
     /**
+     * Show Goal
+     *
      * @Route("/api/matches/{matchId}/goals/{goalId}", name="api_goal", methods={"GET"})
      */
-    public function showGoal(string $matchId, string $goalId, CanShowMatchDetails $showMatchDetails): JsonResponse
+    public function showGoal(string $matchId, string $goalId, CanShowMatchDetails $showMatchDetails) : JsonResponse
     {
         $matchWithDetail = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($matchId)));
 
         $askedGoal = null;
         foreach ($matchWithDetail['goals'] as $scoredGoal) {
-            if (strval($scoredGoal['id']) === $goalId) {
-                $askedGoal = $scoredGoal;
+            if (strval($scoredGoal['id']) !== $goalId) {
+                continue;
             }
+
+            $askedGoal = $scoredGoal;
         }
 
         if ($askedGoal === null) {
@@ -144,9 +161,11 @@ class ApiController extends AbstractController
     }
 
     /**
+     * Update Elo Score
+     *
      * @Route("/api/scores", name="api_update_score", methods={"POST"})
      */
-    public function updateEloScore(Request $request, CanUpdateEloScore $canUpdateEloScore): JsonResponse
+    public function updateEloScore(Request $request, CanUpdateEloScore $canUpdateEloScore) : JsonResponse
     {
         $content = json_decode((string) $request->getContent(), true);
 

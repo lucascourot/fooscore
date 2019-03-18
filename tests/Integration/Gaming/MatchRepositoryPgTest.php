@@ -9,15 +9,25 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Fooscore\Gaming\Infrastructure\DomainEventsFinder;
 use Fooscore\Gaming\Infrastructure\MatchRepositoryPg;
 use Fooscore\Gaming\Infrastructure\SystemClock;
-use Fooscore\Gaming\Match\{
-    Match, MatchId, Scorer
-};
+use Fooscore\Gaming\Match\Match;
+use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Match\Scorer;
 use Fooscore\Tests\Unit\Gaming\FakeTeam;
+use InvalidArgumentException;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PDO;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Throwable;
+use function array_column;
+use function end;
+use function json_decode;
+use function json_encode;
+use function sprintf;
 
 /**
  * @group integration
@@ -26,27 +36,19 @@ class MatchRepositoryPgTest extends KernelTestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     private $connection;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $testMatchId = '6df9c8af-afeb-4422-ac60-5f271c738d76';
 
-    /**
-     * @var DomainEventsFinder
-     */
+    /** @var DomainEventsFinder */
     private $domainEventsFinder;
 
-    /**
-     * @var EventDispatcherInterface|MockInterface
-     */
+    /** @var EventDispatcherInterface|MockInterface */
     private $eventDispatcher;
 
-    public function testShouldReadFromPgsql(): void
+    public function testShouldReadFromPgsql() : void
     {
         // Given
         $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
@@ -68,7 +70,7 @@ class MatchRepositoryPgTest extends KernelTestCase
         self::assertEquals($match->id(), $reconstitutedMatch->id());
     }
 
-    public function testShouldPersistSameEventsTwiceWithDifferentVersionsOfAggregate(): void
+    public function testShouldPersistSameEventsTwiceWithDifferentVersionsOfAggregate() : void
     {
         // Given
         $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
@@ -98,7 +100,7 @@ class MatchRepositoryPgTest extends KernelTestCase
         $this->eventDispatcher->shouldHaveReceived('dispatch')->times(3);
     }
 
-    public function testShouldAddNewEventsAfterBeingFetched(): void
+    public function testShouldAddNewEventsAfterBeingFetched() : void
     {
         // Given
         $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
@@ -129,7 +131,7 @@ class MatchRepositoryPgTest extends KernelTestCase
         $this->eventDispatcher->shouldHaveReceived('dispatch')->twice();
     }
 
-    public function testShouldPersistAndReadMatchWasWon(): void
+    public function testShouldPersistAndReadMatchWasWon() : void
     {
         // Given
         $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
@@ -178,7 +180,7 @@ class MatchRepositoryPgTest extends KernelTestCase
         $this->eventDispatcher->shouldHaveReceived('dispatch')->times(12);
     }
 
-    public function testShouldAvoidRaceConditions(): void
+    public function testShouldAvoidRaceConditions() : void
     {
         // Given
         $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
@@ -205,7 +207,7 @@ class MatchRepositoryPgTest extends KernelTestCase
         $thrownException = null;
         try {
             $adapter->save($raceConditionAggregate);
-        } catch (\Exception $exception) {
+        } catch (Throwable $exception) {
             $thrownException = $exception;
         }
 
@@ -225,9 +227,9 @@ class MatchRepositoryPgTest extends KernelTestCase
         self::assertInstanceOf(UniqueConstraintViolationException::class, $thrownException);
     }
 
-    public function testShouldThrowExceptionIfMatchNotFound(): void
+    public function testShouldThrowExceptionIfMatchNotFound() : void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         // Given
         $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
@@ -238,9 +240,9 @@ class MatchRepositoryPgTest extends KernelTestCase
         $adapter->get($matchId);
     }
 
-    public function testShouldThrowExceptionIfUnknownEvent(): void
+    public function testShouldThrowExceptionIfUnknownEvent() : void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         // Given
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
@@ -264,7 +266,7 @@ SQL
         $adapter->get($matchId);
     }
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         self::bootKernel();
 
@@ -276,26 +278,29 @@ SQL
         $domainEventsFinder = self::$container->get(DomainEventsFinder::class);
         $this->domainEventsFinder = $domainEventsFinder;
 
-        $this->eventDispatcher = \Mockery::spy(EventDispatcherInterface::class);
+        $this->eventDispatcher = Mockery::spy(EventDispatcherInterface::class);
 
         $this->deleteTestAggregateEvents();
     }
 
-    protected function tearDown(): void
+    protected function tearDown() : void
     {
         parent::tearDown();
 
         $this->deleteTestAggregateEvents();
     }
 
-    private function deleteTestAggregateEvents(): void
+    private function deleteTestAggregateEvents() : void
     {
         $this->connection->exec(
-            "DELETE FROM event_store WHERE aggregate_id = '{$this->testMatchId}'"
+            sprintf("DELETE FROM event_store WHERE aggregate_id = '%s'", $this->testMatchId)
         );
     }
 
-    private function fetchDomainEventsForAggregate(MatchId $matchId): array
+    /**
+     * @return mixed[]
+     */
+    private function fetchDomainEventsForAggregate(MatchId $matchId) : array
     {
         $statement = $this->connection->prepare(MatchRepositoryPg::FETCH_EVENTS_QUERY);
         $statement->execute([
@@ -303,8 +308,6 @@ SQL
             'aggregate_type' => 'match',
         ]);
 
-        $domainEventsArray = $statement->fetchAll(\PDO::FETCH_ASSOC);
-
-        return $domainEventsArray;
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 }

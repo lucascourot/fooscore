@@ -9,9 +9,7 @@ use Fooscore\Gaming\Match\Clock;
 
 final class FixedClock implements Clock
 {
-    /**
-     * @var DateTimeImmutable
-     */
+    /** @var DateTimeImmutable */
     private $fixedTime;
 
     public function __construct(DateTimeImmutable $fixedTime)
@@ -19,12 +17,12 @@ final class FixedClock implements Clock
         $this->fixedTime = $fixedTime;
     }
 
-    public function now(): DateTimeImmutable
+    public function now() : DateTimeImmutable
     {
         return $this->fixedTime;
     }
 
-    public function tick(DateTimeImmutable $newFixedTime): void
+    public function tick(DateTimeImmutable $newFixedTime) : void
     {
         $this->fixedTime = $newFixedTime;
     }

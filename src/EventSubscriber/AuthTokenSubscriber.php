@@ -12,21 +12,19 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use function in_array;
+use function is_string;
 
 final class AuthTokenSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var CanCheckToken
-     */
+    /** @var CanCheckToken */
     private $checkToken;
 
-    /**
-     * @var array
-     */
+    /** @var string[] */
     private $whitelist = [
-        ApiController::class.'::login',
-        IndexController::class.'::index',
-        HealthcheckController::class.'::index',
+        ApiController::class . '::login',
+        IndexController::class . '::index',
+        HealthcheckController::class . '::index',
     ];
 
     public function __construct(CanCheckToken $checkToken)
@@ -34,7 +32,7 @@ final class AuthTokenSubscriber implements EventSubscriberInterface
         $this->checkToken = $checkToken;
     }
 
-    public function onKernelRequest(GetResponseEvent $event): void
+    public function onKernelRequest(GetResponseEvent $event) : void
     {
         $action = $event->getRequest()->get('_controller');
 
@@ -44,19 +42,20 @@ final class AuthTokenSubscriber implements EventSubscriberInterface
 
         $authToken = $event->getRequest()->headers->get('Authorization', '');
 
-        if (!is_string($authToken) || $this->checkToken->isValid($authToken) === false) {
-            $event->setResponse(
-                new JsonResponse([
-                    'error' => 'Invalid auth token.',
-                ], Response::HTTP_FORBIDDEN)
-            );
+        if (is_string($authToken) && $this->checkToken->isValid($authToken) !== false) {
+            return;
         }
+
+        $event->setResponse(
+            new JsonResponse(['error' => 'Invalid auth token.'], Response::HTTP_FORBIDDEN)
+        );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public static function getSubscribedEvents()
     {
-        return [
-           'kernel.request' => 'onKernelRequest',
-        ];
+        return ['kernel.request' => 'onKernelRequest'];
     }
 }

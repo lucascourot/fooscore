@@ -6,57 +6,42 @@ namespace Fooscore\Gaming\Match;
 
 use DateTimeImmutable;
 use InvalidArgumentException;
+use function count;
+use function get_class;
+use function sprintf;
 
 /**
  * Match aggregate root
  */
-final class Match
+final class Match extends EventSourcedAggregate
 {
     private const MAX_SCORE = 10;
 
-    use EventSourcedAggregate;
-
-    /**
-     * @var MatchId
-     */
+    /** @var MatchId */
     private $id;
 
-    /**
-     * @var Goal[]
-     */
+    /** @var Goal[] */
     private $scoredGoals = [];
 
-    /**
-     * @var TeamBlue
-     */
+    /** @var TeamBlue */
     private $teamBlue;
 
-    /**
-     * @var TeamRed
-     */
+    /** @var TeamRed */
     private $teamRed;
 
-    /**
-     * @var DateTimeImmutable
-     */
+    /** @var DateTimeImmutable */
     private $startedAt;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $scoreBlue = 0;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $scoreRed = 0;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $isWon = false;
 
-    public static function start(MatchId $matchId, TeamBlue $teamBlue, TeamRed $teamRed, Clock $clock): self
+    public static function start(MatchId $matchId, TeamBlue $teamBlue, TeamRed $teamRed, Clock $clock) : self
     {
         $self = new self();
         $self->recordThat(new MatchWasStarted($matchId, $teamBlue, $teamRed, $clock->now()));
@@ -64,7 +49,7 @@ final class Match
         return $self;
     }
 
-    public function scoreGoal(Scorer $scorer, Clock $clock): self
+    public function scoreGoal(Scorer $scorer, Clock $clock) : self
     {
         if ($this->isWon) {
             throw new MatchAlreadyWon('Match has already been won.');
@@ -85,22 +70,22 @@ final class Match
         return $this;
     }
 
-    public function id(): MatchId
+    public function id() : MatchId
     {
         return $this->id;
     }
 
-    public function getTeamBlue(): TeamBlue
+    public function getTeamBlue() : TeamBlue
     {
         return $this->teamBlue;
     }
 
-    public function getTeamRed(): TeamRed
+    public function getTeamRed() : TeamRed
     {
         return $this->teamRed;
     }
 
-    private function apply(DomainEvent $event): void
+    protected function apply(DomainEvent $event) : void
     {
         if ($event instanceof MatchWasStarted) {
             $this->id = $event->matchId();

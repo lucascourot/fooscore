@@ -10,5 +10,5 @@ use Fooscore\Gaming\Match\Scorer;
 
 interface CanScoreGoal
 {
-    public function scoreGoal(MatchId $matchId, Scorer $scorer): Match;
+    public function scoreGoal(MatchId $matchId, Scorer $scorer) : Match;
 }

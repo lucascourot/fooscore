@@ -8,5 +8,8 @@ use Fooscore\Gaming\Match\MatchId;
 
 interface CanShowMatchDetails
 {
-    public function showMatchDetails(MatchId $matchId): array;
+    /**
+     * @return mixed[]
+     */
+    public function showMatchDetails(MatchId $matchId) : array;
 }
