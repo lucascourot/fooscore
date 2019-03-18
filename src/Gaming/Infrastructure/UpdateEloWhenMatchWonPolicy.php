@@ -37,23 +37,23 @@ final class UpdateEloWhenMatchWonPolicy
             if ($domainEvent->teamWinner() === 'blue') {
                 $matchResult = new MatchResult(
                     new WinningTeam(
-                        $match->getTeamBlue()->back()->id(),
-                        $match->getTeamBlue()->front()->id()
+                        $match->teamBlue()->back()->id(),
+                        $match->teamBlue()->front()->id()
                     ),
                     new LosingTeam(
-                        $match->getTeamRed()->back()->id(),
-                        $match->getTeamRed()->front()->id()
+                        $match->teamRed()->back()->id(),
+                        $match->teamRed()->front()->id()
                     )
                 );
             } else {
                 $matchResult = new MatchResult(
                     new WinningTeam(
-                        $match->getTeamRed()->back()->id(),
-                        $match->getTeamRed()->front()->id()
+                        $match->teamRed()->back()->id(),
+                        $match->teamRed()->front()->id()
                     ),
                     new LosingTeam(
-                        $match->getTeamBlue()->back()->id(),
-                        $match->getTeamBlue()->front()->id()
+                        $match->teamBlue()->back()->id(),
+                        $match->teamBlue()->front()->id()
                     )
                 );
             }

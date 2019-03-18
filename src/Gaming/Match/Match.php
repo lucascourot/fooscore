@@ -41,6 +41,21 @@ final class Match extends EventSourcedAggregate
     /** @var bool */
     private $isWon = false;
 
+    public function id() : MatchId
+    {
+        return $this->id;
+    }
+
+    public function teamBlue() : TeamBlue
+    {
+        return $this->teamBlue;
+    }
+
+    public function teamRed() : TeamRed
+    {
+        return $this->teamRed;
+    }
+
     public static function start(MatchId $matchId, TeamBlue $teamBlue, TeamRed $teamRed, Clock $clock) : self
     {
         $self = new self();
@@ -68,21 +83,6 @@ final class Match extends EventSourcedAggregate
         }
 
         return $this;
-    }
-
-    public function id() : MatchId
-    {
-        return $this->id;
-    }
-
-    public function getTeamBlue() : TeamBlue
-    {
-        return $this->teamBlue;
-    }
-
-    public function getTeamRed() : TeamRed
-    {
-        return $this->teamRed;
     }
 
     protected function apply(DomainEvent $event) : void
