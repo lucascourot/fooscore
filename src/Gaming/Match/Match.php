@@ -10,10 +10,7 @@ use function count;
 use function get_class;
 use function sprintf;
 
-/**
- * Match aggregate root
- */
-final class Match extends EventSourcedAggregate
+final class Match extends EventSourcedAggregateRoot
 {
     private const MAX_SCORE = 10;
 

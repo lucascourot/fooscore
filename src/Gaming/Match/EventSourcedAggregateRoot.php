@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
-abstract class EventSourcedAggregate
+abstract class EventSourcedAggregateRoot
 {
     /** @var VersionedEvent[] */
     private $recordedEvents = [];
