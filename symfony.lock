@@ -71,6 +71,9 @@
     "doctrine/reflection": {
         "version": "v1.0.0"
     },
+    "giorgiosironi/eris": {
+        "version": "0.11.0"
+    },
     "hamcrest/hamcrest-php": {
         "version": "v2.0.0"
     },

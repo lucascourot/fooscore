@@ -80,4 +80,54 @@ class UpdateEloScoreTest extends TestCase
         self::assertEquals(1485, $updatedEloScores->getScoreForPlayerId('l1'));
         self::assertEquals(1305, $updatedEloScores->getScoreForPlayerId('l2'));
     }
+
+    public function testShouldNotDecreaseLoserPlayerAScoreIfNull() : void
+    {
+        // Given
+        $matchResult = new MatchResult(
+            new WinningTeam('w1', 'w2'),
+            new LosingTeam('l1', 'l2')
+        );
+
+        $eloScoresRepository = Mockery::spy(EloScoresRepository::class);
+        $eloScoresRepository->allows('get')->with($matchResult)->andReturns(new EloScores($matchResult, [
+            'w1' => 2069,
+            'w2' => 1940,
+            'l1' => 0,
+            'l2' => 800,
+        ]));
+
+        // When
+        $updateEloScore = new UpdateEloScore($eloScoresRepository);
+        $updatedEloScores = $updateEloScore->updatePlayersScores($matchResult);
+
+        // Then
+        $eloScoresRepository->shouldHaveReceived()->save($updatedEloScores)->once();
+        self::assertEquals(0, $updatedEloScores->getScoreForPlayerId('l1'));
+    }
+
+    public function testShouldNotDecreaseLoserPlayerBScoreIfNull() : void
+    {
+        // Given
+        $matchResult = new MatchResult(
+            new WinningTeam('w1', 'w2'),
+            new LosingTeam('l1', 'l2')
+        );
+
+        $eloScoresRepository = Mockery::spy(EloScoresRepository::class);
+        $eloScoresRepository->allows('get')->with($matchResult)->andReturns(new EloScores($matchResult, [
+            'w1' => 2069,
+            'w2' => 1940,
+            'l1' => 900,
+            'l2' => 0,
+        ]));
+
+        // When
+        $updateEloScore = new UpdateEloScore($eloScoresRepository);
+        $updatedEloScores = $updateEloScore->updatePlayersScores($matchResult);
+
+        // Then
+        $eloScoresRepository->shouldHaveReceived()->save($updatedEloScores)->once();
+        self::assertEquals(0, $updatedEloScores->getScoreForPlayerId('l2'));
+    }
 }

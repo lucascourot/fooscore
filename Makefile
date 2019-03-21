@@ -7,27 +7,31 @@ help: ## This help
 
 # Tests
 
-.PHONY: test unit-test mutation_test
-test: cs phpstan ui-test coverage mutation_test
+.PHONY: test unit-test coverage property-test mutation-test
+test: cs phpstan coverage
+test-ci: test ui-test property-test mutation-test check_security
 
 ui-test: vendor ## Run ui tests
-	php bin/phpunit --group=ui
+	php bin/phpunit --testdox --group=ui
 
 integration-test: vendor ## Run integration tests
-	php bin/phpunit --group=integration
+	php bin/phpunit --testdox --group=integration
 
 unit-test: vendor ## Run unit tests
 	php bin/phpunit --testdox --group=unit
 
-mutation_test: vendor ## Run mutation tests
-	php bin/infection --threads=4
+property-test: vendor ## Run property-based tests (PBT)
+	php bin/phpunit --testdox --group=property
 
-coverage: vendor ## Run test coverage
-	php bin/phpunit --exclude-group=ui --coverage-text --coverage-clover ./build/logs/clover.xml --coverage-xml=build/coverage/coverage-xml --log-junit=build/coverage/phpunit.junit.xml
+mutation-test: vendor ## Run mutation tests
+	php bin/infection --test-framework-options="--exclude-group=property,ui" --threads=8
+
+coverage: vendor ## Run test coverage on unit and integration layers
+	php bin/phpunit --exclude-group=property,ui --coverage-text --coverage-clover ./build/logs/clover.xml --coverage-xml=build/coverage/coverage-xml --log-junit=build/coverage/phpunit.junit.xml
 
 .PHONY: check_security
 check_security: ## Check for dependency vulnerabilities
-	curl -H "Accept: text/plain" https://security.sensiolabs.org/check_lock -F lock=@composer.lock
+	curl -H "Accept: text/plain" https://security.symfony.com/check_lock -F lock=@composer.lock
 
 # Coding Style
 

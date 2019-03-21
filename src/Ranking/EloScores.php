@@ -6,6 +6,7 @@ namespace Fooscore\Ranking;
 
 use InvalidArgumentException;
 use function array_key_exists;
+use function max;
 use function pow;
 use function round;
 use function sprintf;
@@ -16,6 +17,7 @@ final class EloScores
     private const RATING_INTERVAL_SCALE_WEIGHT_FACTOR = 1000;
     private const BASE_TEN = 10;
     private const MATCH_WON = 1;
+    private const MIN_SCORE = 0;
 
     /** @var MatchResult */
     private $matchResult;
@@ -57,6 +59,16 @@ final class EloScores
         $this->playersWithScores[$this->matchResult->winningTeam()->playerBId()] += $earnedRatingPoints;
         $this->playersWithScores[$this->matchResult->losingTeam()->playerAId()] -= $earnedRatingPoints;
         $this->playersWithScores[$this->matchResult->losingTeam()->playerBId()] -= $earnedRatingPoints;
+
+        $this->ensureScoresCannotBeNegative();
+    }
+
+    /**
+     * @return int[]
+     */
+    public function playersWithScores() : array
+    {
+        return $this->playersWithScores;
     }
 
     private function earnedRatingPoints(int $ratingDifference) : int
@@ -69,11 +81,16 @@ final class EloScores
         return (int) round(self::RATING_COEFFICIENT * (self::MATCH_WON - $winExpectancyPercentage));
     }
 
-    /**
-     * @return int[]
-     */
-    public function playersWithScores() : array
+    private function ensureScoresCannotBeNegative() : void
     {
-        return $this->playersWithScores;
+        $this->playersWithScores[$this->matchResult->losingTeam()->playerAId()] = max(
+            $this->playersWithScores[$this->matchResult->losingTeam()->playerAId()],
+            self::MIN_SCORE
+        );
+
+        $this->playersWithScores[$this->matchResult->losingTeam()->playerBId()] = max(
+            $this->playersWithScores[$this->matchResult->losingTeam()->playerBId()],
+            self::MIN_SCORE
+        );
     }
 }
