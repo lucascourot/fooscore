@@ -20,6 +20,9 @@ final class Match extends EventSourcedAggregateRoot
     /** @var Goal[] */
     private $scoredGoals = [];
 
+//    /** @var int */
+//    private $accumulatedGoals = 0;
+
     /** @var TeamBlue */
     private $teamBlue;
 
@@ -82,6 +85,23 @@ final class Match extends EventSourcedAggregateRoot
         return $this;
     }
 
+    public function scoreMiddlefieldGoal(Scorer $scorer, Clock $clock) : self
+    {
+        if ($this->isWon) {
+            throw new MatchAlreadyWon('Match has already been won.');
+        }
+
+        $this->recordThat(new GoalWasAccumulated(
+            new Goal(
+                count($this->scoredGoals) + 1,
+                $scorer,
+                ScoredAt::fromDifference($this->startedAt, $clock->now())
+            )
+        ));
+
+        return $this;
+    }
+
     protected function apply(DomainEvent $event) : void
     {
         if ($event instanceof MatchWasStarted) {
@@ -95,6 +115,7 @@ final class Match extends EventSourcedAggregateRoot
 
         if ($event instanceof GoalWasScored) {
             $this->scoredGoals[] = $event->goal();
+//            $this->accumulatedGoals = 0;
 
             if ($event->goal()->scorer()->team() === 'blue') {
                 $this->scoreBlue++;
@@ -102,6 +123,12 @@ final class Match extends EventSourcedAggregateRoot
             if ($event->goal()->scorer()->team() === 'red') {
                 $this->scoreRed++;
             }
+
+            return;
+        }
+
+        if ($event instanceof GoalWasAccumulated) {
+//            $this->accumulatedGoals++;
 
             return;
         }

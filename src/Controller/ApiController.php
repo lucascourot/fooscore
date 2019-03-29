@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Controller;
 
 use Fooscore\Gaming\CanScoreGoal;
+use Fooscore\Gaming\CanScoreMiddlefieldGoal;
 use Fooscore\Gaming\CanShowMatchDetails;
 use Fooscore\Gaming\CanStartMatch;
 use Fooscore\Gaming\Match\GoalWasScored;
@@ -110,17 +111,25 @@ class ApiController extends AbstractController
      *
      * @Route("/api/matches/{matchId}/goals", name="api_score_goal", methods={"POST"})
      */
-    public function scoreGoal(Request $request, string $matchId, CanScoreGoal $scoreGoal) : RedirectResponse
-    {
+    public function scoreGoal(
+        Request $request,
+        string $matchId,
+        CanScoreGoal $scoreGoal,
+        CanScoreMiddlefieldGoal $scoreMiddlefieldGoal
+    ) : RedirectResponse {
         $content = json_decode((string) $request->getContent(), true);
         $type = $content['type'];
         $team = $content['team'];
         $position = $content['position'];
 
-        $match = $scoreGoal->scoreGoal(
-            new MatchId(Uuid::fromString($matchId)),
-            Scorer::fromTeamAndPosition($team, $position)
-        );
+        $matchIdVo = new MatchId(Uuid::fromString($matchId));
+        $scorer = Scorer::fromTeamAndPosition($team, $position);
+
+        if ($type === 'middlefield') {
+            $match = $scoreMiddlefieldGoal->scoreMiddlefieldGoal($matchIdVo, $scorer);
+        } else {
+            $match = $scoreGoal->scoreGoal($matchIdVo, $scorer);
+        }
 
         foreach ($match->recordedEvents() as $recordedEvent) {
             $domainEvent = $recordedEvent->domainEvent();

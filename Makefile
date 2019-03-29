@@ -24,7 +24,7 @@ property-test: vendor ## Run property-based tests (PBT)
 	php bin/phpunit --testdox --group=property
 
 mutation-test: vendor ## Run mutation tests
-	php bin/infection --test-framework-options="--exclude-group=property,ui" --threads=8
+	php bin/infection --test-framework-options="--exclude-group=property,ui"
 
 coverage: vendor ## Run test coverage on unit and integration layers
 	php bin/phpunit --exclude-group=property,ui --coverage-text --coverage-clover ./build/logs/clover.xml --coverage-xml=build/coverage/coverage-xml --log-junit=build/coverage/phpunit.junit.xml

@@ -9,8 +9,10 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Fooscore\Gaming\Infrastructure\DomainEventsFinder;
 use Fooscore\Gaming\Infrastructure\MatchRepositoryPg;
 use Fooscore\Gaming\Infrastructure\SystemClock;
+use Fooscore\Gaming\Match\GoalWasAccumulated;
 use Fooscore\Gaming\Match\Match;
 use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Match\MatchWasStarted;
 use Fooscore\Gaming\Match\Scorer;
 use Fooscore\Tests\Unit\Gaming\FakeTeam;
 use InvalidArgumentException;
@@ -159,6 +161,8 @@ class MatchRepositoryPgTest extends KernelTestCase
         $reconstitutedMatch = $adapter->get($matchId);
 
         // Then
+        self::assertEquals($matchId, $reconstitutedMatch->id());
+
         $domainEventsArray = $this->fetchDomainEventsForAggregate($matchId);
 
         self::assertSame([
@@ -178,6 +182,37 @@ class MatchRepositoryPgTest extends KernelTestCase
 
         self::assertSame(end($domainEventsArray)['event_data'], '{"teamWinner": "blue"}');
         $this->eventDispatcher->shouldHaveReceived('dispatch')->times(12);
+    }
+
+    public function testShouldPersistAndReadGoalWasAccumulated() : void
+    {
+        // Given
+        $adapter = new MatchRepositoryPg($this->connection, $this->domainEventsFinder, $this->eventDispatcher);
+
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
+        $matchId = new MatchId(Uuid::fromString($this->testMatchId));
+
+        $clock = new SystemClock();
+
+        $match = Match::start($matchId, $teamBlue, $teamRed, $clock);
+        $match->scoreMiddlefieldGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+
+        // When
+        $adapter->save($match);
+        $reconstitutedMatch = $adapter->get($matchId);
+
+        // Then
+        self::assertEquals($matchId, $reconstitutedMatch->id());
+
+        $domainEventsArray = $this->fetchDomainEventsForAggregate($matchId);
+
+        self::assertSame([
+            MatchWasStarted::eventName(),
+            GoalWasAccumulated::eventName(),
+        ], array_column($domainEventsArray, 'event_name'));
+
+        $this->eventDispatcher->shouldHaveReceived('dispatch')->times(2);
     }
 
     public function testShouldAvoidRaceConditions() : void

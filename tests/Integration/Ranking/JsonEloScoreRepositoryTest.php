@@ -28,6 +28,8 @@ class JsonEloScoreRepositoryTest extends KernelTestCase
     {
         $kernel = self::bootKernel();
         $this->dir = $kernel->getProjectDir() . DIRECTORY_SEPARATOR . 'var/';
+
+        @unlink($this->dir . 'ranking.json');
     }
 
     protected function tearDown() : void
