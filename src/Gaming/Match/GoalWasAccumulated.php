@@ -45,4 +45,9 @@ final class GoalWasAccumulated implements DomainEvent
             'sec' => $this->goal->scoredAt()->sec(),
         ];
     }
+
+    public function goal() : Goal
+    {
+        return $this->goal;
+    }
 }

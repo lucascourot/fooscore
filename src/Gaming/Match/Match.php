@@ -20,8 +20,8 @@ final class Match extends EventSourcedAggregateRoot
     /** @var Goal[] */
     private $scoredGoals = [];
 
-//    /** @var int */
-//    private $accumulatedGoals = 0;
+    /** @var Goal[] */
+    private $accumulatedGoals = [];
 
     /** @var TeamBlue */
     private $teamBlue;
@@ -70,17 +70,20 @@ final class Match extends EventSourcedAggregateRoot
             throw new MatchAlreadyWon('Match has already been won.');
         }
 
-        $this->recordThat(new GoalWasScored(
-            new Goal(
-                count($this->scoredGoals) + 1,
-                $scorer,
-                ScoredAt::fromDifference($this->startedAt, $clock->now())
-            )
-        ));
+        $accumulatedGoalsCount = $i = count($this->accumulatedGoals);
+        $scoredAt = ScoredAt::fromDifference($this->startedAt, $clock->now());
 
-        if ($this->scoreBlue === self::MAX_SCORE || $this->scoreRed === self::MAX_SCORE) {
-            $this->recordThat(new MatchWasWon($scorer->team()));
-        }
+        do {
+            $this->recordThat(new GoalWasScored(
+                new Goal(count($this->scoredGoals) + $accumulatedGoalsCount + 1, $scorer, $scoredAt)
+            ));
+
+            if ($this->scoreBlue === self::MAX_SCORE || $this->scoreRed === self::MAX_SCORE) {
+                $this->recordThat(new MatchWasWon($scorer->team()));
+
+                break;
+            }
+        } while (--$i >= 0);
 
         return $this;
     }
@@ -115,7 +118,7 @@ final class Match extends EventSourcedAggregateRoot
 
         if ($event instanceof GoalWasScored) {
             $this->scoredGoals[] = $event->goal();
-//            $this->accumulatedGoals = 0;
+            $this->accumulatedGoals = [];
 
             if ($event->goal()->scorer()->team() === 'blue') {
                 $this->scoreBlue++;
@@ -128,7 +131,7 @@ final class Match extends EventSourcedAggregateRoot
         }
 
         if ($event instanceof GoalWasAccumulated) {
-//            $this->accumulatedGoals++;
+            $this->accumulatedGoals[] = $event->goal();
 
             return;
         }
