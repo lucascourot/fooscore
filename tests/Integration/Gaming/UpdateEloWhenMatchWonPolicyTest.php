@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Integration\Gaming;
 
 use DateTimeImmutable;
-use Fooscore\Gaming\Infrastructure\MatchSymfonyEvent;
+use Fooscore\Gaming\Infrastructure\Events\MatchWasWonPublishedEvent;
 use Fooscore\Gaming\Infrastructure\UpdateEloWhenMatchWonPolicy;
 use Fooscore\Gaming\Match\Goal;
 use Fooscore\Gaming\Match\GoalWasScored;
@@ -26,7 +26,6 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
-use RuntimeException;
 
 /**
  * @group integration
@@ -81,7 +80,9 @@ class UpdateEloWhenMatchWonPolicyTest extends TestCase
         $updateEloWhenMatchWonPolicy = new UpdateEloWhenMatchWonPolicy($matchRepository, $updateEloScore);
 
         // When
-        $eloScores = $updateEloWhenMatchWonPolicy->on(new MatchSymfonyEvent($matchId, new MatchWasWon('blue')));
+        $eloScores = $updateEloWhenMatchWonPolicy->onMatchWasWon(
+            new MatchWasWonPublishedEvent($matchId, new MatchWasWon('blue'))
+        );
 
         // Then
         self::assertSame($eloScoresToReturn, $eloScores->playersWithScores());
@@ -134,51 +135,12 @@ class UpdateEloWhenMatchWonPolicyTest extends TestCase
         $updateEloWhenMatchWonPolicy = new UpdateEloWhenMatchWonPolicy($matchRepository, $updateEloScore);
 
         // When
-        $eloScores = $updateEloWhenMatchWonPolicy->on(new MatchSymfonyEvent($matchId, new MatchWasWon('red')));
+        $eloScores = $updateEloWhenMatchWonPolicy->onMatchWasWon(
+            new MatchWasWonPublishedEvent($matchId, new MatchWasWon('red'))
+        );
 
         // Then
         self::assertSame($eloScoresToReturn, $eloScores->playersWithScores());
         self::assertEquals($matchResult, $updateEloScore->getUsedMatchResult());
-    }
-
-    public function testShouldNotReactToOtherDomainEvents() : void
-    {
-        // Given
-        $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
-        $scorer = Scorer::fromTeamAndPosition('blue', 'back');
-
-        $teamBlue = FakeTeam::blue('a', 'b');
-        $teamRed = FakeTeam::red('c', 'd');
-
-        $matchRepository = Mockery::mock(MatchRepository::class);
-        $matchRepository->allows('get')->with($matchId)->andReturns(
-            Match::reconstituteFromHistory([
-                new VersionedEvent(1, new MatchWasStarted(
-                    $matchId,
-                    $teamBlue,
-                    $teamRed,
-                    new DateTimeImmutable('2000-01-01 00:00:00')
-                )),
-            ])
-        );
-
-        $matchResult = new MatchResult(
-            new WinningTeam('a', 'b'),
-            new LosingTeam('c', 'd')
-        );
-        $eloScoresToReturn = [
-            'a' => 1250,
-            'b' => 1250,
-            'c' => 1200,
-            'd' => 1200,
-        ];
-        $updateEloScore = new FakeUpdateEloScore(new EloScores($matchResult, $eloScoresToReturn));
-        $updateEloWhenMatchWonPolicy = new UpdateEloWhenMatchWonPolicy($matchRepository, $updateEloScore);
-
-        // When
-        $this->expectException(RuntimeException::class);
-        $updateEloWhenMatchWonPolicy->on(
-            new MatchSymfonyEvent($matchId, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(0))))
-        );
     }
 }

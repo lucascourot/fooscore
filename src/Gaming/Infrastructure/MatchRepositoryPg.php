@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fooscore\Gaming\Infrastructure;
 
 use Doctrine\DBAL\Connection;
+use Fooscore\Gaming\Infrastructure\Events\PublishedEventFactory;
 use Fooscore\Gaming\Match\DomainEvent;
 use Fooscore\Gaming\Match\Match;
 use Fooscore\Gaming\Match\MatchId;
@@ -14,7 +15,7 @@ use InvalidArgumentException;
 use PDO;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use function array_map;
 use function count;
 use function json_decode;
@@ -75,10 +76,13 @@ SQL
                 'aggregate_version' => $versionedEvent->aggregateVersion(),
             ]);
 
-            $this->eventDispatcher->dispatch(
-                $domainEvent::eventName(),
-                new MatchSymfonyEvent($match->id(), $domainEvent)
-            );
+            $publishedEvent = PublishedEventFactory::create($match->id(), $domainEvent);
+
+            if ($publishedEvent === null) {
+                continue;
+            }
+
+            $this->eventDispatcher->dispatch($publishedEvent);
         }
     }
 

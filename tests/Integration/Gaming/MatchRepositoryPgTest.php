@@ -10,6 +10,7 @@ use Fooscore\Gaming\Infrastructure\DomainEventsFinder;
 use Fooscore\Gaming\Infrastructure\MatchRepositoryPg;
 use Fooscore\Gaming\Infrastructure\SystemClock;
 use Fooscore\Gaming\Match\GoalWasAccumulated;
+use Fooscore\Gaming\Match\GoalWasScored;
 use Fooscore\Gaming\Match\Match;
 use Fooscore\Gaming\Match\MatchId;
 use Fooscore\Gaming\Match\MatchWasStarted;
@@ -197,6 +198,7 @@ class MatchRepositoryPgTest extends KernelTestCase
 
         $match = Match::start($matchId, $teamBlue, $teamRed, $clock);
         $match->scoreMiddlefieldGoal(Scorer::fromTeamAndPosition('blue', 'back'), $clock);
+        $match->scoreGoal(Scorer::fromTeamAndPosition('blue', 'front'), $clock);
 
         // When
         $adapter->save($match);
@@ -210,9 +212,11 @@ class MatchRepositoryPgTest extends KernelTestCase
         self::assertSame([
             MatchWasStarted::eventName(),
             GoalWasAccumulated::eventName(),
+            GoalWasScored::eventName(),
+            GoalWasScored::eventName(),
         ], array_column($domainEventsArray, 'event_name'));
 
-        $this->eventDispatcher->shouldHaveReceived('dispatch')->times(2);
+        $this->eventDispatcher->shouldHaveReceived('dispatch')->times(3); // accumulated event is not published
     }
 
     public function testShouldAvoidRaceConditions() : void

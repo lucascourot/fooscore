@@ -41,10 +41,10 @@ services:
 
     Fooscore\Gaming\Infrastructure\MatchDetailsProjector:
         tags:
-            - { name: kernel.event_listener, event: match_was_started, method: on }
-            - { name: kernel.event_listener, event: goal_was_scored, method: on }
-            - { name: kernel.event_listener, event: match_was_won, method: on }
+            - { name: kernel.event_listener, event: Fooscore\Gaming\Infrastructure\Events\MatchWasStartedPublishedEvent, method: onMatchWasStarted }
+            - { name: kernel.event_listener, event: Fooscore\Gaming\Infrastructure\Events\GoalWasScoredPublishedEvent, method: onGoalWasScored }
+            - { name: kernel.event_listener, event: Fooscore\Gaming\Infrastructure\Events\MatchWasWonPublishedEvent, method: onMatchWasWon }
 
     Fooscore\Gaming\Infrastructure\UpdateEloWhenMatchWonPolicy:
         tags:
-            - { name: kernel.event_listener, event: match_was_won, method: on }
+            - { name: kernel.event_listener, event: Fooscore\Gaming\Match\MatchWasWonPublishedEvent, method: onMatchWasWon }

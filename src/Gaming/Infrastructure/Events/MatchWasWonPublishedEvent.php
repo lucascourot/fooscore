@@ -2,21 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Fooscore\Gaming\Infrastructure;
+namespace Fooscore\Gaming\Infrastructure\Events;
 
-use Fooscore\Gaming\Match\DomainEvent;
 use Fooscore\Gaming\Match\MatchId;
-use Symfony\Component\EventDispatcher\Event;
+use Fooscore\Gaming\Match\MatchWasWon;
 
-final class MatchSymfonyEvent extends Event
+final class MatchWasWonPublishedEvent extends PublishedEvent
 {
     /** @var MatchId */
     private $matchId;
 
-    /** @var DomainEvent */
+    /** @var MatchWasWon */
     private $domainEvent;
 
-    public function __construct(MatchId $matchId, DomainEvent $domainEvent)
+    public function __construct(MatchId $matchId, MatchWasWon $domainEvent)
     {
         $this->domainEvent = $domainEvent;
         $this->matchId = $matchId;
@@ -27,7 +26,7 @@ final class MatchSymfonyEvent extends Event
         return $this->matchId;
     }
 
-    public function domainEvent() : DomainEvent
+    public function domainEvent() : MatchWasWon
     {
         return $this->domainEvent;
     }

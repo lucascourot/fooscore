@@ -6,8 +6,8 @@ namespace Fooscore\Command;
 
 use Doctrine\DBAL\Connection;
 use Fooscore\Gaming\Infrastructure\DomainEventsFinder;
-use Fooscore\Gaming\Infrastructure\MatchDetailsProjector;
-use Fooscore\Gaming\Infrastructure\MatchSymfonyEvent;
+use Fooscore\Gaming\Infrastructure\Events\PublishedEvent;
+use Fooscore\Gaming\Infrastructure\Events\PublishedEventFactory;
 use Fooscore\Gaming\Match\DomainEvent;
 use Fooscore\Gaming\Match\MatchId;
 use PDO;
@@ -18,6 +18,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use function array_map;
 use function is_string;
 use function json_decode;
@@ -28,20 +29,23 @@ class FooscoreBuildProjectionsCommand extends Command
     /** @var string */
     protected static $defaultName = 'fooscore:build-projections';
 
-    /** @var MatchDetailsProjector */
-    private $matchDetailsProjector;
-
     /** @var Connection */
     private $connection;
 
     /** @var string[]|DomainEvent[] */
     private $knownDomainEvents;
 
-    public function __construct(Connection $connection, DomainEventsFinder $domainEventsFinder, string $projectionDir)
-    {
-        $this->matchDetailsProjector = new MatchDetailsProjector($projectionDir);
+    /** @var EventDispatcherInterface */
+    private $eventDispatcher;
+
+    public function __construct(
+        Connection $connection,
+        DomainEventsFinder $domainEventsFinder,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->connection = $connection;
         $this->knownDomainEvents = $domainEventsFinder->getDomainEventsClassesIndexedByNames();
+        $this->eventDispatcher = $eventDispatcher;
 
         parent::__construct();
     }
@@ -73,7 +77,7 @@ class FooscoreBuildProjectionsCommand extends Command
         $statement->execute($params);
         $domainEventsArray = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        $events = array_map(function (array $domainEventArray) : MatchSymfonyEvent {
+        $events = array_map(function (array $domainEventArray) : PublishedEvent {
             foreach ($this->knownDomainEvents as $knownDomainEventName => $knownDomainEventClass) {
                 if ($domainEventArray['event_name'] === $knownDomainEventName) {
                     /** @var DomainEvent $knownDomainEventClass */
@@ -81,10 +85,16 @@ class FooscoreBuildProjectionsCommand extends Command
                         json_decode($domainEventArray['event_data'], true)
                     );
 
-                    return new MatchSymfonyEvent(
+                    $publishedEvent = PublishedEventFactory::create(
                         new MatchId(Uuid::fromString($domainEventArray['aggregate_id'])),
                         $domainEvent
                     );
+
+                    if ($publishedEvent === null) {
+                        continue;
+                    }
+
+                    return $publishedEvent;
                 }
             }
 
@@ -92,7 +102,7 @@ class FooscoreBuildProjectionsCommand extends Command
         }, $domainEventsArray);
 
         foreach ($events as $event) {
-            $this->matchDetailsProjector->on($event);
+            $this->eventDispatcher->dispatch($event);
         }
 
         $io->success('Done.');

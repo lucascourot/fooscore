@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Integration\Gaming;
 
 use DateTimeImmutable;
+use Fooscore\Gaming\Infrastructure\Events\GoalWasScoredPublishedEvent;
+use Fooscore\Gaming\Infrastructure\Events\MatchWasStartedPublishedEvent;
+use Fooscore\Gaming\Infrastructure\Events\MatchWasWonPublishedEvent;
 use Fooscore\Gaming\Infrastructure\MatchDetailsProjector;
-use Fooscore\Gaming\Infrastructure\MatchSymfonyEvent;
-use Fooscore\Gaming\Match\DomainEvent;
 use Fooscore\Gaming\Match\Goal;
 use Fooscore\Gaming\Match\GoalWasScored;
 use Fooscore\Gaming\Match\MatchId;
@@ -66,7 +67,7 @@ class MatchDetailsProjectorTest extends KernelTestCase
         );
 
         // When
-        $projector->on(new MatchSymfonyEvent($matchId, $matchWasStarted));
+        $projector->onMatchWasStarted(new MatchWasStartedPublishedEvent($matchId, $matchWasStarted));
 
         // Then
         self::assertJsonStringEqualsJsonFile($this->dir . $this->testMatchId . '.json', <<<JSON
@@ -113,21 +114,21 @@ JSON
         $teamRed = FakeTeam::red('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
-        $projector->on(new MatchSymfonyEvent(
+        $projector->onMatchWasStarted(new MatchWasStartedPublishedEvent(
             $matchId,
             new MatchWasStarted($matchId, $teamBlue, $teamRed, new DateTimeImmutable('2000-01-01 00:00:00'))
         ));
 
         // When
-        $projector->on(new MatchSymfonyEvent(
+        $projector->onGoalWasScored(new GoalWasScoredPublishedEvent(
             $matchId,
             new GoalWasScored(new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'), new ScoredAt(90)))
         ));
-        $projector->on(new MatchSymfonyEvent(
+        $projector->onGoalWasScored(new GoalWasScoredPublishedEvent(
             $matchId,
             new GoalWasScored(new Goal(2, Scorer::fromTeamAndPosition('red', 'back'), new ScoredAt(90)))
         ));
-        $projector->on(new MatchSymfonyEvent(
+        $projector->onGoalWasScored(new GoalWasScoredPublishedEvent(
             $matchId,
             new GoalWasScored(new Goal(3, Scorer::fromTeamAndPosition('red', 'back'), new ScoredAt(90)))
         ));
@@ -211,18 +212,18 @@ JSON
         $teamRed = FakeTeam::red('c', 'd');
         $matchId = new MatchId(Uuid::fromString($this->testMatchId));
 
-        $projector->on(new MatchSymfonyEvent(
+        $projector->onMatchWasStarted(new MatchWasStartedPublishedEvent(
             $matchId,
             new MatchWasStarted($matchId, $teamBlue, $teamRed, new DateTimeImmutable('2000-01-01 00:00:00'))
         ));
         foreach (range(1, 5) as $number) {
-            $projector->on(new MatchSymfonyEvent(
+            $projector->onGoalWasScored(new GoalWasScoredPublishedEvent(
                 $matchId,
                 new GoalWasScored(new Goal($number, Scorer::fromTeamAndPosition('blue', 'back'), new ScoredAt(90)))
             ));
         }
         // When
-        $projector->on(new MatchSymfonyEvent(
+        $projector->onMatchWasWon(new MatchWasWonPublishedEvent(
             $matchId,
             new MatchWasWon('blue')
         ));
@@ -332,40 +333,6 @@ JSON
         $goalWasScored = new GoalWasScored(
             new Goal(1, Scorer::fromTeamAndPosition('blue', 'front'), new ScoredAt(70))
         );
-        $projector->on(new MatchSymfonyEvent($matchId, $goalWasScored));
-    }
-
-    public function testCannotProjectUnknownEvent() : void
-    {
-        $this->expectException(RuntimeException::class);
-
-        // Given
-        $projector = new MatchDetailsProjector($this->dir);
-        $matchId = new MatchId(Uuid::fromString($this->testMatchId));
-
-        // When
-        $unknownEvent = new class() implements DomainEvent {
-            public static function eventName() : string
-            {
-                return 'error';
-            }
-
-            /**
-             * {@inheritdoc}
-             */
-            public static function fromEventDataArray(array $eventData) : DomainEvent
-            {
-                return new self();
-            }
-
-            /**
-             * {@inheritdoc}
-             */
-            public function eventDataAsArray() : array
-            {
-                return [];
-            }
-        };
-        $projector->on(new MatchSymfonyEvent($matchId, $unknownEvent));
+        $projector->onGoalWasScored(new GoalWasScoredPublishedEvent($matchId, $goalWasScored));
     }
 }
