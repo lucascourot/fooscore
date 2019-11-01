@@ -15,9 +15,9 @@ use function json_encode;
 
 final class MatchDetailsProjector
 {
-    private const MINUTE_IN_SECONDS    = 60;
-    private const INITIAL_IS_WON_MATCH = false;
-    private const INITIAL_SCORE        = 0;
+    private const MINUTE_IN_SECONDS = 60;
+    private const INITIAL_IS_MATCH_FINISHED = false;
+    private const INITIAL_SCORE = 0;
 
     /** @var string */
     private $dir;
@@ -34,7 +34,7 @@ final class MatchDetailsProjector
         file_put_contents($this->dir . $event->matchId()->value()->toString() . '.json', json_encode(
             [
                 'id' => $domainEvent->matchId()->value()->toString(),
-                'isWon' => self::INITIAL_IS_WON_MATCH,
+                'isFinished' => self::INITIAL_IS_MATCH_FINISHED,
                 'score' => [
                     'blue' => self::INITIAL_SCORE,
                     'red' => self::INITIAL_SCORE,
@@ -104,7 +104,7 @@ final class MatchDetailsProjector
 
         $matchState = json_decode($content, true);
 
-        $matchState['isWon'] = true;
+        $matchState['isFinished'] = true;
 
         file_put_contents($this->dir . $event->matchId()->value()->toString() . '.json', json_encode(
             $matchState,

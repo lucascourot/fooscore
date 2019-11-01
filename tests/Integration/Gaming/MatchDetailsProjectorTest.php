@@ -73,7 +73,7 @@ class MatchDetailsProjectorTest extends KernelTestCase
         self::assertJsonStringEqualsJsonFile($this->dir . $this->testMatchId . '.json', <<<JSON
 {
     "id": "6df9c8af-afeb-4422-ac60-5f271c738d76",
-    "isWon": false,
+    "isFinished": false,
     "score": {
         "blue": 0,
         "red": 0
@@ -137,7 +137,7 @@ JSON
         self::assertJsonStringEqualsJsonFile($this->dir . $this->testMatchId . '.json', <<<JSON
 {
     "id": "6df9c8af-afeb-4422-ac60-5f271c738d76",
-    "isWon": false,
+    "isFinished": false,
     "score": {
         "blue": 1,
         "red": 2
@@ -232,7 +232,7 @@ JSON
         self::assertJsonStringEqualsJsonFile($this->dir . $this->testMatchId . '.json', <<<JSON
 {
     "id": "6df9c8af-afeb-4422-ac60-5f271c738d76",
-    "isWon": true,
+    "isFinished": true,
     "score": {
         "blue": 5,
         "red": 0
