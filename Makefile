@@ -8,8 +8,8 @@ help: ## This help
 # Tests
 
 .PHONY: test unit-test coverage property-test mutation-test
-test: cs phpstan coverage
-test-ci: test ui-test property-test mutation-test check_security
+test: cs phpstan coverage ## Run cs, phpstan and tests excluding property and ui tests
+test-ci: test ui-test property-test mutation-test check_security ## Run all tests
 
 ui-test: vendor ## Run ui tests
 	php bin/phpunit --testdox --group=ui
