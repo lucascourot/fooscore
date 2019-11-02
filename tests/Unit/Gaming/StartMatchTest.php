@@ -40,7 +40,7 @@ class StartMatchTest extends TestCase
 
         // When
         $startMatchUseCase = new StartMatch($matchIdGenerator, $matchRepository, $fixedClock);
-        $match = $startMatchUseCase->startMatch($teamBlue, $teamRed);
+        $match = $startMatchUseCase($teamBlue, $teamRed);
 
         // Then
         self::assertEquals([

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Fooscore\Controller;
 
-use Fooscore\Gaming\CanStartMatch;
 use Fooscore\Gaming\Match\GoalWasScored;
 use Fooscore\Gaming\Match\MatchId;
 use Fooscore\Gaming\Match\Player;
 use Fooscore\Gaming\Match\ScoreGoal;
 use Fooscore\Gaming\Match\ScoreMiddlefieldGoal;
 use Fooscore\Gaming\Match\Scorer;
+use Fooscore\Gaming\Match\StartMatch;
 use Fooscore\Gaming\Match\TeamBlue;
 use Fooscore\Gaming\Match\TeamRed;
 use Fooscore\Gaming\MatchDetails\ShowMatchDetails;
@@ -74,11 +74,11 @@ class ApiController extends AbstractController
      *
      * @Route("/api/matches", name="api_start_match", methods={"POST"})
      */
-    public function startMatch(Request $request, CanStartMatch $startMatch) : RedirectResponse
+    public function startMatch(Request $request, StartMatch $startMatch) : RedirectResponse
     {
         $players = json_decode((string) $request->getContent(), true)['players'];
 
-        $match = $startMatch->startMatch(
+        $match = $startMatch(
             new TeamBlue(
                 new Player($players['blueBack']['id'], $players['blueBack']['name']),
                 new Player($players['blueFront']['id'], $players['blueFront']['name'])

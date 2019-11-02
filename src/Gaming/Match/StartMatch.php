@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
-use Fooscore\Gaming\CanStartMatch;
-
-final class StartMatch implements CanStartMatch
+final class StartMatch
 {
     /** @var MatchIdGenerator */
     private $matchIdGenerator;
@@ -24,7 +22,7 @@ final class StartMatch implements CanStartMatch
         $this->clock = $clock;
     }
 
-    public function startMatch(TeamBlue $teamBlue, TeamRed $teamRed) : Match
+    public function __invoke(TeamBlue $teamBlue, TeamRed $teamRed) : Match
     {
         $match = Match::start($this->matchIdGenerator->generate(), $teamBlue, $teamRed, $this->clock);
 
