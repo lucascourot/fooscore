@@ -6,7 +6,6 @@ namespace Fooscore\Controller;
 
 use Fooscore\Gaming\CanScoreGoal;
 use Fooscore\Gaming\CanScoreMiddlefieldGoal;
-use Fooscore\Gaming\CanShowMatchDetails;
 use Fooscore\Gaming\CanStartMatch;
 use Fooscore\Gaming\Match\GoalWasScored;
 use Fooscore\Gaming\Match\MatchId;
@@ -14,6 +13,7 @@ use Fooscore\Gaming\Match\Player;
 use Fooscore\Gaming\Match\Scorer;
 use Fooscore\Gaming\Match\TeamBlue;
 use Fooscore\Gaming\Match\TeamRed;
+use Fooscore\Gaming\MatchDetails\ShowMatchDetails;
 use Fooscore\Identity\CanGetUsers;
 use Fooscore\Identity\CanLogIn;
 use Fooscore\Identity\Credentials;
@@ -99,9 +99,9 @@ class ApiController extends AbstractController
      *
      * @Route("/api/matches/{matchId}", name="api_match", methods={"GET"})
      */
-    public function showMatch(string $matchId, CanShowMatchDetails $showMatchDetails) : JsonResponse
+    public function showMatch(string $matchId, ShowMatchDetails $showMatchDetails) : JsonResponse
     {
-        $matchWithDetail = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($matchId)));
+        $matchWithDetail = $showMatchDetails($matchId);
 
         return $this->json($matchWithDetail);
     }
@@ -149,9 +149,9 @@ class ApiController extends AbstractController
      *
      * @Route("/api/matches/{matchId}/goals/{goalId}", name="api_goal", methods={"GET"})
      */
-    public function showGoal(string $matchId, string $goalId, CanShowMatchDetails $showMatchDetails) : JsonResponse
+    public function showGoal(string $matchId, string $goalId, ShowMatchDetails $showMatchDetails) : JsonResponse
     {
-        $matchWithDetail = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($matchId)));
+        $matchWithDetail = $showMatchDetails($matchId);
 
         $askedGoal = null;
         foreach ($matchWithDetail['goals'] as $scoredGoal) {

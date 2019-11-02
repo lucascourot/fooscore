@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Infrastructure;
 
-use Fooscore\Gaming\CanShowMatchDetails;
-use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\MatchDetails\ShowMatchDetails;
 use RuntimeException;
 use function file_get_contents;
 use function json_decode;
 
-final class ShowMatchDetails implements CanShowMatchDetails
+final class ShowMatchDetailsFromFile implements ShowMatchDetails
 {
     /** @var string */
     private $dir;
@@ -23,9 +22,9 @@ final class ShowMatchDetails implements CanShowMatchDetails
     /**
      * {@inheritdoc}
      */
-    public function showMatchDetails(MatchId $matchId) : array
+    public function __invoke(string $matchId) : array
     {
-        $details = @file_get_contents($this->dir . $matchId->value()->toString() . '.json');
+        $details = @file_get_contents($this->dir . $matchId . '.json');
 
         if ($details === false) {
             throw new RuntimeException('Cannot read projection file.');

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Fooscore\Tests\Integration\Gaming;
 
-use Fooscore\Gaming\Infrastructure\ShowMatchDetails;
-use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Infrastructure\ShowMatchDetailsFromFile;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use const DIRECTORY_SEPARATOR;
@@ -78,10 +76,10 @@ class ShowMatchDetailsTest extends KernelTestCase
 JSON
         );
 
-        $showMatchDetails = new ShowMatchDetails($this->dir);
+        $showMatchDetails = new ShowMatchDetailsFromFile($this->dir);
 
         // When
-        $details = $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($this->testMatchId)));
+        $details = $showMatchDetails($this->testMatchId);
 
         // Then
         self::assertSame($details, [
@@ -122,9 +120,9 @@ JSON
         $this->expectException(RuntimeException::class);
 
         // Given
-        $showMatchDetails = new ShowMatchDetails('unknowndir');
+        $showMatchDetails = new ShowMatchDetailsFromFile('unknowndir');
 
         // When
-        $showMatchDetails->showMatchDetails(new MatchId(Uuid::fromString($this->testMatchId)));
+        $showMatchDetails($this->testMatchId);
     }
 }
