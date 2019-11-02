@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Fooscore\Gaming\Match;
 
-use Fooscore\Gaming\CanScoreGoal;
-
-final class ScoreGoal implements CanScoreGoal
+final class ScoreGoal
 {
     /** @var MatchRepository */
     private $matchRepository;
@@ -20,7 +18,7 @@ final class ScoreGoal implements CanScoreGoal
         $this->clock = $clock;
     }
 
-    public function scoreGoal(MatchId $matchId, Scorer $scorer) : Match
+    public function __invoke(MatchId $matchId, Scorer $scorer) : Match
     {
         $match = $this->matchRepository->get($matchId);
 

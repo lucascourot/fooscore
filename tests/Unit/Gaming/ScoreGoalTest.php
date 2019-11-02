@@ -56,7 +56,7 @@ class ScoreGoalTest extends TestCase
         $scoreGoalUseCase = new ScoreGoal($matchRepository, $fixedClock);
         $scorer = Scorer::fromTeamAndPosition('blue', 'back');
         $fixedClock->tick($startedAt->add(new DateInterval('PT1M30S')));
-        $match = $scoreGoalUseCase->scoreGoal($matchId, $scorer);
+        $match = $scoreGoalUseCase($matchId, $scorer);
 
         // Then
         self::assertEquals([
@@ -87,7 +87,7 @@ class ScoreGoalTest extends TestCase
         // When
         $scoreGoalUseCase = new ScoreGoal($matchRepository, $fixedClock);
         $fixedClock->tick($startedAt->add(new DateInterval('PT2M30S')));
-        $match = $scoreGoalUseCase->scoreGoal($matchId, $scorer);
+        $match = $scoreGoalUseCase($matchId, $scorer);
 
         // Then
         self::assertEquals([
@@ -129,7 +129,7 @@ class ScoreGoalTest extends TestCase
         // When
         $scoreGoalUseCase = new ScoreGoal($matchRepository, $fixedClock);
         $fixedClock->tick($startedAt->add(new DateInterval('PT2M30S')));
-        $match = $scoreGoalUseCase->scoreGoal($matchId, $scorer);
+        $match = $scoreGoalUseCase($matchId, $scorer);
 
         // Then
         self::assertEquals([
@@ -169,8 +169,8 @@ class ScoreGoalTest extends TestCase
         $scoreGoalUseCase = new ScoreGoal($matchRepository, $fixedClock);
         $scorer = Scorer::fromTeamAndPosition('blue', 'back');
         $fixedClock->tick($startedAt->add(new DateInterval('PT1M30S')));
-        $scoreGoalUseCase->scoreGoal($matchId, $scorer);
-        $match = $scoreGoalUseCase->scoreGoal($matchId, $scorer);
+        $scoreGoalUseCase($matchId, $scorer);
+        $match = $scoreGoalUseCase($matchId, $scorer);
 
         // Then
         self::assertEquals([
@@ -209,7 +209,7 @@ class ScoreGoalTest extends TestCase
 
         // When
         $scoreGoalUseCase = new ScoreGoal($matchRepository, $fixedClock);
-        $match = $scoreGoalUseCase->scoreGoal($matchId, $scorer);
+        $match = $scoreGoalUseCase($matchId, $scorer);
 
         // Then
         self::assertEquals([
@@ -248,7 +248,7 @@ class ScoreGoalTest extends TestCase
 
         // When
         $scoreGoalUseCase = new ScoreGoal($matchRepository, $fixedClock);
-        $match = $scoreGoalUseCase->scoreGoal($matchId, $scorer);
+        $match = $scoreGoalUseCase($matchId, $scorer);
 
         // Then
         self::assertEquals([
@@ -291,6 +291,6 @@ class ScoreGoalTest extends TestCase
 
         // When
         $scoreGoalUseCase = new ScoreGoal($matchRepository, $fixedClock);
-        $scoreGoalUseCase->scoreGoal($matchId, $scorer);
+        $scoreGoalUseCase($matchId, $scorer);
     }
 }
