@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Fooscore\Controller;
 
-use Fooscore\Gaming\CanScoreMiddlefieldGoal;
 use Fooscore\Gaming\CanStartMatch;
 use Fooscore\Gaming\Match\GoalWasScored;
 use Fooscore\Gaming\Match\MatchId;
 use Fooscore\Gaming\Match\Player;
 use Fooscore\Gaming\Match\ScoreGoal;
+use Fooscore\Gaming\Match\ScoreMiddlefieldGoal;
 use Fooscore\Gaming\Match\Scorer;
 use Fooscore\Gaming\Match\TeamBlue;
 use Fooscore\Gaming\Match\TeamRed;
@@ -115,7 +115,7 @@ class ApiController extends AbstractController
         Request $request,
         string $matchId,
         ScoreGoal $scoreGoal,
-        CanScoreMiddlefieldGoal $scoreMiddlefieldGoal
+        ScoreMiddlefieldGoal $scoreMiddlefieldGoal
     ) : RedirectResponse {
         $content = json_decode((string) $request->getContent(), true);
         $type = $content['type'];
@@ -126,7 +126,7 @@ class ApiController extends AbstractController
         $scorer = Scorer::fromTeamAndPosition($team, $position);
 
         if ($type === 'middlefield') {
-            $match = $scoreMiddlefieldGoal->scoreMiddlefieldGoal($matchIdVo, $scorer);
+            $match = $scoreMiddlefieldGoal($matchIdVo, $scorer);
         } else {
             $match = $scoreGoal($matchIdVo, $scorer);
         }

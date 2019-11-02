@@ -56,7 +56,7 @@ class ScoreMiddlefieldGoalTest extends TestCase
         $scoreMiddlefieldGoalUseCase = new ScoreMiddlefieldGoal($matchRepository, $fixedClock);
         $scorer = Scorer::fromTeamAndPosition('blue', 'back');
         $fixedClock->tick($startedAt->add(new DateInterval('PT1M30S')));
-        $match = $scoreMiddlefieldGoalUseCase->scoreMiddlefieldGoal($matchId, $scorer);
+        $match = $scoreMiddlefieldGoalUseCase($matchId, $scorer);
 
         // Then
         self::assertEquals([
@@ -97,7 +97,7 @@ class ScoreMiddlefieldGoalTest extends TestCase
         );
 
         // When
-        $scoreGoalUseCase = new ScoreMiddlefieldGoal($matchRepository, $fixedClock);
-        $scoreGoalUseCase->scoreMiddlefieldGoal($matchId, $scorer);
+        $scoreMiddlefieldGoalUseCase = new ScoreMiddlefieldGoal($matchRepository, $fixedClock);
+        $scoreMiddlefieldGoalUseCase($matchId, $scorer);
     }
 }
