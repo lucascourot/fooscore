@@ -213,10 +213,10 @@
         };
 
         const sendGoalToServer = async (team, position, type) => {
-            const rawResponse = await fetch('/api/matches/' + matchId + '/goals', {
+            const rawResponse = await fetch('/api/matches/' + matchId + '/'+type+'-goals', {
                 method: 'POST',
                 headers,
-                body: JSON.stringify({team, position, type})
+                body: JSON.stringify({team, position})
             });
 
             const response = await rawResponse.json();

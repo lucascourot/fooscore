@@ -38,6 +38,9 @@ final class Match extends EventSourcedAggregateRoot
     /** @var int */
     private $scoreRed = 0;
 
+    /** @var int */
+    private $lastGoalNumber = 0;
+
     /** @var bool */
     private $isWon = false;
 
@@ -70,12 +73,12 @@ final class Match extends EventSourcedAggregateRoot
             throw new MatchAlreadyWon('Match has already been won.');
         }
 
-        $accumulatedGoalsCount = $i = count($this->accumulatedGoals);
+        $accumulatedGoalsCount = count($this->accumulatedGoals);
         $scoredAt = ScoredAt::fromDifference($this->startedAt, $clock->now());
 
         do {
             $this->recordThat(new GoalWasScored(
-                new Goal(count($this->scoredGoals) + $accumulatedGoalsCount + 1, $scorer, $scoredAt)
+                new Goal($this->lastGoalNumber + 1, $scorer, $scoredAt)
             ));
 
             if ($this->scoreBlue === self::MAX_SCORE || $this->scoreRed === self::MAX_SCORE) {
@@ -83,26 +86,28 @@ final class Match extends EventSourcedAggregateRoot
 
                 break;
             }
-        } while (--$i >= 0);
+        } while (--$accumulatedGoalsCount >= 0);
 
         return $this;
     }
 
-    public function scoreMiddlefieldGoal(Scorer $scorer, Clock $clock) : self
+    public function scoreMiddlefieldGoal(Scorer $scorer, Clock $clock) : GoalWasAccumulated
     {
         if ($this->isWon) {
             throw new MatchAlreadyWon('Match has already been won.');
         }
 
-        $this->recordThat(new GoalWasAccumulated(
+        $goalWasAccumulated = new GoalWasAccumulated(
             new Goal(
-                count($this->scoredGoals) + 1,
+                $this->lastGoalNumber + 1,
                 $scorer,
                 ScoredAt::fromDifference($this->startedAt, $clock->now())
             )
-        ));
+        );
 
-        return $this;
+        $this->recordThat($goalWasAccumulated);
+
+        return $goalWasAccumulated;
     }
 
     protected function apply(DomainEvent $event) : void
@@ -119,6 +124,7 @@ final class Match extends EventSourcedAggregateRoot
         if ($event instanceof GoalWasScored) {
             $this->scoredGoals[] = $event->goal();
             $this->accumulatedGoals = [];
+            $this->lastGoalNumber = $event->goal()->number();
 
             if ($event->goal()->scorer()->team() === 'blue') {
                 $this->scoreBlue++;
@@ -132,6 +138,7 @@ final class Match extends EventSourcedAggregateRoot
 
         if ($event instanceof GoalWasAccumulated) {
             $this->accumulatedGoals[] = $event->goal();
+            $this->lastGoalNumber = $event->goal()->number();
 
             return;
         }

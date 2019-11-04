@@ -22,11 +22,11 @@ use Fooscore\Ranking\LosingTeam;
 use Fooscore\Ranking\MatchResult;
 use Fooscore\Ranking\WinningTeam;
 use Ramsey\Uuid\Uuid;
-use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -107,49 +107,41 @@ class ApiController extends AbstractController
     }
 
     /**
-     * Score goal
+     * Score regular goal
      *
-     * @Route("/api/matches/{matchId}/goals", name="api_score_goal", methods={"POST"})
+     * @Route("/api/matches/{matchId}/regular-goals", name="api_score_regular_goal", methods={"POST"})
      */
-    public function scoreGoal(
+    public function scoreRegularGoal(
         Request $request,
         string $matchId,
-        ScoreGoal $scoreGoal,
-        ScoreMiddlefieldGoal $scoreMiddlefieldGoal
-    ) : RedirectResponse {
+        ScoreGoal $scoreGoal
+    ) : Response {
         $content = json_decode((string) $request->getContent(), true);
-        $type = $content['type'];
-        $team = $content['team'];
-        $position = $content['position'];
 
-        $matchIdVo = new MatchId(Uuid::fromString($matchId));
-        $scorer = Scorer::fromTeamAndPosition($team, $position);
-
-        if ($type === 'middlefield') {
-            $match = $scoreMiddlefieldGoal($matchIdVo, $scorer);
-        } else {
-            $match = $scoreGoal($matchIdVo, $scorer);
-        }
+        $match = $scoreGoal(
+            new MatchId(Uuid::fromString($matchId)),
+            Scorer::fromTeamAndPosition($content['team'], $content['position'])
+        );
 
         foreach ($match->recordedEvents() as $recordedEvent) {
             $domainEvent = $recordedEvent->domainEvent();
             if ($domainEvent instanceof GoalWasScored) {
-                return $this->redirect($this->generateUrl('api_goal', [
+                return $this->redirect($this->generateUrl('api_regular_goal', [
                     'matchId' => $matchId,
                     'goalId' => $domainEvent->goal()->number(),
                 ]));
             }
         }
 
-        throw new RuntimeException('No goal has been scored');
+        return new Response('No goal has been scored');
     }
 
     /**
-     * Show Goal
+     * Show Regular Goal
      *
-     * @Route("/api/matches/{matchId}/goals/{goalId}", name="api_goal", methods={"GET"})
+     * @Route("/api/matches/{matchId}/regular-goals/{goalId}", name="api_regular_goal", methods={"GET"})
      */
-    public function showGoal(string $matchId, string $goalId, ShowMatchDetails $showMatchDetails) : JsonResponse
+    public function showRegularGoal(string $matchId, string $goalId, ShowMatchDetails $showMatchDetails) : JsonResponse
     {
         $matchWithDetail = $showMatchDetails($matchId);
 
@@ -167,6 +159,31 @@ class ApiController extends AbstractController
         }
 
         return $this->json($askedGoal);
+    }
+
+    /**
+     * Score middlefield goal
+     *
+     * @Route("/api/matches/{matchId}/middlefield-goals", name="api_score_middlefield_goal", methods={"POST"})
+     */
+    public function scoreMiddlefieldGoal(
+        Request $request,
+        string $matchId,
+        ScoreMiddlefieldGoal $scoreMiddlefieldGoal
+    ) : Response {
+        $content = json_decode((string) $request->getContent(), true);
+
+        $goalWasAccumulated = $scoreMiddlefieldGoal(
+            new MatchId(Uuid::fromString($matchId)),
+            Scorer::fromTeamAndPosition($content['team'], $content['position'])
+        );
+
+        return new Response($goalWasAccumulated->goal()->number());
+
+//        return $this->redirect($this->generateUrl('api_middlefield_goal', [
+//            'matchId' => $matchId,
+//            'goalId' => $goalWasAccumulated->goal()->number(), // @todo project accumulated goals
+//        ]));
     }
 
     /**

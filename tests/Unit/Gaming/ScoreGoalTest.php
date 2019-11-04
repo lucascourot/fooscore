@@ -293,4 +293,40 @@ class ScoreGoalTest extends TestCase
         $scoreGoalUseCase = new ScoreGoal($matchRepository, $fixedClock);
         $scoreGoalUseCase($matchId, $scorer);
     }
+
+    /**
+     * Regression test : goal number was sometimes wrong
+     */
+    public function testShouldHaveCorrectGoalNumbers() : void
+    {
+        // Given
+        $matchId = new MatchId(Uuid::fromString('6df9c8af-afeb-4422-ac60-5f271c738d76'));
+        $scorer = Scorer::fromTeamAndPosition('blue', 'back');
+
+        $startedAt = new DateTimeImmutable('2000-01-01 00:00:00');
+        $fixedClock = new FixedClock($startedAt);
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
+
+        $matchRepository = Mockery::spy(MatchRepository::class);
+        $matchRepository->allows('get')->with($matchId)->andReturns(
+            Match::reconstituteFromHistory([
+                new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, $startedAt)),
+                new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(0)))),
+                new VersionedEvent(3, new GoalWasScored(new Goal(2, $scorer, new ScoredAt(0)))),
+                new VersionedEvent(4, new GoalWasAccumulated(new Goal(3, $scorer, new ScoredAt(0)))),
+                new VersionedEvent(5, new GoalWasScored(new Goal(4, $scorer, new ScoredAt(0)))),
+            ])
+        );
+
+        // When
+        $scoreGoalUseCase = new ScoreGoal($matchRepository, $fixedClock);
+        $match = $scoreGoalUseCase($matchId, $scorer);
+
+        // Then
+        self::assertEquals([
+            new VersionedEvent(6, new GoalWasScored(new Goal(5, $scorer, new ScoredAt(0)))),
+        ], $match->recordedEvents());
+        $matchRepository->shouldHaveReceived()->save($match)->once();
+    }
 }

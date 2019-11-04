@@ -18,14 +18,14 @@ final class ScoreMiddlefieldGoal
         $this->clock = $clock;
     }
 
-    public function __invoke(MatchId $matchId, Scorer $scorer) : Match
+    public function __invoke(MatchId $matchId, Scorer $scorer) : GoalWasAccumulated
     {
         $match = $this->matchRepository->get($matchId);
 
-        $match->scoreMiddlefieldGoal($scorer, $this->clock);
+        $goalWasAccumulated = $match->scoreMiddlefieldGoal($scorer, $this->clock);
 
         $this->matchRepository->save($match);
 
-        return $match;
+        return $goalWasAccumulated;
     }
 }
