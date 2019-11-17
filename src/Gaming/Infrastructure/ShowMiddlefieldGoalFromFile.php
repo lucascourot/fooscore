@@ -47,7 +47,7 @@ final class ShowMiddlefieldGoalFromFile implements ShowMiddlefieldGoal
         }
 
         if ($askedGoal === null) {
-            throw new MiddlefieldGoalNotFound(sprintf('Middlefield goal "%s" not found', $goalId));
+            throw new MiddlefieldGoalNotFound(sprintf('Middlefield goal "%s" not found.', $goalId));
         }
 
         return $askedGoal;

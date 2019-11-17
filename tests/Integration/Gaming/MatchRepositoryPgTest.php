@@ -216,7 +216,7 @@ class MatchRepositoryPgTest extends KernelTestCase
             GoalWasScored::eventName(),
         ], array_column($domainEventsArray, 'event_name'));
 
-        $this->eventDispatcher->shouldHaveReceived('dispatch')->times(3); // accumulated event is not published
+        $this->eventDispatcher->shouldHaveReceived('dispatch')->times(4);
     }
 
     public function testShouldAvoidRaceConditions() : void

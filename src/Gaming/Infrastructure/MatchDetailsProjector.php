@@ -98,6 +98,31 @@ final class MatchDetailsProjector
         ));
     }
 
+    public function onGoalWasAccumulated(Events\GoalWasAccumulatedPublishedEvent $event) : void
+    {
+        $domainEvent = $event->domainEvent();
+        $content = $this->getFileContent($event);
+
+        $matchState = json_decode($content, true);
+        $goal = $domainEvent->goal();
+        $matchState['goals'][] = [
+            'id' => $goal->number(),
+            'scoredAt' => [
+                'min' => floor($goal->scoredAt()->sec() / self::MINUTE_IN_SECONDS),
+                'sec' => $goal->scoredAt()->sec() % self::MINUTE_IN_SECONDS,
+            ],
+            'scorer' => [
+                'team' => $goal->scorer()->team(),
+                'position' => $goal->scorer()->position(),
+            ],
+        ];
+
+        file_put_contents($this->dir . $event->matchId()->value()->toString() . '.json', json_encode(
+            $matchState,
+            JSON_PRETTY_PRINT
+        ));
+    }
+
     public function onMatchWasWon(Events\MatchWasWonPublishedEvent $event) : void
     {
         $content = $this->getFileContent($event);

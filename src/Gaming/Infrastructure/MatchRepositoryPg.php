@@ -78,10 +78,6 @@ SQL
 
             $publishedEvent = PublishedEventFactory::create($match->id(), $domainEvent);
 
-            if ($publishedEvent === null) {
-                continue;
-            }
-
             $this->eventDispatcher->dispatch($publishedEvent);
         }
     }

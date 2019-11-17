@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Integration\Gaming;
 
 use DateTimeImmutable;
+use Fooscore\Gaming\Infrastructure\Events\GoalWasAccumulatedPublishedEvent;
 use Fooscore\Gaming\Infrastructure\Events\GoalWasScoredPublishedEvent;
 use Fooscore\Gaming\Infrastructure\Events\MatchWasStartedPublishedEvent;
 use Fooscore\Gaming\Infrastructure\Events\MatchWasWonPublishedEvent;
 use Fooscore\Gaming\Infrastructure\MatchDetailsProjector;
 use Fooscore\Gaming\Match\Goal;
+use Fooscore\Gaming\Match\GoalWasAccumulated;
 use Fooscore\Gaming\Match\GoalWasScored;
 use Fooscore\Gaming\Match\MatchId;
 use Fooscore\Gaming\Match\MatchWasStarted;
@@ -174,6 +176,104 @@ JSON
             "scorer": {
                 "team": "red",
                 "position": "back"
+            }
+        }
+    ],
+    "players": {
+        "blue": {
+            "back": {
+                "id": "a",
+                "name": "a"
+            },
+            "front": {
+                "id": "b",
+                "name": "b"
+            }
+        },
+        "red": {
+            "back": {
+                "id": "c",
+                "name": "c"
+            },
+            "front": {
+                "id": "d",
+                "name": "d"
+            }
+        }
+    }
+}
+JSON
+        );
+    }
+
+    public function testProjectGoalWasAccumulatedEvent() : void
+    {
+        // Given
+        $projector = new MatchDetailsProjector($this->dir);
+        $teamBlue = FakeTeam::blue('a', 'b');
+        $teamRed = FakeTeam::red('c', 'd');
+        $matchId = new MatchId(Uuid::fromString($this->testMatchId));
+
+        $projector->onMatchWasStarted(new MatchWasStartedPublishedEvent(
+            $matchId,
+            new MatchWasStarted($matchId, $teamBlue, $teamRed, new DateTimeImmutable('2000-01-01 00:00:00'))
+        ));
+
+        // When
+        $projector->onGoalWasAccumulated(new GoalWasAccumulatedPublishedEvent(
+            $matchId,
+            new GoalWasAccumulated(new Goal(1, Scorer::fromTeamAndPosition('blue', 'front'), new ScoredAt(90)))
+        ));
+        $projector->onGoalWasAccumulated(new GoalWasAccumulatedPublishedEvent(
+            $matchId,
+            new GoalWasAccumulated(new Goal(2, Scorer::fromTeamAndPosition('blue', 'front'), new ScoredAt(90)))
+        ));
+        $projector->onGoalWasAccumulated(new GoalWasAccumulatedPublishedEvent(
+            $matchId,
+            new GoalWasAccumulated(new Goal(3, Scorer::fromTeamAndPosition('blue', 'front'), new ScoredAt(90)))
+        ));
+
+        // Then
+        self::assertJsonStringEqualsJsonFile($this->dir . $this->testMatchId . '.json', <<<JSON
+{
+    "id": "6df9c8af-afeb-4422-ac60-5f271c738d76",
+    "isFinished": false,
+    "score": {
+        "blue": 0,
+        "red": 0
+    },
+    "goals": [
+        {
+            "id": 1,
+            "scoredAt": {
+                "min": 1,
+                "sec": 30
+            },
+            "scorer": {
+                "team": "blue",
+                "position": "front"
+            }
+        },
+        {
+            "id": 2,
+            "scoredAt": {
+                "min": 1,
+                "sec": 30
+            },
+            "scorer": {
+                "team": "blue",
+                "position": "front"
+            }
+        },
+        {
+            "id": 3,
+            "scoredAt": {
+                "min": 1,
+                "sec": 30
+            },
+            "scorer": {
+                "team": "blue",
+                "position": "front"
             }
         }
     ],

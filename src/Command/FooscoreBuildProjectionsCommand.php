@@ -85,16 +85,10 @@ class FooscoreBuildProjectionsCommand extends Command
                         json_decode($domainEventArray['event_data'], true)
                     );
 
-                    $publishedEvent = PublishedEventFactory::create(
+                    return PublishedEventFactory::create(
                         new MatchId(Uuid::fromString($domainEventArray['aggregate_id'])),
                         $domainEvent
                     );
-
-                    if ($publishedEvent === null) {
-                        continue;
-                    }
-
-                    return $publishedEvent;
                 }
             }
 
