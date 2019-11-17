@@ -1,0 +1,82 @@
+{
+  "id": "6df9c8af-afeb-4422-ac60-5f271c738d76",
+  "isFinished": false,
+  "score": {
+    "blue": 4,
+    "red": 0
+  },
+  "goals": [
+    {
+      "id": 1,
+      "type": "regular",
+      "accumulated": [],
+      "scoredAt": {
+        "min": 0,
+        "sec": 4
+      },
+      "scorer": {
+        "team": "blue",
+        "position": "back"
+      }
+    },
+    {
+      "id": 2,
+      "type": "middlefield",
+      "scoredAt": {
+        "min": 1,
+        "sec": 4
+      },
+      "scorer": {
+        "team": "blue",
+        "position": "front"
+      }
+    },
+    {
+      "id": 3,
+      "type": "middlefield",
+      "scoredAt": {
+        "min": 2,
+        "sec": 4
+      },
+      "scorer": {
+        "team": "blue",
+        "position": "front"
+      }
+    },
+    {
+      "id": 4,
+      "type": "regular",
+      "accumulated": [2, 3],
+      "scoredAt": {
+        "min": 3,
+        "sec": 4
+      },
+      "scorer": {
+        "team": "blue",
+        "position": "front"
+      }
+    }
+  ],
+  "players": {
+    "blue": {
+      "back": {
+        "id": "a",
+        "name": "a"
+      },
+      "front": {
+        "id": "b",
+        "name": "b"
+      }
+    },
+    "red": {
+      "back": {
+        "id": "c",
+        "name": "c"
+      },
+      "front": {
+        "id": "d",
+        "name": "d"
+      }
+    }
+  }
+}

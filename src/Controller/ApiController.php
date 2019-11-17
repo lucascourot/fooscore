@@ -13,7 +13,9 @@ use Fooscore\Gaming\Match\Scorer;
 use Fooscore\Gaming\Match\StartMatch;
 use Fooscore\Gaming\Match\TeamBlue;
 use Fooscore\Gaming\Match\TeamRed;
+use Fooscore\Gaming\MatchDetails\MiddlefieldGoalNotFound;
 use Fooscore\Gaming\MatchDetails\ShowMatchDetails;
+use Fooscore\Gaming\MatchDetails\ShowMiddlefieldGoal;
 use Fooscore\Identity\CanGetUsers;
 use Fooscore\Identity\CanLogIn;
 use Fooscore\Identity\Credentials;
@@ -178,12 +180,29 @@ class ApiController extends AbstractController
             Scorer::fromTeamAndPosition($content['team'], $content['position'])
         );
 
-        return new Response($goalWasAccumulated->goal()->number());
+        return $this->redirect($this->generateUrl('api_middlefield_goal', [
+            'matchId' => $matchId,
+            'goalId' => $goalWasAccumulated->goal()->number(),
+        ]));
+    }
 
-//        return $this->redirect($this->generateUrl('api_middlefield_goal', [
-//            'matchId' => $matchId,
-//            'goalId' => $goalWasAccumulated->goal()->number(), // @todo project accumulated goals
-//        ]));
+    /**
+     * Show Middlefield Goal
+     *
+     * @Route("/api/matches/{matchId}/middlefield-goals/{goalId}", name="api_middlefield_goal", methods={"GET"})
+     */
+    public function showMiddlefieldGoal(
+        string $matchId,
+        string $goalId,
+        ShowMiddlefieldGoal $showMiddlefieldGoal
+    ) : JsonResponse {
+        try {
+            $middlefieldGoal = $showMiddlefieldGoal($matchId, $goalId);
+        } catch (MiddlefieldGoalNotFound $e) {
+            throw new NotFoundHttpException($e->getMessage(), $e);
+        }
+
+        return $this->json($middlefieldGoal);
     }
 
     /**
