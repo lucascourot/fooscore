@@ -18,9 +18,6 @@ final class Match extends EventSourcedAggregateRoot
     private $id;
 
     /** @var Goal[] */
-    private $scoredGoals = [];
-
-    /** @var Goal[] */
     private $accumulatedGoals = [];
 
     /** @var TeamBlue */
@@ -76,28 +73,31 @@ final class Match extends EventSourcedAggregateRoot
         $accumulatedGoalsCount = count($this->accumulatedGoals);
         $scoredAt = ScoredAt::fromDifference($this->startedAt, $clock->now());
 
-        do {
+        if ($accumulatedGoalsCount > 0) {
+            $this->recordThat(new MiddlefieldGoalsWereValidatedByRegularGoal(
+                new Goal($this->lastGoalNumber + 1, $scorer, $scoredAt),
+                $accumulatedGoalsCount + 1
+            ));
+        } else {
             $this->recordThat(new GoalWasScored(
                 new Goal($this->lastGoalNumber + 1, $scorer, $scoredAt)
             ));
+        }
 
-            if ($this->scoreBlue === self::MAX_SCORE || $this->scoreRed === self::MAX_SCORE) {
-                $this->recordThat(new MatchWasWon($scorer->team()));
-
-                break;
-            }
-        } while (--$accumulatedGoalsCount >= 0);
+        if ($this->scoreBlue >= self::MAX_SCORE || $this->scoreRed >= self::MAX_SCORE) {
+            $this->recordThat(new MatchWasWon($scorer->team()));
+        }
 
         return $this;
     }
 
-    public function scoreMiddlefieldGoal(Scorer $scorer, Clock $clock) : GoalWasAccumulated
+    public function scoreMiddlefieldGoal(Scorer $scorer, Clock $clock) : MiddlefieldGoalWasScored
     {
         if ($this->isWon) {
             throw new MatchAlreadyWon('Match has already been won.');
         }
 
-        $goalWasAccumulated = new GoalWasAccumulated(
+        $goalWasAccumulated = new MiddlefieldGoalWasScored(
             new Goal(
                 $this->lastGoalNumber + 1,
                 $scorer,
@@ -122,7 +122,6 @@ final class Match extends EventSourcedAggregateRoot
         }
 
         if ($event instanceof GoalWasScored) {
-            $this->scoredGoals[] = $event->goal();
             $this->accumulatedGoals = [];
             $this->lastGoalNumber = $event->goal()->number();
 
@@ -136,7 +135,21 @@ final class Match extends EventSourcedAggregateRoot
             return;
         }
 
-        if ($event instanceof GoalWasAccumulated) {
+        if ($event instanceof MiddlefieldGoalsWereValidatedByRegularGoal) {
+            $this->accumulatedGoals = [];
+            $this->lastGoalNumber = $event->goal()->number();
+
+            if ($event->goal()->scorer()->team() === 'blue') {
+                $this->scoreBlue += $event->numberOfGoalsToValidate();
+            }
+            if ($event->goal()->scorer()->team() === 'red') {
+                $this->scoreRed += $event->numberOfGoalsToValidate();
+            }
+
+            return;
+        }
+
+        if ($event instanceof MiddlefieldGoalWasScored) {
             $this->accumulatedGoals[] = $event->goal();
             $this->lastGoalNumber = $event->goal()->number();
 

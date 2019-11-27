@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Fooscore\Gaming\Infrastructure\Events;
 
 use Fooscore\Gaming\Match\DomainEvent;
-use Fooscore\Gaming\Match\GoalWasAccumulated;
 use Fooscore\Gaming\Match\GoalWasScored;
 use Fooscore\Gaming\Match\MatchId;
 use Fooscore\Gaming\Match\MatchWasStarted;
 use Fooscore\Gaming\Match\MatchWasWon;
+use Fooscore\Gaming\Match\MiddlefieldGoalsWereValidatedByRegularGoal;
+use Fooscore\Gaming\Match\MiddlefieldGoalWasScored;
 
 final class PublishedEventFactory
 {
@@ -19,8 +20,12 @@ final class PublishedEventFactory
             return new GoalWasScoredPublishedEvent($matchId, $domainEvent);
         }
 
-        if ($domainEvent instanceof GoalWasAccumulated) {
-            return new GoalWasAccumulatedPublishedEvent($matchId, $domainEvent);
+        if ($domainEvent instanceof MiddlefieldGoalWasScored) {
+            return new MiddlefieldGoalWasScoredPublishedEvent($matchId, $domainEvent);
+        }
+
+        if ($domainEvent instanceof MiddlefieldGoalsWereValidatedByRegularGoal) {
+            return new MiddlefieldGoalsWereValidatedByRegularGoalPublishedEvent($matchId, $domainEvent);
         }
 
         if ($domainEvent instanceof MatchWasStarted) {

@@ -9,11 +9,11 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Fooscore\Gaming\Infrastructure\DomainEventsFinder;
 use Fooscore\Gaming\Infrastructure\MatchRepositoryPg;
 use Fooscore\Gaming\Infrastructure\SystemClock;
-use Fooscore\Gaming\Match\GoalWasAccumulated;
-use Fooscore\Gaming\Match\GoalWasScored;
 use Fooscore\Gaming\Match\Match;
 use Fooscore\Gaming\Match\MatchId;
 use Fooscore\Gaming\Match\MatchWasStarted;
+use Fooscore\Gaming\Match\MiddlefieldGoalsWereValidatedByRegularGoal;
+use Fooscore\Gaming\Match\MiddlefieldGoalWasScored;
 use Fooscore\Gaming\Match\Scorer;
 use Fooscore\Tests\Unit\Gaming\FakeTeam;
 use InvalidArgumentException;
@@ -211,12 +211,11 @@ class MatchRepositoryPgTest extends KernelTestCase
 
         self::assertSame([
             MatchWasStarted::eventName(),
-            GoalWasAccumulated::eventName(),
-            GoalWasScored::eventName(),
-            GoalWasScored::eventName(),
+            MiddlefieldGoalWasScored::eventName(),
+            MiddlefieldGoalsWereValidatedByRegularGoal::eventName(),
         ], array_column($domainEventsArray, 'event_name'));
 
-        $this->eventDispatcher->shouldHaveReceived('dispatch')->times(4);
+        $this->eventDispatcher->shouldHaveReceived('dispatch')->times(3);
     }
 
     public function testShouldAvoidRaceConditions() : void

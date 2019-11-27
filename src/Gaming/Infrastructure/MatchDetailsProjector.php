@@ -34,7 +34,7 @@ final class MatchDetailsProjector
         file_put_contents($this->dir . $event->matchId()->value()->toString() . '.json', json_encode(
             [
                 'id' => $domainEvent->matchId()->value()->toString(),
-                'isFinished' => self::INITIAL_IS_MATCH_FINISHED,
+                'isWon' => self::INITIAL_IS_MATCH_FINISHED,
                 'score' => [
                     'blue' => self::INITIAL_SCORE,
                     'red' => self::INITIAL_SCORE,
@@ -76,6 +76,7 @@ final class MatchDetailsProjector
         $goal = $domainEvent->goal();
         $matchState['goals'][] = [
             'id' => $goal->number(),
+            'type' => 'regular',
             'scoredAt' => [
                 'min' => floor($goal->scoredAt()->sec() / self::MINUTE_IN_SECONDS),
                 'sec' => $goal->scoredAt()->sec() % self::MINUTE_IN_SECONDS,
@@ -98,7 +99,7 @@ final class MatchDetailsProjector
         ));
     }
 
-    public function onGoalWasAccumulated(Events\GoalWasAccumulatedPublishedEvent $event) : void
+    public function onMiddlefieldGoalWasScored(Events\MiddlefieldGoalWasScoredPublishedEvent $event) : void
     {
         $domainEvent = $event->domainEvent();
         $content = $this->getFileContent($event);
@@ -107,6 +108,35 @@ final class MatchDetailsProjector
         $goal = $domainEvent->goal();
         $matchState['goals'][] = [
             'id' => $goal->number(),
+            'type' => 'middlefield',
+            'scoredAt' => [
+                'min' => floor($goal->scoredAt()->sec() / self::MINUTE_IN_SECONDS),
+                'sec' => $goal->scoredAt()->sec() % self::MINUTE_IN_SECONDS,
+            ],
+            'scorer' => [
+                'team' => $goal->scorer()->team(),
+                'position' => $goal->scorer()->position(),
+            ],
+        ];
+
+        file_put_contents($this->dir . $event->matchId()->value()->toString() . '.json', json_encode(
+            $matchState,
+            JSON_PRETTY_PRINT
+        ));
+    }
+
+    public function onMiddlefieldGoalsWereValidatedByRegularGoal(
+        Events\MiddlefieldGoalsWereValidatedByRegularGoalPublishedEvent $event
+    ) : void {
+        $domainEvent = $event->domainEvent();
+        $content = $this->getFileContent($event);
+
+        $matchState = json_decode($content, true);
+        $goal = $domainEvent->goal();
+        $matchState['goals'][] = [
+            'id' => $goal->number(),
+            'type' => 'middlefield_validated_by_regular',
+            'numberOfGoalsToValidate' => $domainEvent->numberOfGoalsToValidate(),
             'scoredAt' => [
                 'min' => floor($goal->scoredAt()->sec() / self::MINUTE_IN_SECONDS),
                 'sec' => $goal->scoredAt()->sec() % self::MINUTE_IN_SECONDS,
@@ -129,7 +159,7 @@ final class MatchDetailsProjector
 
         $matchState = json_decode($content, true);
 
-        $matchState['isFinished'] = true;
+        $matchState['isWon'] = true;
 
         file_put_contents($this->dir . $event->matchId()->value()->toString() . '.json', json_encode(
             $matchState,

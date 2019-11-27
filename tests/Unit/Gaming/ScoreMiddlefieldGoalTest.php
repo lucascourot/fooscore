@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Fooscore\Tests\Unit\Gaming;
 
 use Fooscore\Gaming\Match\Goal;
-use Fooscore\Gaming\Match\GoalWasAccumulated;
 use Fooscore\Gaming\Match\MatchAlreadyWon;
+use Fooscore\Gaming\Match\MiddlefieldGoalWasScored;
 use Fooscore\Gaming\Match\ScoredAt;
 use Fooscore\Gaming\Match\ScoreMiddlefieldGoal;
 use Fooscore\Gaming\Match\Scorer;
@@ -38,10 +38,10 @@ class ScoreMiddlefieldGoalTest extends TestCase
         $accumulatedGoal = $scoreMiddlefieldGoal($matchListWithOneStartedMatch->matchId(), $scorer);
 
         // Then
-        self::assertEquals(new GoalWasAccumulated(new Goal(1, $scorer, new ScoredAt(90))), $accumulatedGoal);
+        self::assertEquals(new MiddlefieldGoalWasScored(new Goal(1, $scorer, new ScoredAt(90))), $accumulatedGoal);
         self::assertEquals(
             [
-                new VersionedEvent(2, new GoalWasAccumulated(new Goal(1, $scorer, new ScoredAt(90)))),
+                new VersionedEvent(2, new MiddlefieldGoalWasScored(new Goal(1, $scorer, new ScoredAt(90)))),
             ],
             $matchListWithOneStartedMatch->savedMatch()->recordedEvents()
         );
