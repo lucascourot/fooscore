@@ -63,7 +63,7 @@ class ScoreGoalTest extends TestCase
         self::assertEquals([
             new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(90)))),
         ], $match->recordedEvents());
-        $matchRepository->shouldHaveReceived()->save($match)->once();
+        $matchRepository->shouldHaveReceived(null)->save($match)->once();
     }
 
     public function testShouldScoreGoalAfterMiddlefieldGoalWasScored() : void
@@ -97,7 +97,7 @@ class ScoreGoalTest extends TestCase
                 2
             )),
         ], $match->recordedEvents());
-        $matchRepository->shouldHaveReceived()->save($match)->once();
+        $matchRepository->shouldHaveReceived(null)->save($match)->once();
     }
 
     public function testShouldWinWithMiddlefieldGoals() : void
@@ -142,7 +142,7 @@ class ScoreGoalTest extends TestCase
             )),
             new VersionedEvent(15, new MatchWasWon('red')),
         ], $match->recordedEvents());
-        $matchRepository->shouldHaveReceived()->save($match)->once();
+        $matchRepository->shouldHaveReceived(null)->save($match)->once();
     }
 
     public function testShouldScoreIncrementGoalIds() : void
@@ -174,7 +174,7 @@ class ScoreGoalTest extends TestCase
             new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(90)))),
             new VersionedEvent(3, new GoalWasScored(new Goal(2, $scorer, new ScoredAt(90)))),
         ], $match->recordedEvents());
-        $matchRepository->shouldHaveReceived()->save($match)->twice();
+        $matchRepository->shouldHaveReceived(null)->save($match)->twice();
     }
 
     public function testTeamBlueShouldWinWhen10GoalsScored() : void
@@ -213,7 +213,7 @@ class ScoreGoalTest extends TestCase
             new VersionedEvent(11, new GoalWasScored(new Goal(10, $scorer, new ScoredAt(0)))),
             new VersionedEvent(12, new MatchWasWon('blue')),
         ], $match->recordedEvents());
-        $matchRepository->shouldHaveReceived()->save($match)->once();
+        $matchRepository->shouldHaveReceived(null)->save($match)->once();
     }
 
     public function testTeamRedShouldWinWhen10GoalsScored() : void
@@ -252,7 +252,7 @@ class ScoreGoalTest extends TestCase
             new VersionedEvent(11, new GoalWasScored(new Goal(10, $scorer, new ScoredAt(0)))),
             new VersionedEvent(12, new MatchWasWon('red')),
         ], $match->recordedEvents());
-        $matchRepository->shouldHaveReceived()->save($match)->once();
+        $matchRepository->shouldHaveReceived(null)->save($match)->once();
     }
 
     public function testShouldNotScoreGoalAfterMatchHasBeenWon() : void
@@ -324,6 +324,6 @@ class ScoreGoalTest extends TestCase
         self::assertEquals([
             new VersionedEvent(6, new GoalWasScored(new Goal(5, $scorer, new ScoredAt(0)))),
         ], $match->recordedEvents());
-        $matchRepository->shouldHaveReceived()->save($match)->once();
+        $matchRepository->shouldHaveReceived(null)->save($match)->once();
     }
 }

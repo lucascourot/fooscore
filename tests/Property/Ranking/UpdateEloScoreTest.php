@@ -51,7 +51,7 @@ class UpdateEloScoreTest extends TestCase
             $updatedEloScores = $updateEloScore->updatePlayersScores($matchResult);
 
             // Then
-            $eloScoresRepository->shouldHaveReceived()->save($updatedEloScores)->once();
+            $eloScoresRepository->shouldHaveReceived(null)->save($updatedEloScores)->once();
             self::assertGreaterThanOrEqual($w1, $updatedEloScores->getScoreForPlayerId('w1'));
             self::assertGreaterThanOrEqual($w2, $updatedEloScores->getScoreForPlayerId('w2'));
             self::assertLessThanOrEqual($l1, $updatedEloScores->getScoreForPlayerId('l1'));
@@ -86,7 +86,7 @@ class UpdateEloScoreTest extends TestCase
             $updatedEloScores = $updateEloScore->updatePlayersScores($matchResult);
 
             // Then
-            $eloScoresRepository->shouldHaveReceived()->save($updatedEloScores)->once();
+            $eloScoresRepository->shouldHaveReceived(null)->save($updatedEloScores)->once();
             self::assertLessThanOrEqual(50, $updatedEloScores->getScoreForPlayerId('w1') - $w1);
             self::assertLessThanOrEqual(50, $updatedEloScores->getScoreForPlayerId('w2') - $w2);
             self::assertLessThanOrEqual(50, $l1 - $updatedEloScores->getScoreForPlayerId('l1'));
@@ -121,7 +121,7 @@ class UpdateEloScoreTest extends TestCase
             $updatedEloScores = $updateEloScore->updatePlayersScores($matchResult);
 
             // Then
-            $eloScoresRepository->shouldHaveReceived()->save($updatedEloScores)->once();
+            $eloScoresRepository->shouldHaveReceived(null)->save($updatedEloScores)->once();
             self::assertGreaterThanOrEqual(0, $updatedEloScores->getScoreForPlayerId('l1'));
             self::assertGreaterThanOrEqual(0, $updatedEloScores->getScoreForPlayerId('l2'));
         });

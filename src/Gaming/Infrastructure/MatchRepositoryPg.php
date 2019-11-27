@@ -66,7 +66,7 @@ SQL;
                     (event_id, event_name, event_data, aggregate_id, aggregate_type, aggregate_version, created_at)
                 VALUES (:event_id, :event_name, :event_data, :aggregate_id, :aggregate_type, :aggregate_version, NOW());
 SQL
-);
+            );
             $statement->execute([
                 'event_id' => Uuid::uuid4(),
                 'event_name' => $domainEvent::eventName(),

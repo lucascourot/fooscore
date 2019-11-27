@@ -47,6 +47,6 @@ class StartMatchTest extends TestCase
             new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, $startedAt)),
         ], $match->recordedEvents());
         self::assertSame($matchId->value()->toString(), $match->id()->value()->toString());
-        $matchRepository->shouldHaveReceived()->save($match)->once();
+        $matchRepository->shouldHaveReceived(null)->save($match)->once();
     }
 }

@@ -46,7 +46,7 @@ class UpdateEloScoreTest extends TestCase
         $updatedEloScores = $updateEloScore->updatePlayersScores($matchResult);
 
         // Then
-        $eloScoresRepository->shouldHaveReceived()->save($updatedEloScores)->once();
+        $eloScoresRepository->shouldHaveReceived(null)->save($updatedEloScores)->once();
         self::assertEquals(1535, $updatedEloScores->getScoreForPlayerId('w1'));
         self::assertEquals(1355, $updatedEloScores->getScoreForPlayerId('w2'));
         self::assertEquals(2029, $updatedEloScores->getScoreForPlayerId('l1'));
@@ -74,7 +74,7 @@ class UpdateEloScoreTest extends TestCase
         $updatedEloScores = $updateEloScore->updatePlayersScores($matchResult);
 
         // Then
-        $eloScoresRepository->shouldHaveReceived()->save($updatedEloScores)->once();
+        $eloScoresRepository->shouldHaveReceived(null)->save($updatedEloScores)->once();
         self::assertEquals(2079, $updatedEloScores->getScoreForPlayerId('w1'));
         self::assertEquals(1950, $updatedEloScores->getScoreForPlayerId('w2'));
         self::assertEquals(1485, $updatedEloScores->getScoreForPlayerId('l1'));
@@ -102,7 +102,7 @@ class UpdateEloScoreTest extends TestCase
         $updatedEloScores = $updateEloScore->updatePlayersScores($matchResult);
 
         // Then
-        $eloScoresRepository->shouldHaveReceived()->save($updatedEloScores)->once();
+        $eloScoresRepository->shouldHaveReceived(null)->save($updatedEloScores)->once();
         self::assertEquals(0, $updatedEloScores->getScoreForPlayerId('l1'));
     }
 
@@ -127,7 +127,7 @@ class UpdateEloScoreTest extends TestCase
         $updatedEloScores = $updateEloScore->updatePlayersScores($matchResult);
 
         // Then
-        $eloScoresRepository->shouldHaveReceived()->save($updatedEloScores)->once();
+        $eloScoresRepository->shouldHaveReceived(null)->save($updatedEloScores)->once();
         self::assertEquals(0, $updatedEloScores->getScoreForPlayerId('l2'));
     }
 }

@@ -26,7 +26,7 @@ class HealthcheckTest extends TestCase
         $response = $kernel->handle(Request::create('/status'));
 
         // Then
-        self::assertJson($response->getContent());
-        self::assertSame(['status' => 'ok'], json_decode($response->getContent(), true));
+        self::assertJson((string) $response->getContent());
+        self::assertSame(['status' => 'ok'], json_decode((string) $response->getContent(), true));
     }
 }

@@ -65,7 +65,7 @@ class JsonEloScoreRepositoryTest extends KernelTestCase
     "l2": 1000
 }
 JSON
-);
+        );
     }
 
     public function testShouldGetScoresForMatchPlayers() : void
