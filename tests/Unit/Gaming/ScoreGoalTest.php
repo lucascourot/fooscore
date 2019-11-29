@@ -194,9 +194,12 @@ class ScoreGoalTest extends TestCase
                 new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, $startedAt)),
                 new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(0)))),
                 new VersionedEvent(3, new GoalWasScored(new Goal(2, $scorer, new ScoredAt(0)))),
-                new VersionedEvent(4, new GoalWasScored(new Goal(3, $scorer, new ScoredAt(0)))),
-                new VersionedEvent(5, new GoalWasScored(new Goal(4, $scorer, new ScoredAt(0)))),
-                new VersionedEvent(6, new GoalWasScored(new Goal(5, $scorer, new ScoredAt(0)))),
+                new VersionedEvent(4, new MiddlefieldGoalWasScored(new Goal(3, $scorer, new ScoredAt(0)))),
+                new VersionedEvent(5, new MiddlefieldGoalWasScored(new Goal(4, $scorer, new ScoredAt(0)))),
+                new VersionedEvent(6, new MiddlefieldGoalsWereValidatedByRegularGoal(
+                    new Goal(5, $scorer, new ScoredAt(0)),
+                    3
+                )),
                 new VersionedEvent(7, new GoalWasScored(new Goal(6, $scorer, new ScoredAt(0)))),
                 new VersionedEvent(8, new GoalWasScored(new Goal(7, $scorer, new ScoredAt(0)))),
                 new VersionedEvent(9, new GoalWasScored(new Goal(8, $scorer, new ScoredAt(0)))),
@@ -233,9 +236,12 @@ class ScoreGoalTest extends TestCase
                 new VersionedEvent(1, new MatchWasStarted($matchId, $teamBlue, $teamRed, $startedAt)),
                 new VersionedEvent(2, new GoalWasScored(new Goal(1, $scorer, new ScoredAt(0)))),
                 new VersionedEvent(3, new GoalWasScored(new Goal(2, $scorer, new ScoredAt(0)))),
-                new VersionedEvent(4, new GoalWasScored(new Goal(3, $scorer, new ScoredAt(0)))),
-                new VersionedEvent(5, new GoalWasScored(new Goal(4, $scorer, new ScoredAt(0)))),
-                new VersionedEvent(6, new GoalWasScored(new Goal(5, $scorer, new ScoredAt(0)))),
+                new VersionedEvent(4, new MiddlefieldGoalWasScored(new Goal(3, $scorer, new ScoredAt(0)))),
+                new VersionedEvent(5, new MiddlefieldGoalWasScored(new Goal(4, $scorer, new ScoredAt(0)))),
+                new VersionedEvent(6, new MiddlefieldGoalsWereValidatedByRegularGoal(
+                    new Goal(5, $scorer, new ScoredAt(0)),
+                    3
+                )),
                 new VersionedEvent(7, new GoalWasScored(new Goal(6, $scorer, new ScoredAt(0)))),
                 new VersionedEvent(8, new GoalWasScored(new Goal(7, $scorer, new ScoredAt(0)))),
                 new VersionedEvent(9, new GoalWasScored(new Goal(8, $scorer, new ScoredAt(0)))),
