@@ -30,14 +30,14 @@ final class RegisteredUsersInMemory implements RegisteredUsers
             'username' => 'alice@example.com',
             'password' => 'alice123',
             'name' => 'Alice',
-            'token' => 'johnToken',
+            'token' => 'aliceToken',
         ],
         [
             'id' => 4,
             'username' => 'bob@example.com',
             'password' => 'bob123',
             'name' => 'Bob',
-            'token' => 'johnToken',
+            'token' => 'bobToken',
         ],
     ];
 

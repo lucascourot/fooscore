@@ -14,7 +14,6 @@ use Fooscore\Gaming\Match\Scorer;
 use Fooscore\Gaming\Match\StartMatch;
 use Fooscore\Gaming\Match\TeamBlue;
 use Fooscore\Gaming\Match\TeamRed;
-use Fooscore\Gaming\MatchDetails\MiddlefieldGoalNotFound;
 use Fooscore\Gaming\MatchDetails\ShowMatchDetails;
 use Fooscore\Gaming\MatchDetails\ShowMiddlefieldGoal;
 use Fooscore\Identity\CanGetUsers;
@@ -212,7 +211,11 @@ class ApiController extends AbstractController
     /**
      * Show api_regular_middlefield_validation_goal
      *
-     * @Route("/api/matches/{matchId}/regular-validation-goals/{goalId}", name="api_regular_validation_goal", methods={"GET"})
+     * @Route(
+     *     "/api/matches/{matchId}/regular-validation-goals/{goalId}",
+     *     name="api_regular_validation_goal",
+     *     methods={"GET"}
+     * )
      */
     public function showRegularValidationGoal(
         string $matchId,

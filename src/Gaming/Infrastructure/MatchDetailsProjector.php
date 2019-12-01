@@ -87,11 +87,7 @@ final class MatchDetailsProjector
             ],
         ];
 
-        if ($goal->scorer()->team() === 'blue') {
-            $matchState['score']['blue']++;
-        } else {
-            $matchState['score']['red']++;
-        }
+        $matchState['score'][$goal->scorer()->team()]++;
 
         file_put_contents($this->dir . $event->matchId()->value()->toString() . '.json', json_encode(
             $matchState,
@@ -146,6 +142,8 @@ final class MatchDetailsProjector
                 'position' => $goal->scorer()->position(),
             ],
         ];
+
+        $matchState['score'][$goal->scorer()->team()] += $domainEvent->numberOfGoalsToValidate();
 
         file_put_contents($this->dir . $event->matchId()->value()->toString() . '.json', json_encode(
             $matchState,

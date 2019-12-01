@@ -326,6 +326,10 @@ JSON
         ));
 
         // When
+        $projector->onGoalWasScored(new GoalWasScoredPublishedEvent(
+            $matchId,
+            new GoalWasScored(new Goal(1, Scorer::fromTeamAndPosition('blue', 'back'), new ScoredAt(90)))
+        ));
         $projector->onMiddlefieldGoalWasScored(new MiddlefieldGoalWasScoredPublishedEvent(
             $matchId,
             new MiddlefieldGoalWasScored(new Goal(1, Scorer::fromTeamAndPosition('blue', 'front'), new ScoredAt(90)))
@@ -339,7 +343,7 @@ JSON
                 $matchId,
                 new MiddlefieldGoalsWereValidatedByRegularGoal(
                     new Goal(3, Scorer::fromTeamAndPosition('blue', 'front'), new ScoredAt(90)),
-                    2
+                    3
                 )
             )
         );
@@ -350,10 +354,22 @@ JSON
     "id": "6df9c8af-afeb-4422-ac60-5f271c738d76",
     "isWon": false,
     "score": {
-        "blue": 0,
+        "blue": 4,
         "red": 0
     },
     "goals": [
+        {
+            "id": 1,
+            "type": "regular",
+            "scoredAt": {
+                "min": 1,
+                "sec": 30
+            },
+            "scorer": {
+                "team": "blue",
+                "position": "back"
+            }
+        },
         {
             "id": 1,
             "type": "middlefield",
@@ -381,7 +397,7 @@ JSON
         {
             "id": 3,
             "type": "middlefield_validated_by_regular",
-            "numberOfGoalsToValidate": 2,
+            "numberOfGoalsToValidate": 3,
             "scoredAt": {
                 "min": 1,
                 "sec": 30
