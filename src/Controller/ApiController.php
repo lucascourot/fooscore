@@ -6,6 +6,7 @@ namespace Fooscore\Controller;
 
 use Fooscore\Gaming\Match\GoalWasScored;
 use Fooscore\Gaming\Match\MatchId;
+use Fooscore\Gaming\Match\MiddlefieldGoalsWereValidatedByRegularGoal;
 use Fooscore\Gaming\Match\Player;
 use Fooscore\Gaming\Match\ScoreGoal;
 use Fooscore\Gaming\Match\ScoreMiddlefieldGoal;
@@ -133,6 +134,13 @@ class ApiController extends AbstractController
                     'goalId' => $domainEvent->goal()->number(),
                 ]));
             }
+
+            if ($domainEvent instanceof MiddlefieldGoalsWereValidatedByRegularGoal) {
+                return $this->redirect($this->generateUrl('api_regular_validation_goal', [
+                    'matchId' => $matchId,
+                    'goalId' => $domainEvent->goal()->number(),
+                ]));
+            }
         }
 
         return new Response('No goal has been scored');
@@ -196,13 +204,37 @@ class ApiController extends AbstractController
         string $goalId,
         ShowMiddlefieldGoal $showMiddlefieldGoal
     ) : JsonResponse {
-        try {
-            $middlefieldGoal = $showMiddlefieldGoal($matchId, $goalId);
-        } catch (MiddlefieldGoalNotFound $e) {
-            throw new NotFoundHttpException($e->getMessage(), $e);
-        }
+        $middlefieldGoal = $showMiddlefieldGoal($matchId, $goalId);
 
         return $this->json($middlefieldGoal);
+    }
+
+    /**
+     * Show api_regular_middlefield_validation_goal
+     *
+     * @Route("/api/matches/{matchId}/regular-validation-goals/{goalId}", name="api_regular_validation_goal", methods={"GET"})
+     */
+    public function showRegularValidationGoal(
+        string $matchId,
+        string $goalId,
+        ShowMatchDetails $showMatchDetails
+    ) : JsonResponse {
+        $matchWithDetail = $showMatchDetails($matchId);
+
+        $askedGoal = null;
+        foreach ($matchWithDetail['goals'] as $scoredGoal) {
+            if (strval($scoredGoal['id']) !== $goalId) {
+                continue;
+            }
+
+            $askedGoal = $scoredGoal;
+        }
+
+        if ($askedGoal === null) {
+            throw new NotFoundHttpException('Goal not found');
+        }
+
+        return $this->json($askedGoal);
     }
 
     /**

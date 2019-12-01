@@ -43,6 +43,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: Fooscore\Gaming\Infrastructure\Events\MatchWasStartedPublishedEvent, method: onMatchWasStarted }
             - { name: kernel.event_listener, event: Fooscore\Gaming\Infrastructure\Events\GoalWasScoredPublishedEvent, method: onGoalWasScored }
+            - { name: kernel.event_listener, event: Fooscore\Gaming\Infrastructure\Events\MiddlefieldGoalWasScoredPublishedEvent, method: onMiddlefieldGoalWasScored }
+            - { name: kernel.event_listener, event: Fooscore\Gaming\Infrastructure\Events\MiddlefieldGoalsWereValidatedByRegularGoalPublishedEvent, method: onMiddlefieldGoalsWereValidatedByRegularGoal }
             - { name: kernel.event_listener, event: Fooscore\Gaming\Infrastructure\Events\MatchWasWonPublishedEvent, method: onMatchWasWon }
 
     Fooscore\Gaming\Infrastructure\UpdateEloWhenMatchWonPolicy:
