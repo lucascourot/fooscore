@@ -4,7 +4,7 @@ Foosball app for your team.
 
 This app allows you to score goals in order to rank players.
 
-> The purpose of this app is mainly to learn how to apply DDD / CQRS / Event Souring with PHP.
+> The purpose of this app is mainly to learn how to apply DDD / CQRS / Event Sourcing with PHP.
 
 ## Business rules
 
