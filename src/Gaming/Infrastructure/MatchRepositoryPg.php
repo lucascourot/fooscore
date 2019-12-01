@@ -96,7 +96,19 @@ SQL
             throw new InvalidArgumentException('Match not found.');
         }
 
-        $versionedEvents = array_map(function (array $domainEventArray) : VersionedEvent {
+        $versionedEvents = $this->transformToVersionedEvents($domainEventsArray);
+
+        return Match::reconstituteFromHistory($versionedEvents);
+    }
+
+    /**
+     * @param mixed[] $domainEventsArray
+     *
+     * @return VersionedEvent[]
+     */
+    private function transformToVersionedEvents(array $domainEventsArray) : array
+    {
+        return array_map(function (array $domainEventArray) : VersionedEvent {
             foreach ($this->knownDomainEvents as $knownDomainEventName => $knownDomainEventClass) {
                 if ($domainEventArray['event_name'] === $knownDomainEventName) {
                     /** @var DomainEvent $knownDomainEventClass */
@@ -112,7 +124,5 @@ SQL
                 sprintf('Unknown domain event name : %s', $domainEventArray['event_name'])
             );
         }, $domainEventsArray);
-
-        return Match::reconstituteFromHistory($versionedEvents);
     }
 }
