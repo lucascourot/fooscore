@@ -262,7 +262,7 @@
         const appendGoalToList = (goal) => {
             let goalRecord = document.createElement('li');
             goalRecord.appendChild(
-                document.createTextNode(`${goal.scorer.team}-${goal.scorer.position} (${goal.scoredAt.min}"${goal.scoredAt.sec})`)
+                document.createTextNode(`${goal.scorer.team}-${goal.scorer.position} (${goal.scoredAt.min}"${goal.scoredAt.sec}) (${goal.type})`)
             );
             document.getElementById(`${goal.scorer.team}-goals`).appendChild(goalRecord);
         };
